@@ -13,7 +13,8 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import styles from './style';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
-import { app, auth } from '../../../service/firebase/conexao';
+import { app, auth } from '../../../service/firebase/Conexao';
+import PropTypes from 'prop-types';
 
 export default function Cadastro({ navigation }) {
   const [nome, setNome] = useState('');
@@ -138,10 +139,8 @@ export default function Cadastro({ navigation }) {
   const onChangeDate = (event, selectedDate) => {
     setMostrarDatePicker(false);
     if (selectedDate) {
-      const dia = String(selectedDate.getDate()).padStart(2, '0');
-      const mes = String(selectedDate.getMonth() + 1).padStart(2, '0');
-      const ano = selectedDate.getFullYear();
-      setDataNascimento(`${dia}/${mes}/${ano}`);
+      const dataFormatada = selectedDate.toLocaleDateString('pt-BR');
+      setDataNascimento(dataFormatada);
     }
   };
 
@@ -243,3 +242,9 @@ export default function Cadastro({ navigation }) {
     </SafeAreaView>
   );
 }
+
+Cadastro.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+  }).isRequired,
+};

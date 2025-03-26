@@ -6,10 +6,12 @@ import {
   TouchableOpacity,
   Alert,
   SafeAreaView,
+  ActivityIndicator,
 } from 'react-native';
 import styles from './style';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../../service/firebase/conexao';
+import { auth } from '../../../service/firebase/Conexao';
+import PropTypes from 'prop-types';
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState('');
@@ -27,15 +29,14 @@ export default function Login({ navigation }) {
 
     try {
       // Faz login com o Firebase Auth
+      // eslint-disable-next-line
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
         senha,
       );
-      const user = userCredential.user;
-
       Alert.alert('Sucesso', 'Login realizado com sucesso!');
-      navigation.navigate('Cadastro'); // Redireciona para a tela principal
+      navigation.navigate('Home'); // Redireciona para a tela principal
     } catch (error) {
       let errorMessage = 'Erro ao fazer login. Tente novamente.';
 
@@ -90,6 +91,8 @@ export default function Login({ navigation }) {
           </TouchableOpacity>
         </View>
 
+        {loading && <ActivityIndicator size="large" color="#A349A4" />}
+
         <TouchableOpacity style={styles.botao} onPress={handleLogin}>
           <Text style={styles.botaoTexto}>Entrar</Text>
         </TouchableOpacity>
@@ -101,3 +104,9 @@ export default function Login({ navigation }) {
     </SafeAreaView>
   );
 }
+
+Login.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+  }).isRequired,
+};

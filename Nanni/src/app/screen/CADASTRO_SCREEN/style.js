@@ -1,9 +1,16 @@
 import { StyleSheet } from 'react-native';
 
+const colors = {
+  primary: '#A349A4',
+  secondary: '#42FFA3',
+  text: '#000000',
+  background: '#FFFFFF',
+};
+
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#FFFFFF', // Cor secundária
+    backgroundColor: colors.background,
   },
   container: {
     flex: 1,
@@ -15,21 +22,21 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
-    color: '#000000', // Fonte cor preta
+    color: colors.text,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#A349A4', // Cor primária
+    borderColor: colors.primary,
     padding: 10,
     marginBottom: 15,
     borderRadius: 5,
-    color: '#000000', // Fonte cor preta
+    color: colors.text,
   },
   passwordContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#A349A4', // Cor primária
+    borderColor: colors.primary,
     paddingHorizontal: 10,
     marginBottom: 15,
     borderRadius: 5,
@@ -37,26 +44,26 @@ const styles = StyleSheet.create({
   passwordInput: {
     flex: 1,
     paddingVertical: 10,
-    color: '#000000', // Fonte cor preta
+    color: colors.text,
   },
   showPasswordText: {
-    color: '#A349A4', // Cor primária
+    color: colors.primary,
     fontWeight: 'bold',
     marginLeft: 10,
   },
   botao: {
-    backgroundColor: '#42FFA3', // Cor secundária
+    backgroundColor: colors.secondary,
     padding: 15,
     borderRadius: 5,
     alignItems: 'center',
   },
   botaoTexto: {
-    color: '#000000', // Fonte cor preta
+    color: colors.text,
     fontSize: 16,
     fontWeight: 'bold',
   },
   link: {
-    color: '#A349A4', // Cor primária
+    color: colors.primary,
     marginTop: 15,
     textAlign: 'center',
   },
