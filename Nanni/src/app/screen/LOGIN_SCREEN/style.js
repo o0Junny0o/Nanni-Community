@@ -15,6 +15,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
+    alignItems: 'center',
     padding: 20,
   },
   logo: {
@@ -31,6 +32,7 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   input: {
+    width: '100%',
     borderWidth: 1,
     borderColor: colors.primary,
     padding: 10,
@@ -58,6 +60,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   botao: {
+    width: '80%',
     backgroundColor: colors.secondary,
     padding: 15,
     borderRadius: 5,
@@ -74,10 +77,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   forgotPasswordLink: {
-    color: "#A349A4",
-    marginTop: 10, 
-    marginBottom: 20, 
-    textAlign: "right",
+    color: colors.primary,
+    marginTop: 10,
+    marginBottom: 20,
+    textAlign: 'right',
     width: '100%',
   },
 });

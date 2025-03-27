@@ -1,4 +1,4 @@
-import React, { useContext, View, Text } from 'react';
+import React, { useContext } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { ConnectionProvider } from './src/app/components/contexts/ConexaoContext';
@@ -8,35 +8,19 @@ import {
   AuthContext,
 } from './src/app/components/contexts/AuthContext';
 import Toast from 'react-native-toast-message';
-import styles from './src/styles/styles'
+import { toastConfig } from './src/app/components/toasts/ToastConfig';
 
 // Importa as telas
 import Login from './src/app/screen/LOGIN_SCREEN/index';
 import Cadastro from './src/app/screen/CADASTRO_SCREEN/index';
 import Home from './src/app/screen/HOME_SCREEN/index';
 import CARREGAMENTO_SCREEN from './src/app/screen/CARREGAMENTO_SCREEN/index';
-import RecuperarSenha from "./src/app/screen/RECUPERAR_SENHA_SCREEN/index";
+import RecuperarSenha from './src/app/screen/RECUPERAR_SENHA_SCREEN/index';
 
 // Criação dos Stacks
 const Stack = createStackNavigator();
 const AuthStack = createStackNavigator();
 const MainStack = createStackNavigator();
-
-// Configuração do toast
-const toastConfig = {
-  success: ({ text1, text2 }) => (
-    <View style={styles.toastSuccess}>
-      <Text style={styles.toastText1}>{text1}</Text>
-      <Text style={styles.toastText2}>{text2}</Text>
-    </View>
-  ),
-  error: ({ text1, text2 }) => (
-    <View style={styles.toastError}>
-      <Text style={styles.toastText1}>{text1}</Text>
-      <Text style={styles.toastText2}>{text2}</Text>
-    </View>
-  ),
-};
 
 export default function App() {
   return (
@@ -45,6 +29,7 @@ export default function App() {
         <NavigationContainer>
           <RootNavigator />
         </NavigationContainer>
+        <Toast config={toastConfig} />
       </AuthProvider>
       <ConnectionMonitor />
     </ConnectionProvider>

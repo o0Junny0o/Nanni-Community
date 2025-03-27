@@ -1,49 +1,65 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, SafeAreaView, Alert, ActivityIndicator } from "react-native";
-import styles from "./style"; 
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  SafeAreaView,
+  ActivityIndicator,
+} from 'react-native';
+import { auth } from '../../../service/firebase/Conexao';
+import Toast from 'react-native-toast-message';
+import styles from './style';
+import PropTypes from 'prop-types';
 
+// eslint-disable-next-line
 const RecuperarSenha = ({ navigation }) => {
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
   const [isEnviandoEmail, setIsEnviandoEmail] = useState(false);
 
   const handleEnviarEmail = async () => {
     if (isEnviandoEmail) return;
-    
+
     if (!email) {
-      Alert.alert("Erro", "Por favor, informe seu e-mail.");
+      Toast.show({
+        type: 'error',
+        text1: 'Erro',
+        text2: 'Por favor, informe seu e-mail.',
+      });
       return;
     }
 
     try {
       setIsEnviandoEmail(true);
-      
+
       // Envia email de redefinição de senha usando Firebase
       await auth.sendPasswordResetEmail(email);
-      
-      showToast(
-        'Email enviado!',
-        `Verifique sua caixa de entrada em ${email}`
-      );
-      
+
+      Toast.show({
+        type: 'success',
+        text1: 'Email enviado!',
+        text2: `Verifique sua caixa de entrada em ${email}`,
+      });
     } catch (error) {
-      let mensagemErro = "Ocorreu um erro ao enviar o email. Tente novamente.";
-      
+      let mensagemErro = 'Ocorreu um erro ao enviar o email. Tente novamente.';
+
       switch (error.code) {
-        case "auth/user-not-found":
-          mensagemErro = "Nenhum usuário encontrado com este email.";
+        case 'auth/user-not-found':
+          mensagemErro = 'Nenhum usuário encontrado com este email.';
           break;
-        case "auth/invalid-email":
-          mensagemErro = "Endereço de email inválido.";
+        case 'auth/invalid-email':
+          mensagemErro = 'Endereço de email inválido.';
           break;
-        case "auth/too-many-requests":
-          mensagemErro = "Muitas tentativas. Tente novamente mais tarde.";
+        case 'auth/too-many-requests':
+          mensagemErro = 'Muitas tentativas. Tente novamente mais tarde.';
           break;
       }
-      
-      showToast(
-        'Email enviado!',
-        mensagemErro
-      );
+
+      Toast.show({
+        type: 'error',
+        text1: 'Erro',
+        text2: mensagemErro,
+      });
     } finally {
       setIsEnviandoEmail(false);
     }
@@ -54,7 +70,9 @@ const RecuperarSenha = ({ navigation }) => {
       <View style={styles.container}>
         <Text style={styles.titulo}>Recuperar Senha</Text>
 
-        <Text style={styles.subtitulo}>Informe seu e-mail para receber o código de recuperação.</Text>
+        <Text style={styles.subtitulo}>
+          Informe seu e-mail para receber o código de recuperação.
+        </Text>
 
         <TextInput
           style={styles.input}
@@ -63,6 +81,7 @@ const RecuperarSenha = ({ navigation }) => {
           keyboardType="email-address"
           value={email}
           onChangeText={setEmail}
+          autoCapitalize="none"
         />
 
         <TouchableOpacity
@@ -70,11 +89,21 @@ const RecuperarSenha = ({ navigation }) => {
           onPress={handleEnviarEmail}
           disabled={isEnviandoEmail}
         >
-          {isEnviandoEmail ? <ActivityIndicator size="small" color="#FFFFFF" /> : <Text style={styles.botaoTexto}>Enviar Código</Text>}
+          {isEnviandoEmail ? (
+            <ActivityIndicator size="small" color="#FFFFFF" />
+          ) : (
+            <Text style={styles.botaoTexto}>Enviar Código</Text>
+          )}
         </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
+};
+
+RecuperarSenha.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+  }).isRequired,
 };
 
 export default RecuperarSenha;

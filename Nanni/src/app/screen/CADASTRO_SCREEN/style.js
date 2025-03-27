@@ -15,6 +15,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
+    alignItems: 'center',
     padding: 20,
   },
   titulo: {
@@ -25,6 +26,7 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   input: {
+    width: '100%',
     borderWidth: 1,
     borderColor: colors.primary,
     padding: 10,
@@ -52,6 +54,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   botao: {
+    width: '80%',
     backgroundColor: colors.secondary,
     padding: 15,
     borderRadius: 5,
@@ -66,6 +69,9 @@ const styles = StyleSheet.create({
     color: colors.primary,
     marginTop: 15,
     textAlign: 'center',
+  },
+  touchable_opacity: {
+    width: '100%',
   },
 });
 

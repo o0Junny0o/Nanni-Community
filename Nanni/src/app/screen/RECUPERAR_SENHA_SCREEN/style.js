@@ -1,50 +1,57 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet } from 'react-native';
+
+const colors = {
+  primary: '#A349A4',
+  secondary: '#42FFA3',
+  text: '#000000',
+  background: '#FFFFFF',
+};
 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.background,
   },
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: 20,
   },
   titulo: {
     fontSize: 24,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginBottom: 20,
-    textAlign: "center",
-    color: "#000000",
+    textAlign: 'center',
+    color: colors.text,
   },
   subtitulo: {
     fontSize: 16,
     marginBottom: 15,
-    textAlign: "center",
-    color: "#000000",
+    textAlign: 'center',
+    color: colors.text,
   },
   input: {
     width: '100%',
     borderWidth: 1,
-    borderColor: "#A349A4",
+    borderColor: colors.primary,
     padding: 10,
     marginBottom: 15,
     borderRadius: 5,
-    color: "#000000",
+    color: colors.text,
   },
   botao: {
-    backgroundColor: "#42FFA3",
+    backgroundColor: colors.secondary,
     padding: 15,
     borderRadius: 5,
-    alignItems: "center",
-    width: '100%',
+    alignItems: 'center',
+    width: '80%',
     marginBottom: 15, // Espaçamento entre os botões
   },
   botaoTexto: {
-    color: "#000000",
+    color: colors.text,
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
 });
 

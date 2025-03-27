@@ -13,7 +13,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import styles from './style';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
-import { app, auth } from '../../../service/firebase/conexao';
+import { app, auth } from '../../../service/firebase/Conexao';
 import PropTypes from 'prop-types';
 
 export default function Cadastro({ navigation }) {
@@ -167,7 +167,10 @@ export default function Cadastro({ navigation }) {
           onChangeText={setEmail}
         />
 
-        <TouchableOpacity onPress={() => setMostrarDatePicker(true)}>
+        <TouchableOpacity
+          onPress={() => setMostrarDatePicker(true)}
+          style={styles.touchable_opacity}
+        >
           <TextInput
             style={styles.input}
             placeholder="Data de Nascimento (DD/MM/AAAA)"
