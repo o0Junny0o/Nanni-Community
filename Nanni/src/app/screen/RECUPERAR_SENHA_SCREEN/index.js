@@ -1,28 +1,52 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, SafeAreaView, Alert, ActivityIndicator } from "react-native";
-import styles from "./style";
+import styles from "./style"; 
 
 const RecuperarSenha = ({ navigation }) => {
   const [email, setEmail] = useState("");
-  const [codigo, setCodigo] = useState("");
   const [isEnviandoEmail, setIsEnviandoEmail] = useState(false);
-  const [isVerificandoCodigo, setIsVerificandoCodigo] = useState(false);
 
   const handleEnviarEmail = async () => {
-    if (isEnviandoEmail) {
-      return;
-    }
-    setIsEnviandoEmail(true);
+    if (isEnviandoEmail) return;
+    
     if (!email) {
       Alert.alert("Erro", "Por favor, informe seu e-mail.");
-      setIsEnviandoEmail(false);
       return;
     }
-    console.log("Enviar código para:", email);
-    // Simule o envio do email
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    Alert.alert("Código Enviado", `Um código de recuperação foi enviado para o e-mail: ${email}`);
-    setIsEnviandoEmail(false);
+
+    try {
+      setIsEnviandoEmail(true);
+      
+      // Envia email de redefinição de senha usando Firebase
+      await auth.sendPasswordResetEmail(email);
+      
+      showToast(
+        'Email enviado!',
+        `Verifique sua caixa de entrada em ${email}`
+      );
+      
+    } catch (error) {
+      let mensagemErro = "Ocorreu um erro ao enviar o email. Tente novamente.";
+      
+      switch (error.code) {
+        case "auth/user-not-found":
+          mensagemErro = "Nenhum usuário encontrado com este email.";
+          break;
+        case "auth/invalid-email":
+          mensagemErro = "Endereço de email inválido.";
+          break;
+        case "auth/too-many-requests":
+          mensagemErro = "Muitas tentativas. Tente novamente mais tarde.";
+          break;
+      }
+      
+      showToast(
+        'Email enviado!',
+        mensagemErro
+      );
+    } finally {
+      setIsEnviandoEmail(false);
+    }
   };
 
   return (
