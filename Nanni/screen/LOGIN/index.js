@@ -1,29 +1,28 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Alert, SafeAreaView } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, SafeAreaView } from "react-native";
 import styles from "./style";
 
-export default function Login({ navigation }) {
+const Login = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [mostrarSenha, setMostrarSenha] = useState(false);
 
   const handleLogin = () => {
-    if (!email || !senha) {
-      Alert.alert("Erro", "Por favor, preencha todos os campos!");
-      return;
-    }
-
-    // Simula sucesso no login
-    Alert.alert("Sucesso", "Login realizado com sucesso!");
-    // TODO: Adicionar lógica de autenticação aqui
+    console.log("Tentativa de login com:", email, senha);
+    // lógica de autenticação
+    // navigation.navigate("Home");
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
+        <Image
+          source={require("../../assets/logo_nanni.png")}
+          style={styles.logo}
+        />
+
         <Text style={styles.titulo}>Login</Text>
 
-        {/* Campo de entrada para email */}
         <TextInput
           style={styles.input}
           placeholder="Email"
@@ -49,15 +48,21 @@ export default function Login({ navigation }) {
           </TouchableOpacity>
         </View>
 
-    
+
+        <TouchableOpacity onPress={() => navigation.navigate("RecuperarSenha")}>
+          <Text style={styles.forgotPasswordLink}>Esqueci a senha</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity style={styles.botao} onPress={handleLogin}>
           <Text style={styles.botaoTexto}>Entrar</Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => navigation.navigate("Cadastro")}>
-          <Text style={styles.link}>Não possui uma conta? Cadastre-se</Text>
+          <Text style={styles.link}>Não tem uma conta? Cadastre-se</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
-}
+};
+
+export default Login;
