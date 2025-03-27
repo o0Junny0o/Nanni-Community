@@ -3,7 +3,7 @@ import { db } from "../../service/firebase/Conexao"
 
 
 // Envia mensagem a coleção Message
-export async function sendMessage({ discussaoPATH, message, userRef, anexo }) {
+export async function sendMessage({ userRef, discussaoPATH, message, anexo }) {
     // Tratamento:
     if(typeof message !== 'string' && message.trim() === '') return
     
