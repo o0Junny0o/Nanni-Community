@@ -1,15 +1,17 @@
-import { addDoc, serverTimestamp } from "firebase/firestore"
+import { addDoc, serverTimestamp, collection } from "firebase/firestore"
 import { db } from "../../service/firebase/Conexao"
 
 
 // Envia mensagem a coleção Message
-export async function sendMessage({ userRef, discussaoPATH, message, anexo }) {
+export async function sendMessage({ discussaoPATH, userRef, message, anexo }) {
     // Tratamento:
-    if(typeof message !== 'string' && message.trim() === '') return
+    if(typeof message !== 'string' && message.trim() !== '') return
+    if(!userRef) return
     
     // Collection:
     const MESSAGE_PATH = `${discussaoPATH}/Comentários` 
     const MESSAGE_REFERENCE = collection(db, MESSAGE_PATH)
+
 
     // Envio:
     try {
