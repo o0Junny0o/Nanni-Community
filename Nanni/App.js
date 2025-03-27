@@ -3,10 +3,10 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
 // Importa as telas
-import Login from "./screen/LOGIN/index";
-import Cadastro from "./screen/CADASTRO/index";
-import RecuperarSenha from "./screen/RECUPERAR_SENHA/index";
-import RedefinirSenha from "./screen/REDEFINIR_SENHA/index";
+import Login from "./screen/LOGIN_SCREEN/index";
+import Cadastro from "./screen/CADASTRO_SCREEN/index";
+import RecuperarSenha from "./screen/RECUPERAR_SENHA_SCREEN/index";
+import RedefinirSenha from "./screen/REDEFINIR_SENHA_SCREEN/index";
 
 // Criação do Stack Navigator
 const Stack = createStackNavigator();
