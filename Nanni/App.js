@@ -13,6 +13,7 @@ import Login from './src/app/screen/LOGIN_SCREEN/index';
 import Cadastro from './src/app/screen/CADASTRO_SCREEN/index';
 import Home from './src/app/screen/HOME_SCREEN/index';
 import CARREGAMENTO_SCREEN from './src/app/screen/CARREGAMENTO_SCREEN/index';
+import RecuperarSenha from "./src/app/screen/RECUPERAR_SENHA_SCREEN/index";
 
 // Criação dos Stacks
 const Stack = createStackNavigator();
@@ -32,12 +33,13 @@ export default function App() {
   );
 }
 
-// Stack para telas de autenticação (Login e Cadastro)
+// Stack para telas de autenticação (Login, Cadastro e recuperação de senha)
 function AuthNavigator() {
   return (
     <AuthStack.Navigator screenOptions={{ headerShown: false }}>
       <AuthStack.Screen name="Login" component={Login} />
       <AuthStack.Screen name="Cadastro" component={Cadastro} />
+      <AuthStack.Screen name="RecuperarSenha" component={RecuperarSenha} />
     </AuthStack.Navigator>
   );
 }

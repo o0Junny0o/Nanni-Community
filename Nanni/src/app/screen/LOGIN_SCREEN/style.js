@@ -17,6 +17,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 20,
   },
+  logo: {
+    width: 320,
+    height: 120,
+    marginBottom: 30,
+    resizeMode: 'contain',
+  },
   titulo: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -66,6 +72,13 @@ const styles = StyleSheet.create({
     color: colors.primary,
     marginTop: 15,
     textAlign: 'center',
+  },
+  forgotPasswordLink: {
+    color: "#A349A4",
+    marginTop: 10, 
+    marginBottom: 20, 
+    textAlign: "right",
+    width: '100%',
   },
 });
 

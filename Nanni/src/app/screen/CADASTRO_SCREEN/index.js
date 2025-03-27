@@ -13,7 +13,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import styles from './style';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
-import { app, auth } from '../../../service/firebase/Conexao';
+import { app, auth } from '../../../service/firebase/conexao';
 import PropTypes from 'prop-types';
 
 export default function Cadastro({ navigation }) {
