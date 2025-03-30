@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { ConnectionProvider } from './src/app/components/contexts/ConexaoContext';
@@ -9,6 +9,7 @@ import {
 } from './src/app/components/contexts/AuthContext';
 import Toast from 'react-native-toast-message';
 import { toastConfig } from './src/app/components/toasts/ToastConfig';
+import { requestNotificationPermissions } from './src/utils/Notifications';
 
 // Importa as telas
 import Login from './src/app/screen/LOGIN_SCREEN/index';
@@ -23,6 +24,10 @@ const AuthStack = createStackNavigator();
 const MainStack = createStackNavigator();
 
 export default function App() {
+  // Solicita permissões ao iniciar o app
+  useEffect(() => {
+    requestNotificationPermissions();
+  }, []);
   return (
     <ConnectionProvider>
       <AuthProvider>

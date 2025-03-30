@@ -14,6 +14,7 @@ export default {
       resizeMode: 'contain',
       backgroundColor: '#ffffff',
     },
+    
     ios: {
       supportsTablet: true,
     },
@@ -26,6 +27,17 @@ export default {
     web: {
       favicon: './src/assets/favicon.png',
     },
+    plugins: [
+      [
+        "expo-notifications",
+        {
+          icon: "./src/assets/logo_nanni.png", // TODO: 96x96 all-white png with transparency
+          color: "#ffffff",
+          androidMode: "collapse", // Modo recomendado
+          androidCollapsedTitle: "Nanni" // Título quando recolhido
+        }
+      ]
+    ],
     extra: {
       FIREBASE_API_KEY: process.env.FIREBASE_API_KEY,
       FIREBASE_AUTH_DOMAIN: process.env.FIREBASE_AUTH_DOMAIN,
