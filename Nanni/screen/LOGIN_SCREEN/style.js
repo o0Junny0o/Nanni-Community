@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#FFFFFF", // Cor secundária
+    backgroundColor: '#FFFFFF',
   },
   container: {
     flex: 1,
@@ -22,58 +22,58 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 20,
     textAlign: "center",
-    color: "#000000",
+    color: '#071934', // MidnightBlue
   },
   input: {
     width: '100%',
     borderWidth: 1,
-    borderColor: "#A349A4",
+    borderColor: '#163690', // DarkRoyalBlue
     padding: 10,
     marginBottom: 15,
     borderRadius: 5,
-    color: "#000000",
+    color: '#071934', // MidnightBlue
   },
   passwordContainer: {
     flexDirection: "row",
     alignItems: "center",
     width: '100%',
     borderWidth: 1,
-    borderColor: "#A349A4",
+    borderColor: '#163690', // DarkRoyalBlue
     paddingHorizontal: 10,
-    marginBottom: 10, // Reduzi o marginBottom aqui
+    marginBottom: 10,
     borderRadius: 5,
   },
   passwordInput: {
     flex: 1,
     paddingVertical: 10,
-    color: "#000000",
+    color: '#071934', // MidnightBlue
   },
   showPasswordText: {
-    color: "#A349A4",
+    color: '#163690', // DarkRoyalBlue
     fontWeight: "bold",
     marginLeft: 10,
   },
   botao: {
-    backgroundColor: "#42FFA3",
+    backgroundColor: '#5d90d6', // MediumSkyBlue
     padding: 15,
     borderRadius: 5,
     alignItems: "center",
     width: '100%',
   },
   botaoTexto: {
-    color: "#000000",
+    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: "bold",
   },
   link: {
-    color: "#A349A4",
+    color: '#163690', // DarkRoyalBlue
     marginTop: 15,
     textAlign: "center",
   },
   forgotPasswordLink: {
-    color: "#A349A4",
-    marginTop: 10, 
-    marginBottom: 20, 
+    color: '#163690', // DarkRoyalBlue
+    marginTop: 10,
+    marginBottom: 20,
     textAlign: "right",
     width: '100%',
   },

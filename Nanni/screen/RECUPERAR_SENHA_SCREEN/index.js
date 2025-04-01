@@ -4,9 +4,7 @@ import styles from "./style";
 
 const RecuperarSenha = ({ navigation }) => {
   const [email, setEmail] = useState("");
-  const [codigo, setCodigo] = useState("");
   const [isEnviandoEmail, setIsEnviandoEmail] = useState(false);
-  const [isVerificandoCodigo, setIsVerificandoCodigo] = useState(false);
 
   const handleEnviarEmail = async () => {
     if (isEnviandoEmail) {
@@ -25,28 +23,6 @@ const RecuperarSenha = ({ navigation }) => {
     setIsEnviandoEmail(false);
   };
 
-  const handleAdicionarCodigo = async () => {
-    if (isVerificandoCodigo) {
-      return;
-    }
-    setIsVerificandoCodigo(true);
-    if (!codigo) {
-      Alert.alert("Erro", "Por favor, informe o código de recuperação.");
-      setIsVerificandoCodigo(false);
-      return;
-    }
-    console.log("Código inserido:", codigo);
-    // Simule a verificação do código
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    if (codigo.trim() !== "") {
-      Alert.alert("Código Verificado", "Código verificado com sucesso!");
-      navigation.navigate("RedefinirSenha");
-    } else {
-      Alert.alert("Código Inválido", "Por favor, insira o código de recuperação.");
-    }
-    setIsVerificandoCodigo(false);
-  };
-
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -57,7 +33,7 @@ const RecuperarSenha = ({ navigation }) => {
         <TextInput
           style={styles.input}
           placeholder="E-mail"
-          placeholderTextColor="#A349A4"
+          placeholderTextColor="#071934"
           keyboardType="email-address"
           value={email}
           onChangeText={setEmail}
@@ -69,24 +45,6 @@ const RecuperarSenha = ({ navigation }) => {
           disabled={isEnviandoEmail}
         >
           {isEnviandoEmail ? <ActivityIndicator size="small" color="#FFFFFF" /> : <Text style={styles.botaoTexto}>Enviar Código</Text>}
-        </TouchableOpacity>
-
-        <Text style={styles.subtitulo}>Informe o código de recuperação enviado para o seu e-mail.</Text>
-
-        <TextInput
-          style={styles.input}
-          placeholder="Adicionar Código"
-          placeholderTextColor="#A349A4"
-          value={codigo}
-          onChangeText={setCodigo}
-        />
-
-        <TouchableOpacity
-          style={styles.botao}
-          onPress={handleAdicionarCodigo}
-          disabled={isVerificandoCodigo}
-        >
-          {isVerificandoCodigo ? <ActivityIndicator size="small" color="#FFFFFF" /> : <Text style={styles.botaoTexto}>Verificar Código</Text>}
         </TouchableOpacity>
       </View>
     </SafeAreaView>

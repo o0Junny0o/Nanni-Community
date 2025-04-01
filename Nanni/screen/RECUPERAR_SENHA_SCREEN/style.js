@@ -27,14 +27,14 @@ const styles = StyleSheet.create({
   input: {
     width: '100%',
     borderWidth: 1,
-    borderColor: "#A349A4",
+    borderColor: "#071934",
     padding: 10,
     marginBottom: 15,
     borderRadius: 5,
     color: "#000000",
   },
   botao: {
-    backgroundColor: "#42FFA3",
+    backgroundColor: "#5d90d6",
     padding: 15,
     borderRadius: 5,
     alignItems: "center",
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     marginBottom: 15, // Espaçamento entre os botões
   },
   botaoTexto: {
-    color: "#000000",
+    color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "bold",
   },

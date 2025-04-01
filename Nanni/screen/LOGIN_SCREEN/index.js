@@ -10,7 +10,8 @@ const Login = ({ navigation }) => {
   const handleLogin = () => {
     console.log("Tentativa de login com:", email, senha);
     // lógica de autenticação
-    // navigation.navigate("Home");
+    // Se a autenticação for bem-sucedida, navegue para a tela Home
+    navigation.navigate("Forum");
   };
 
   return (
@@ -26,7 +27,7 @@ const Login = ({ navigation }) => {
         <TextInput
           style={styles.input}
           placeholder="Email"
-          placeholderTextColor="#A349A4"
+          placeholderTextColor="#071934"
           keyboardType="email-address"
           value={email}
           onChangeText={setEmail}
@@ -36,7 +37,7 @@ const Login = ({ navigation }) => {
           <TextInput
             style={styles.passwordInput}
             placeholder="Senha"
-            placeholderTextColor="#A349A4"
+            placeholderTextColor="#071934"
             secureTextEntry={!mostrarSenha}
             value={senha}
             onChangeText={setSenha}
