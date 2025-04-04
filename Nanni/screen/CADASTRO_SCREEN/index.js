@@ -1,9 +1,12 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Platform, SafeAreaView } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, TextInput, TouchableOpacity, Alert, Platform, SafeAreaView, Image } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import styles from "./style"; 
+import * as ImagePicker from 'expo-image-picker';
+import * as Permissions from 'expo-permissions';
+import { Ionicons } from '@expo/vector-icons'; // Importe ícones se desejar
+import styles from "./style"; // Importe o arquivo de estilos
 
-export default function Cadastro({ navigation }) {
+const Cadastro = ({ navigation }) => {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
@@ -12,15 +15,33 @@ export default function Cadastro({ navigation }) {
   const [mostrarConfirmarSenha, setMostrarConfirmarSenha] = useState(false);
   const [dataNascimento, setDataNascimento] = useState("");
   const [mostrarDatePicker, setMostrarDatePicker] = useState(false);
+  const [fotoPerfil, setFotoPerfil] = useState(null);
 
-  // Função para calcular a idade com base na data de nascimento
+  useEffect(() => {
+    pedirPermissaoCameraRoll();
+  }, []);
+
+  const pedirPermissaoCameraRoll = async () => {
+    if (Platform.OS !== 'web') {
+      const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+      if (status !== 'granted') {
+        Alert.alert(
+          'Permissão Necessária',
+          'Precisamos da sua permissão para acessar a galeria de fotos para adicionar uma foto de perfil.',
+          [{ text: 'OK' }],
+          { cancelable: false }
+        );
+      }
+    }
+  };
+
   const calcularIdade = (dataNascimento) => {
     const hoje = new Date();
-    const nascimento = new Date(dataNascimento.split("/").reverse().join("-")); // Transforma "DD/MM/AAAA" em "AAAA-MM-DD"
+    const nascimento = new Date(dataNascimento.split("/").reverse().join("-"));
     let idade = hoje.getFullYear() - nascimento.getFullYear();
     const mes = hoje.getMonth() - nascimento.getMonth();
     if (mes < 0 || (mes === 0 && hoje.getDate() < nascimento.getDate())) {
-      idade--; // Se ainda não completou o aniversário, subtrai 1
+      idade--;
     }
     return idade;
   };
@@ -49,7 +70,25 @@ export default function Cadastro({ navigation }) {
       const dia = String(selectedDate.getDate()).padStart(2, "0");
       const mes = String(selectedDate.getMonth() + 1).padStart(2, "0");
       const ano = selectedDate.getFullYear();
-      setDataNascimento(`${dia}/${mes}/${ano}`); // Formato "DD/MM/AAAA"
+      setDataNascimento(`${dia}/${mes}/${ano}`);
+    }
+  };
+
+  const selecionarFotoPerfil = async () => {
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+      });
+
+      if (!result.cancelled) {
+        setFotoPerfil(result.uri);
+      }
+    } catch (error) {
+      console.log('Erro ao selecionar foto:', error);
+      Alert.alert('Erro', 'Houve um problema ao selecionar a foto. Por favor, tente novamente.');
     }
   };
 
@@ -58,17 +97,28 @@ export default function Cadastro({ navigation }) {
       <View style={styles.container}>
         <Text style={styles.titulo}>Cadastro</Text>
 
+        <TouchableOpacity style={styles.fotoPerfilContainerRectangular} onPress={selecionarFotoPerfil}>
+          {fotoPerfil ? (
+            <Image source={{ uri: fotoPerfil }} style={styles.fotoPerfilRectangular} />
+          ) : (
+            <View style={styles.fotoPerfilPlaceholderRectangular}>
+              <Ionicons name="camera-outline" size={30} color="#071934" />
+              <Text style={styles.textoFotoPerfilRectangular}>Adicionar Foto de Perfil (Opcional)</Text>
+            </View>
+          )}
+        </TouchableOpacity>
+
         <TextInput
           style={styles.input}
           placeholder="Nome"
-          placeholderTextColor="#A349A4"
+          placeholderTextColor="#071934"
           value={nome}
           onChangeText={setNome}
         />
         <TextInput
           style={styles.input}
           placeholder="Email"
-          placeholderTextColor="#A349A4"
+          placeholderTextColor="#071934"
           keyboardType="email-address"
           value={email}
           onChangeText={setEmail}
@@ -78,9 +128,9 @@ export default function Cadastro({ navigation }) {
           <TextInput
             style={styles.input}
             placeholder="Data de Nascimento (DD/MM/AAAA)"
-            placeholderTextColor="#A349A4"
+            placeholderTextColor="#071934"
             value={dataNascimento}
-            editable={false} // Impede edição direta
+            editable={false}
           />
         </TouchableOpacity>
 
@@ -97,7 +147,7 @@ export default function Cadastro({ navigation }) {
           <TextInput
             style={styles.passwordInput}
             placeholder="Senha"
-            placeholderTextColor="#A349A4"
+            placeholderTextColor="#071934"
             secureTextEntry={!mostrarSenha}
             value={senha}
             onChangeText={setSenha}
@@ -113,7 +163,7 @@ export default function Cadastro({ navigation }) {
           <TextInput
             style={styles.passwordInput}
             placeholder="Confirmar Senha"
-            placeholderTextColor="#A349A4"
+            placeholderTextColor="#071934"
             secureTextEntry={!mostrarConfirmarSenha}
             value={confirmarSenha}
             onChangeText={setConfirmarSenha}
@@ -135,4 +185,6 @@ export default function Cadastro({ navigation }) {
       </View>
     </SafeAreaView>
   );
-}
+};
+
+export default Cadastro;
