@@ -14,9 +14,11 @@ import { requestNotificationPermissions } from './src/utils/Notifications';
 // Importa as telas
 import Login from './src/app/screen/LOGIN_SCREEN/index';
 import Cadastro from './src/app/screen/CADASTRO_SCREEN/index';
-import Home from './src/app/screen/HOME_SCREEN/index';
 import CARREGAMENTO_SCREEN from './src/app/screen/CARREGAMENTO_SCREEN/index';
 import RecuperarSenha from './src/app/screen/RECUPERAR_SENHA_SCREEN/index';
+import PerfilUsuario from './src/app/screen/PERFIL/index';
+import Forum from './src/app/screen/FORUM_SCREEN/index';
+import TopicoScreen from './src/app/screen/TOPICOS_SCREEN/index';
 
 // Criação dos Stacks
 const Stack = createStackNavigator();
@@ -56,7 +58,9 @@ function AuthNavigator() {
 function MainNavigator() {
   return (
     <MainStack.Navigator screenOptions={{ headerShown: false }}>
-      <MainStack.Screen name="Home" component={Home} />
+      <MainStack.Screen name="Forum" component={Forum} />
+      <MainStack.Screen name="PerfilUsuario" component={PerfilUsuario} />
+      <MainStack.Screen name="TopicoScreen" component={TopicoScreen} />
     </MainStack.Navigator>
   );
 }

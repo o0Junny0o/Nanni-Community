@@ -14,7 +14,7 @@ export default {
       resizeMode: 'contain',
       backgroundColor: '#ffffff',
     },
-    
+
     ios: {
       supportsTablet: true,
     },
@@ -29,14 +29,14 @@ export default {
     },
     plugins: [
       [
-        "expo-notifications",
+        'expo-notifications',
         {
-          icon: "./src/assets/logo_nanni.png", // TODO: 96x96 all-white png with transparency
-          color: "#ffffff",
-          androidMode: "collapse", // Modo recomendado
-          androidCollapsedTitle: "Nanni" // Título quando recolhido
-        }
-      ]
+          icon: './src/assets/logo_nanni.png', // TODO: 96x96 all-white png with transparency
+          color: '#ffffff',
+          androidMode: 'collapse', // Modo recomendado
+          androidCollapsedTitle: 'Nanni', // Título quando recolhido
+        },
+      ],
     ],
     extra: {
       FIREBASE_API_KEY: process.env.FIREBASE_API_KEY,

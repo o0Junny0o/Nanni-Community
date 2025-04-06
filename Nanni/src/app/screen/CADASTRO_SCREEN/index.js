@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   Platform,
   SafeAreaView,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import styles from './style';
@@ -15,6 +16,10 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
 import { app, auth } from '../../../service/firebase/Conexao';
 import PropTypes from 'prop-types';
+import * as ImagePicker from 'expo-image-picker';
+import * as Permissions from 'expo-permissions';
+import calcularIdade from '../../../utils/FuncCalcIdade';
+import { Ionicons } from '@expo/vector-icons'; // Importe ícones se desejar
 
 export default function Cadastro({ navigation }) {
   const [nome, setNome] = useState('');
@@ -26,19 +31,27 @@ export default function Cadastro({ navigation }) {
   const [dataNascimento, setDataNascimento] = useState('');
   const [mostrarDatePicker, setMostrarDatePicker] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [fotoPerfil, setFotoPerfil] = useState(null);
 
   // Inicializa Firestore
   const db = getFirestore(app);
 
-  const calcularIdade = (dataNascimento) => {
-    const hoje = new Date();
-    const nascimento = new Date(dataNascimento.split('/').reverse().join('-'));
-    let idade = hoje.getFullYear() - nascimento.getFullYear();
-    const mes = hoje.getMonth() - nascimento.getMonth();
-    if (mes < 0 || (mes === 0 && hoje.getDate() < nascimento.getDate())) {
-      idade--;
+  useEffect(() => {
+    pedirPermissaoCameraRoll();
+  }, []);
+
+  const pedirPermissaoCameraRoll = async () => {
+    if (Platform.OS !== 'web') {
+      const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+      if (status !== 'granted') {
+        Alert.alert(
+          'Permissão Necessária',
+          'Precisamos da sua permissão para acessar a galeria de fotos para adicionar uma foto de perfil.',
+          [{ text: 'OK' }],
+          { cancelable: false },
+        );
+      }
     }
-    return idade;
   };
 
   // Função de validação de senha
@@ -144,10 +157,50 @@ export default function Cadastro({ navigation }) {
     }
   };
 
+  const selecionarFotoPerfil = async () => {
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+      });
+
+      if (!result.cancelled) {
+        setFotoPerfil(result.uri);
+      }
+    } catch (error) {
+      console.log('Erro ao selecionar foto:', error);
+      Alert.alert(
+        'Erro',
+        'Houve um problema ao selecionar a foto. Por favor, tente novamente.',
+      );
+    }
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <Text style={styles.titulo}>Cadastro</Text>
+
+        <TouchableOpacity
+          style={styles.fotoPerfilContainerRectangular}
+          onPress={selecionarFotoPerfil}
+        >
+          {fotoPerfil ? (
+            <Image
+              source={{ uri: fotoPerfil }}
+              style={styles.fotoPerfilRectangular}
+            />
+          ) : (
+            <View style={styles.fotoPerfilPlaceholderRectangular}>
+              <Ionicons name="camera-outline" size={30} color="#071934" />
+              <Text style={styles.textoFotoPerfilRectangular}>
+                Adicionar Foto de Perfil (Opcional)
+              </Text>
+            </View>
+          )}
+        </TouchableOpacity>
 
         <TextInput
           style={styles.input}
