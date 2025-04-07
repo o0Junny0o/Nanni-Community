@@ -48,6 +48,8 @@ export default [
       'react-native/no-color-literals': 'error', // Prevents color literals
       'react/react-in-jsx-scope': 'off', // No need to import React with JSX
       'no-console': 'warn', // Warns for console.log()
+      'max-depth': ['warn', 3], // 🚨 Aviso com mais de 3 níveis de aninhamento
+      //'complexity': ['warn', 5], // (opcional) Limita complexidade ciclomática
     },
   },
   {

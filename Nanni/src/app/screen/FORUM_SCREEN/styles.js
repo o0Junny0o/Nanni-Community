@@ -171,7 +171,9 @@ export const styles = StyleSheet.create({
     width: 60,
     height: 60,
     backgroundColor: colors.lightBlue,
-    borderRadius: 50,
+    borderRadius: 75,
+    borderWidth: 3,
+    borderColor: colors.primaryDark,
   },
   noTopicsContainer: {
     flex: 1,

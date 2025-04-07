@@ -8,7 +8,10 @@ export const useAuthCheck = () => {
 
   useEffect(() => {
     if (!user) {
-      navigation.navigate('AuthStack', { screen: 'Login' });
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'AuthStack' }],
+      });
     }
   }, [user, navigation]);
 };

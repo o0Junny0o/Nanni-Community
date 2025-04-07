@@ -19,6 +19,9 @@ import PropTypes from 'prop-types';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 import calcularIdade from '../../../utils/FuncCalcIdade';
+import {
+  convertImageToBase64,
+} from '../../../utils/Base64Image.js';
 import { Ionicons } from '@expo/vector-icons'; // Importe ícones se desejar
 
 export default function Cadastro({ navigation }) {
@@ -98,7 +101,7 @@ export default function Cadastro({ navigation }) {
       return;
     }
 
-    const idade = calcularIdade(dataNascimento);
+    const idade = calcularIdade(dataNascimento.toLocaleDateString('pt-BR'));
     if (idade < 13) {
       Alert.alert(
         'Erro',
@@ -117,13 +120,18 @@ export default function Cadastro({ navigation }) {
         senha,
       );
 
+      // Converter para Base64 apenas se houver foto
+      let avatar = null;
+      if (fotoPerfil) {
+        avatar = await convertImageToBase64(fotoPerfil); // Adicionado await
+      }
+
       // Salva dados adicionais no Firestore
       await setDoc(doc(db, 'usuarios', userCredential.user.uid), {
+        avatar,
         nome,
         email,
-        dataNascimento: new Date(
-          dataNascimento.split('/').reverse().join('-'),
-        ).toISOString(),
+        dataNascimento: dataNascimento.toISOString(),
       });
 
       Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
@@ -152,8 +160,7 @@ export default function Cadastro({ navigation }) {
   const onChangeDate = (event, selectedDate) => {
     setMostrarDatePicker(false);
     if (selectedDate) {
-      const dataFormatada = selectedDate.toLocaleDateString('pt-BR');
-      setDataNascimento(dataFormatada);
+      setDataNascimento(selectedDate);
     }
   };
 
@@ -166,8 +173,8 @@ export default function Cadastro({ navigation }) {
         quality: 1,
       });
 
-      if (!result.cancelled) {
-        setFotoPerfil(result.uri);
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        setFotoPerfil(result.assets[0].uri);
       }
     } catch (error) {
       console.log('Erro ao selecionar foto:', error);
@@ -228,7 +235,7 @@ export default function Cadastro({ navigation }) {
             style={styles.input}
             placeholder="Data de Nascimento (DD/MM/AAAA)"
             placeholderTextColor="#A349A4"
-            value={dataNascimento}
+            value={dataNascimento ? dataNascimento.toLocaleDateString('pt-BR') : ''}
             editable={false}
           />
         </TouchableOpacity>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -12,20 +12,71 @@ import styles from './styles';
 import * as ImagePicker from 'expo-image-picker'; // 📷 Biblioteca para selecionar imagem
 import { Ionicons } from '@expo/vector-icons';
 import PropTypes from 'prop-types';
+import { db } from '../../../service/firebase/Conexao';
+import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import BotaoVoltar from '../../components/buttons/BotaoVoltar/index';
 import BotaoPadrao from '../../components/buttons/BotaoPadrao/index';
+import { useAuth } from '../../components/contexts/AuthContext';
+import {
+  convertImageToBase64,
+  deconvertBase64ToImage,
+} from '../../../utils/Base64Image';
+import { auth } from '../../../service/firebase/Conexao';
+import { updateEmail } from 'firebase/auth';
+import CARREGAMENTO_SCREEN from '../CARREGAMENTO_SCREEN/index';
 
 const PerfilUsuario = ({ navigation }) => {
-  const [nome, setNome] = useState('Nome');
-  const [email, setEmail] = useState('email@email.com');
-  const [idade, setIdade] = useState('20');
-  const [fotoPerfil, setFotoPerfil] = useState(
-    require('../../../assets/perfil2.png'),
-  ); // Foto padrão
+  const { user, loading: authLoading } = useAuth();
+  const [isLoading, setIsLoading] = useState(true); // Adicione este state
 
+  const [nome, setNome] = useState('');
+  const [email, setEmail] = useState('');
+  const [dataNaci, setDataNaci] = useState('');
+  const [fotoPerfil, setFotoPerfil] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [campoEdicao, setCampoEdicao] = useState('');
   const [valorEdicao, setValorEdicao] = useState('');
+
+  useEffect(() => {
+    const carregarDadosUsuario = async () => {
+      if (authLoading || !user) return;
+  
+      setIsLoading(true);
+  
+      try {
+        const userRef = doc(db, 'usuarios', user.uid);
+        const docSnap = await getDoc(userRef);
+  
+        if (!docSnap.exists()) return;
+  
+        const data = docSnap.data();
+        setNome(data.nome || '');
+        setEmail(data.email || '');
+        setDataNaci(
+          data.dataNascimento
+            ? new Date(data.dataNascimento).toLocaleDateString()
+            : ''
+        );
+  
+        if (data.avatar) {
+          setFotoPerfil(
+            deconvertBase64ToImage(data.avatar) || '',
+          );
+        }
+      } catch (error) {
+        console.error('Erro ao carregar dados:', error);
+        alert('Erro ao carregar perfil');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+  
+    carregarDadosUsuario();
+  }, [user, authLoading]);  
+
+  if (authLoading || isLoading) {
+    return <CARREGAMENTO_SCREEN />;
+  }
 
   // Função para abrir o modal e editar um campo específico
   const editarCampo = (campo, valorAtual) => {
@@ -35,25 +86,95 @@ const PerfilUsuario = ({ navigation }) => {
   };
 
   // Função para salvar a edição
-  const salvarEdicao = () => {
-    if (campoEdicao === 'Nome') setNome(valorEdicao);
-    else if (campoEdicao === 'Email') setEmail(valorEdicao);
-    else if (campoEdicao === 'Idade') setIdade(valorEdicao);
+  const salvarEdicao = async () => {
+    try {
+      if (!user) {
+        alert('Usuário não autenticado');
+        return;
+      }
 
-    setModalVisible(false);
+      const updates = {};
+
+      if (campoEdicao === 'Nome') {
+        updates.nome = valorEdicao;
+        setNome(valorEdicao);
+      } else if (campoEdicao === 'Email') {
+        // Atualiza o email na autenticação
+        await updateEmail(auth.currentUser, valorEdicao);
+
+        // Atualiza o email no Firestore
+        updates.email = valorEdicao;
+        setEmail(valorEdicao);
+      } else if (campoEdicao === 'Data de nascimento') {
+        updates.idade = Number(valorEdicao);
+        setDataNaci(valorEdicao);
+      }
+
+      // Atualiza o Firestore
+      await updateDoc(doc(db, 'usuarios', user.uid), updates);
+
+      setModalVisible(false);
+      alert('Alterações salvas com sucesso!');
+    } catch (error) {
+      console.error('Erro ao salvar edição:', error);
+
+      // Tratamento específico de erros
+      if (error.code === 'auth/email-already-in-use') {
+        alert('Este email já está em uso por outra conta');
+      } else if (error.code === 'auth/requires-recent-login') {
+        try {
+          await auth.signOut();
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'AuthStack' }],
+          });
+          alert('Sessão expirada. Faça login novamente para continuar');
+        } catch (logoutError) {
+          console.error('Erro ao fazer logout:', logoutError);
+        }
+      } else if (!auth.currentUser.emailVerified) {
+        alert('Verifique seu e-mail antes de alterá-lo.');
+        return;
+      } else {
+        alert('Erro ao salvar alterações: ' + error.message);
+      }
+
+      // Reverte o estado em caso de erro
+      if (campoEdicao === 'Email') {
+        setEmail(user.email);
+      }
+    }
   };
 
   // Função para escolher uma nova foto
   const mudarFotoPerfil = async () => {
-    let resultado = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: 'Images',
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
+    try {
+      let resultado = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: 'Images',
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+      });
 
-    if (!resultado.canceled) {
-      setFotoPerfil({ uri: resultado.assets[0].uri });
+      if (!resultado.canceled) {
+        const uri = resultado.assets[0].uri;
+        const base64 = await convertImageToBase64(uri);
+
+        if (base64) {
+          // Referência ao documento do usuário
+          const userRef = doc(db, 'usuarios', user.uid);
+
+          // Atualize apenas o campo avatar
+          await updateDoc(userRef, {
+            avatar: base64,
+          });
+
+          setFotoPerfil(deconvertBase64ToImage(base64));
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao atualizar foto:', error);
+      alert('Erro ao salvar nova foto');
     }
   };
 
@@ -85,9 +206,9 @@ const PerfilUsuario = ({ navigation }) => {
           onEdit={() => editarCampo('Email', email)}
         />
         <InfoItem
-          label="Idade"
-          value={idade}
-          onEdit={() => editarCampo('Idade', idade)}
+          label="Data de nascimento"
+          value={dataNaci}
+          onEdit={() => editarCampo('Data de nascimento', dataNaci)}
         />
       </View>
 
@@ -153,6 +274,7 @@ PerfilUsuario.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
     goBack: PropTypes.func.isRequired,
+    reset: PropTypes.func.isRequired,
   }).isRequired,
 };
 

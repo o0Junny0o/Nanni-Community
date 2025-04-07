@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -12,8 +12,16 @@ import {
 import { styles } from './styles';
 import PropTypes from 'prop-types';
 import BotaoPadrao from '../../components/buttons/BotaoPadrao/index';
+import { useAuth } from '../../components/contexts/AuthContext'
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../../../service/firebase/Conexao';
+import {
+  deconvertBase64ToImage,
+} from '../../../utils/Base64Image';
 
 const Forum = ({ navigation }) => {
+  const { user } = useAuth();
+
   const [filtrosAtivos, setFiltrosAtivos] = useState({
     maisVistos: false,
     maisRecentes: false,
@@ -23,7 +31,33 @@ const Forum = ({ navigation }) => {
   const [topicoTitle, setTopicoTitle] = useState('');
   const [topicoDesc, setTopicoDesc] = useState('');
   const [modal, setModal] = useState(false);
+  const [fotoPerfil, setFotoPerfil] = useState('');
   //const [modalPerfil, setModalPerfil] = useState(false);
+
+  useEffect(() => {
+    const carregarDadosUsuario = async () => {
+  
+      try {
+        const userRef = doc(db, 'usuarios', user.uid);
+        const docSnap = await getDoc(userRef);
+  
+        if (!docSnap.exists()) return;
+  
+        const data = docSnap.data();
+  
+        if (data.avatar) {
+          setFotoPerfil(
+            deconvertBase64ToImage(data.avatar) || '',
+          );
+        }
+      } catch (error) {
+        console.error('Erro ao carregar dados:', error);
+        alert('Erro ao carregar perfil');
+      }
+    };
+  
+    carregarDadosUsuario();
+  }, [user]);  
 
   const CriarNovoTopico = () => {
     if (topicoTitle.trim() === '' || topicoDesc.trim() === '') {
@@ -69,7 +103,7 @@ const Forum = ({ navigation }) => {
         <Text style={styles.title}>FÓRUM</Text>
         <TouchableOpacity onPress={() => navigation.navigate('PerfilUsuario')}>
           <Image
-            source={require('../../../assets/perfil2.png')}
+            source={fotoPerfil}
             style={styles.perfilImage}
           />
         </TouchableOpacity>
