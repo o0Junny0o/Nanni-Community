@@ -1,4 +1,5 @@
 import queryListDiscussao from "../../hooks/forum/queryListDiscussao";
+import useForumDiscussao from "../../hooks/useForum";
 
 
 
@@ -12,19 +13,34 @@ class Forum {
     //
     forumListDiscussao;
 
-    constructor({ forumID, userRef, forumName, forumDesc, forumRating }) {
-        this.forumID = forumID;
-        this.userRef = userRef;
-        this.forumName = forumName;
-        this.forumDesc = forumDesc;
-        this.forumRating = forumRating;
+    constructor(docData) {
+        this.forumID = docData.forumID;
+        this.userRef = docData.userRef;
+        this.forumName = docData.forumName;
+        this.forumDesc = docData.forumDesc;
+        this.forumRating = docData.forumRating;
+    }
 
-        this.forumListDiscussao = []
+    getForumListDiscussao() {
+        if(!this.forumListDiscussao) {
+            startForumListDiscussao();
+        }
+
+        return this.forumListDiscussao;
+    }
+
+    startForumListDiscussao({ qLimit = 10}) {
+        this.forumListDiscussao = useForumDiscussao({ forumPath: this.getForumPath(), initialLimit: qLimit})
     }
 
     async getHookDiscussao() {
         return await queryListDiscussao(this.forumID)
     }
+
+    getForumPath() {
+        return `${FORUM_COLLECTION}/${this.forumID}`;
+    }
+
 
     toFirestoreData() {
         return {

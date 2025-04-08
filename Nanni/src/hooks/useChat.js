@@ -33,7 +33,7 @@ export function useChat({ discussaoPATH, initialLimit }) {
     }, [snapshotMessages]) 
 
     const addMessages = ({ addLimit }) => {
-        if(!addLimit || typeof addLimit !== 'number') return
+        if(!addLimit || typeof addLimit !== 'number') return null;
         setQLimit(qLimit + addLimit)
     }
 
