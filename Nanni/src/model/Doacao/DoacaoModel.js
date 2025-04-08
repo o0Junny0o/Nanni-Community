@@ -27,7 +27,7 @@ class DoacaoModel {
       };
 
       // Salva na coleção "Doacao"
-      const docRef = await addDoc(collection(db, 'doacao'), donationData);
+      const docRef = await addDoc(collection(db, 'doacoes'), donationData);
       this.id = docRef.id; // Atualiza o ID após salvar
 
       Toast.show({
@@ -65,7 +65,7 @@ class DoacaoModel {
   static async fetchByUserRefGive(userRef) {
     try {
       const q = query(
-        collection(db, 'doacao'),
+        collection(db, 'doacoes'),
         where('userRefGive', '==', userRef),
       );
 
