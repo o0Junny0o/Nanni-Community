@@ -22,6 +22,7 @@
     "@react-navigation/native": "^7.0.15",
     "@react-navigation/stack": "^7.1.2",
     "expo": "~52.0.39",
+    "expo-image": "~2.0.7",
     "expo-status-bar": "~2.0.1",
     "firebase": "^11.5.0",
     "prop-types": "^15.8.1",

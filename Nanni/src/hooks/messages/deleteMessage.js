@@ -16,7 +16,6 @@ export async function deleteMessage({ discussaoPATH, msgID }) {
 
         return true
     } catch(err) {
-        console.log(`function deleteMessage ERROR : ${err}`)
         return false
     }
 }
