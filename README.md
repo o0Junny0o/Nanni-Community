@@ -22,5 +22,5 @@ A “Nanni?!” é um sistema pensado para solucionar problemas na comercializa�
 
 ## Documentação
 
-[Documentação](https://fatecspgov-my.sharepoint.com/:b:/g/personal/vitor_gomes24_fatec_sp_gov_br/EVTloMnRNNtKqdkdAR_iR9YBmwPP74xK7t7o1ph3EzAHOw?e=y8LDJt)
+[Documentação da Empresa e Projeto](https://fatecspgov-my.sharepoint.com/:b:/g/personal/vitor_gomes24_fatec_sp_gov_br/EVTloMnRNNtKqdkdAR_iR9YBmwPP74xK7t7o1ph3EzAHOw?e=y8LDJt)
 
