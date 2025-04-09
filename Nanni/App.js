@@ -20,31 +20,27 @@ import PerfilUsuario from './src/app/screen/PERFIL/index';
 import Forum from './src/app/screen/FORUM_SCREEN/index';
 import TopicoScreen from './src/app/screen/TOPICOS_SCREEN/index';
 
-
-import TelaTest from './src/app/screen/TELA_TESTE';
-
 // Criação dos Stacks
 const Stack = createStackNavigator();
 const AuthStack = createStackNavigator();
 const MainStack = createStackNavigator();
 
 export default function App() {
-  return (<TelaTest />)
-  // // Solicita permissões ao iniciar o app
-  // useEffect(() => {
-  //   requestNotificationPermissions();
-  // }, []);
-  // return (
-  //   <ConnectionProvider>
-  //     <AuthProvider>
-  //       <NavigationContainer>
-  //         <RootNavigator />
-  //       </NavigationContainer>
-  //       <Toast config={toastConfig} />
-  //     </AuthProvider>
-  //     <ConnectionMonitor />
-  //   </ConnectionProvider>
-  // );
+  // Solicita permissões ao iniciar o app
+  useEffect(() => {
+    requestNotificationPermissions();
+  }, []);
+  return (
+    <ConnectionProvider>
+      <AuthProvider>
+        <NavigationContainer>
+          <RootNavigator />
+        </NavigationContainer>
+        <Toast config={toastConfig} />
+      </AuthProvider>
+      <ConnectionMonitor />
+    </ConnectionProvider>
+  );
 }
 
 // Stack para telas de autenticação (Login, Cadastro e recuperação de senha)
