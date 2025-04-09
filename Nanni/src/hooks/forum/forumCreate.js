@@ -1,6 +1,7 @@
 import { addDoc, collection } from "firebase/firestore";
-import { Forum, FORUM_COLLECTION } from "../../app/models/Forum"
-import { db } from "../../service/firebase/Conexao";
+import { db } from "../../service/firebase/conexao";
+import { FORUM_COLLECTION } from "../../app/models/refsCollection";
+import Forum from "../../app/models/Forum";
 
 // Criador de forum
 async function forumCreate(forum) {
@@ -11,9 +12,10 @@ async function forumCreate(forum) {
 
     // Criação:
     try {
-        await addDoc(collection(db, FORUM_COLLECTION), forum.toFirestoreData())
-        return true
+        const response = await addDoc(collection(db, FORUM_COLLECTION), forum.toFirestoreData())
+        return response
     } catch(err) {
+        console.error(err)
         return err
     }
 }

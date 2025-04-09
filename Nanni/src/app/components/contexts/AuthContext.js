@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState, useContext } from 'react';
-import { auth } from '../../../service/firebase/Conexao';
+import { auth } from '../../../service/firebase/conexao';
 import PropTypes from 'prop-types';
 
 // Criação do contexto
@@ -17,9 +17,9 @@ export const AuthProvider = ({ children }) => {
       },
       (error) => {
         // eslint-disable-next-line
-        console.error("Erro de autenticação:", error);
+        console.error('Erro de autenticação:', error);
         setLoading(false);
-      }
+      },
     );
 
     return unsubscribe;

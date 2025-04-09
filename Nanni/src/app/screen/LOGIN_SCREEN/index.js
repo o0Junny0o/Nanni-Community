@@ -7,11 +7,14 @@ import {
   Alert,
   SafeAreaView,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import styles from './style';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../../service/firebase/Conexao';
+import { auth } from '../../../service/firebase/conexao';
 import PropTypes from 'prop-types';
+
+const logo = require('../../../assets/logo_nanni.png');
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState('');
@@ -64,6 +67,8 @@ export default function Login({ navigation }) {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
+        <Image source={logo} style={styles.logo} />
+
         <Text style={styles.titulo}>Login</Text>
 
         <TextInput
@@ -73,6 +78,7 @@ export default function Login({ navigation }) {
           keyboardType="email-address"
           value={email}
           onChangeText={setEmail}
+          autoCapitalize="none"
         />
 
         <View style={styles.passwordContainer}>
@@ -83,6 +89,7 @@ export default function Login({ navigation }) {
             secureTextEntry={!mostrarSenha}
             value={senha}
             onChangeText={setSenha}
+            autoCapitalize="none"
           />
           <TouchableOpacity onPress={() => setMostrarSenha(!mostrarSenha)}>
             <Text style={styles.showPasswordText}>
@@ -92,6 +99,10 @@ export default function Login({ navigation }) {
         </View>
 
         {loading && <ActivityIndicator size="large" color="#A349A4" />}
+
+        <TouchableOpacity onPress={() => navigation.navigate('RecuperarSenha')}>
+          <Text style={styles.forgotPasswordLink}>Esqueci a senha</Text>
+        </TouchableOpacity>
 
         <TouchableOpacity style={styles.botao} onPress={handleLogin}>
           <Text style={styles.botaoTexto}>Entrar</Text>

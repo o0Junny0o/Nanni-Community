@@ -1,7 +1,8 @@
 import { collection, limit, query } from "firebase/firestore";
-import { db } from "../service/firebase/Conexao";
+import { db } from "../service/firebase/conexao";
 import { useEffect, useState } from "react";
 import { useCollection } from "react-firebase-hooks/firestore";
+import Discussao from "../app/models/Discussao";
 
 // Hook para atualização dinâmica de lista de discussões em Forum
 function useForumDiscussao({ forumPath, initialLimit }) {
@@ -11,7 +12,6 @@ function useForumDiscussao({ forumPath, initialLimit }) {
     }
 
     
-
     // Tentativa:
     try {
         // Query:
@@ -33,7 +33,11 @@ function useForumDiscussao({ forumPath, initialLimit }) {
         useEffect(() => {
             if(snapshot) {
                 setListDiscussao( 
-                    snapshot.docs.map(doc => new Discussao({discussaoID: doc.id, ...doc.data()})) 
+                    snapshot.docs.map(doc => new Discussao({
+                        discussaoID: doc.id, 
+                        forumPath: forumPath, 
+                        ...doc.data()
+                    })) 
                 )
             }
         }, [snapshot])

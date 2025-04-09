@@ -28,6 +28,4 @@ const auth = initializeAuth(app, {
   persistence: getReactNativePersistence(AsyncStorage),
 });
 
-
-
 export { app, auth, db, GIPHY_API_KEY };

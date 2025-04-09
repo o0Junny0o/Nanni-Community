@@ -1,7 +1,7 @@
-import queryListDiscussao from "../../hooks/forum/queryListDiscussao";
-import useForumDiscussao from "../../hooks/useForum";
-
-
+import forumCreate from "../../hooks/forum/forumCreate";
+import forumDelete from "../../hooks/forum/forumDelete";
+import forumUpdate from "../../hooks/forum/forumUpdate";
+import { FORUM_COLLECTION } from "./refsCollection";
 
 // Model de Forum
 class Forum {
@@ -10,37 +10,49 @@ class Forum {
     forumName;
     forumDesc;
     forumRating;
-    //
-    forumListDiscussao;
 
-    constructor(docData) {
-        this.forumID = docData.forumID;
-        this.userRef = docData.userRef;
-        this.forumName = docData.forumName;
-        this.forumDesc = docData.forumDesc;
-        this.forumRating = docData.forumRating;
-    }
-
-    getForumListDiscussao() {
-        if(!this.forumListDiscussao) {
-            startForumListDiscussao();
-        }
-
-        return this.forumListDiscussao;
-    }
-
-    startForumListDiscussao({ qLimit = 10}) {
-        this.forumListDiscussao = useForumDiscussao({ forumPath: this.getForumPath(), initialLimit: qLimit})
-    }
-
-    async getHookDiscussao() {
-        return await queryListDiscussao(this.forumID)
+    constructor({ forumID, userRef, forumName, forumDesc, forumRating}) {
+        this.forumID = forumID;
+        this.userRef = userRef;
+        this.forumName = forumName;
+        this.forumDesc = forumDesc;
+        this.forumRating = forumRating;
     }
 
     getForumPath() {
-        return `${FORUM_COLLECTION}/${this.forumID}`;
+        if(this.forumID) {
+            return `${FORUM_COLLECTION}/${this.forumID}`
+        }
+
+        return null
     }
 
+    async create() {
+        const resp = await forumCreate(this)
+
+        if(resp.id) {
+            this.forumID = resp.id
+            return true;
+        }
+
+        return false;
+    }
+
+    async delete() {
+        if(this.forumID) {
+            return await forumDelete(this)
+        }
+
+        return false;
+    }
+
+    async update() {
+        if(this.forumID) {
+            return await forumUpdate(this)
+        }
+
+        return false;
+    }
 
     toFirestoreData() {
         return {
@@ -53,8 +65,6 @@ class Forum {
 }
 
 
-// Nome da coleção de Forum
-const FORUM_COLLECTION = "Foruns"
-const DISCUSSAO_COLLECTION = "Discussões"
 
-export default { FORUM_COLLECTION, DISCUSSAO_COLLECTION, Forum}
+
+export default Forum

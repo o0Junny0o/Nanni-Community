@@ -4,17 +4,21 @@ const colors = {
   primary: '#A349A4',
   secondary: '#42FFA3',
   text: '#000000',
-  background: '#FFFFFF',
+  backgroundPrimary: '#FFFFFF',
+  backgroundSecondary: '#f9f9f9',
+  border: '#ccc',
+  darkBlue: '#071934',
 };
 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.backgroundPrimary,
   },
   container: {
     flex: 1,
     justifyContent: 'center',
+    alignItems: 'center',
     padding: 20,
   },
   titulo: {
@@ -25,6 +29,7 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   input: {
+    width: '100%',
     borderWidth: 1,
     borderColor: colors.primary,
     padding: 10,
@@ -52,6 +57,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   botao: {
+    width: '80%',
     backgroundColor: colors.secondary,
     padding: 15,
     borderRadius: 5,
@@ -65,6 +71,33 @@ const styles = StyleSheet.create({
   link: {
     color: colors.primary,
     marginTop: 15,
+    textAlign: 'center',
+  },
+  touchable_opacity: {
+    width: '100%',
+  },
+  fotoPerfilContainerRectangular: {
+    width: '100%', // Ocupa a largura total
+    height: 80, // Altura desejada
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 5,
+    backgroundColor: colors.backgroundSecondary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  fotoPerfilRectangular: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 5,
+  },
+  fotoPerfilPlaceholderRectangular: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  textoFotoPerfilRectangular: {
+    color: colors.darkBlue,
     textAlign: 'center',
   },
 });

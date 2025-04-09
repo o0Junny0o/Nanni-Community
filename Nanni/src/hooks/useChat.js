@@ -1,20 +1,28 @@
 import { useEffect, useState } from 'react';
 import { useCollection } from 'react-firebase-hooks/firestore'
 import { collection, limit, query } from 'firebase/firestore'
-import { db } from '../service/firebase/Conexao';
+import { db } from '../service/firebase/conexao';
+import { COMENTARIOS_COLLECTION } from '../app/models/refsCollection';
+import Comentario from '../app/models/Comentario';
 
 
 // Retorna [map] de mensagens com atualização em tempo real
 export function useChat({ discussaoPATH, initialLimit }) {
     // Tratamento:
-    if(!discussaoPATH || typeof discussaoPATH !== 'string') return null
-    if(!initialLimit || typeof initialLimit !== 'number') return null
+    if(!discussaoPATH || typeof discussaoPATH !== 'string') {
+        console.error("Discussão inválida")
+        return null
+    }
+    if(!initialLimit || typeof initialLimit !== 'number') {
+        console.error("Sem limite inicial")
+        return null
+    }
 
 
     // Limit var.:
     const [qLimit, setQLimit] = useState(initialLimit)
     // Query:
-    const MESSAGE_PATH = `${discussaoPATH}/Comentários` 
+    const MESSAGE_PATH = `${discussaoPATH}/${COMENTARIOS_COLLECTION}` 
     const MESSAGE_REFERENCE = collection(db, MESSAGE_PATH)
     const MESSAGE_QUERY = query(MESSAGE_REFERENCE, limit(qLimit))   
 
@@ -25,9 +33,10 @@ export function useChat({ discussaoPATH, initialLimit }) {
     // Atualização do [map]:
     useEffect(() => {
         if(snapshotMessages) {
-            setMessages(snapshotMessages.docs.map((msg) => ({
-                id: msg.id,
-                ...msg.data()
+            setMessages(snapshotMessages.docs.map(doc => new Comentario({
+                comentarioID: doc.id,
+                discussaoPath: discussaoPATH,
+                ...doc.data()
             })))
         }
     }, [snapshotMessages]) 
