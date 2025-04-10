@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,11 +9,37 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 import styles from './styles';
+import { forumQuery } from '../../../hooks/forum';
 
 export default function TopicoScreen({ route }) {
-  const { topicoTitle, topicoDesc } = route.params;
+  const { topicoId } = route.params;
+  const [topicoDetalhes, setTopicoDetalhes] = useState(null);
   const [mensagens, setMensagens] = useState([]);
   const [mensagem, setMensagem] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const carregarDetalhesDoTopico = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const detalhes = await forumQuery({ forumID: topicoId });
+        if (detalhes) {
+          setTopicoDetalhes(detalhes);
+        } else {
+          setError('Tópico não encontrado.');
+        }
+      } catch (e) {
+        setError('Erro ao carregar detalhes do tópico.');
+        console.error('Erro ao buscar tópico:', e);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    carregarDetalhesDoTopico();
+  }, [topicoId]);
 
   const enviarMensagem = () => {
     if (mensagem.trim().length === 0) return; // Evita mensagens vazias
@@ -25,12 +51,43 @@ export default function TopicoScreen({ route }) {
     setMensagem(''); // Limpa o campo após envio
   };
 
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.titulo}>Carregando Tópico...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (error) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.titulo}>Erro ao Carregar Tópico</Text>
+          <Text style={styles.descricao}>{error}</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (!topicoDetalhes) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.titulo}>Tópico não encontrado</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Cabeçalho */}
       <View style={styles.header}>
-        <Text style={styles.titulo}>{topicoTitle}</Text>
-        <Text style={styles.descricao}>{topicoDesc}</Text>
+        <Text style={styles.titulo}>{topicoDetalhes.forumName}</Text>
+        <Text style={styles.descricao}>{topicoDetalhes.forumDesc}</Text>
       </View>
 
       {/* Lista de mensagens */}
@@ -70,8 +127,7 @@ export default function TopicoScreen({ route }) {
 TopicoScreen.propTypes = {
   route: PropTypes.shape({
     params: PropTypes.shape({
-      topicoTitle: PropTypes.string.isRequired,
-      topicoDesc: PropTypes.string.isRequired,
+      topicoId: PropTypes.string.isRequired,
     }).isRequired,
   }).isRequired,
 };

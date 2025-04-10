@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore'
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getFirestore } from 'firebase/firestore';
 import Constants from 'expo-constants';
 
 // Configuração do Firebase
@@ -14,6 +14,9 @@ const firebaseConfig = {
   appId: Constants.expoConfig.extra.FIREBASE_APP_ID,
 };
 
+// Configuração de APIs
+const GIPHY_API_KEY = Constants.expoConfig.extra.GIPHY_API_KEY;
+
 // Inicializa o Firebase
 const app = initializeApp(firebaseConfig);
 
@@ -25,4 +28,4 @@ const auth = initializeAuth(app, {
   persistence: getReactNativePersistence(AsyncStorage),
 });
 
-export { app, auth, db };
+export { app, auth, db, GIPHY_API_KEY };

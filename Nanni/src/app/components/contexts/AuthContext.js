@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState, useContext } from 'react';
-import { auth } from '../../../service/firebase/Conexao';
+import { auth } from '../../../service/firebase/conexao';
 import PropTypes from 'prop-types';
 
 // Criação do contexto

@@ -12,7 +12,7 @@ import styles from './styles';
 import * as ImagePicker from 'expo-image-picker'; // 📷 Biblioteca para selecionar imagem
 import { Ionicons } from '@expo/vector-icons';
 import PropTypes from 'prop-types';
-import { db } from '../../../service/firebase/Conexao';
+import { db } from '../../../service/firebase/conexao';
 import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import BotaoVoltar from '../../components/buttons/BotaoVoltar/index';
 import BotaoPadrao from '../../components/buttons/BotaoPadrao/index';
@@ -21,7 +21,7 @@ import {
   convertImageToBase64,
   deconvertBase64ToImage,
 } from '../../../utils/Base64Image';
-import { auth } from '../../../service/firebase/Conexao';
+import { auth } from '../../../service/firebase/conexao';
 import { updateEmail } from 'firebase/auth';
 import CARREGAMENTO_SCREEN from '../CARREGAMENTO_SCREEN/index';
 
