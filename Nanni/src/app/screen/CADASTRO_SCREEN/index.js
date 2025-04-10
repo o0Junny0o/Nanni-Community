@@ -191,18 +191,18 @@ export default function Cadastro({ navigation }) {
         <Text style={styles.titulo}>Cadastro</Text>
 
         <TouchableOpacity
-          style={styles.fotoPerfilContainerRectangular}
+          style={styles.fotoPerfilContainerCircular}
           onPress={selecionarFotoPerfil}
         >
           {fotoPerfil ? (
             <Image
               source={{ uri: fotoPerfil }}
-              style={styles.fotoPerfilRectangular}
+              style={styles.fotoPerfilCircular}
             />
           ) : (
-            <View style={styles.fotoPerfilPlaceholderRectangular}>
+            <View style={styles.fotoPerfilPlaceholderCircular}>
               <Ionicons name="camera-outline" size={30} color="#071934" />
-              <Text style={styles.textoFotoPerfilRectangular}>
+              <Text style={styles.textoFotoPerfilCircular}>
                 Adicionar Foto de Perfil (Opcional)
               </Text>
             </View>

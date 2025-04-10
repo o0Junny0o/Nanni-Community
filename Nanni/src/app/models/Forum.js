@@ -10,13 +10,16 @@ class Forum {
     forumName;
     forumDesc;
     forumRating;
+    reportComentarios;
 
-    constructor({ forumID, userRef, forumName, forumDesc, forumRating}) {
+
+    constructor({ forumID, userRef, forumName, forumDesc, forumRating, reportComentarios}) {
         this.forumID = forumID;
         this.userRef = userRef;
         this.forumName = forumName;
         this.forumDesc = forumDesc;
         this.forumRating = forumRating;
+        this.reportComentarios = reportComentarios ?? [];
     }
 
     getForumPath() {
@@ -60,6 +63,7 @@ class Forum {
             forumName: this.forumName,
             forumDesc: this.forumDesc,
             forumRating: this.forumRating,
+            reportComentarios: this.reportComentarios,
         };
     }
 }

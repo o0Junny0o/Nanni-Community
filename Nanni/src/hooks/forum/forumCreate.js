@@ -7,16 +7,16 @@ import Forum from "../../app/models/Forum";
 async function forumCreate(forum) {
     // Verificação
     if(!(forum instanceof Forum)) {
-        return null;
+        console.error("Parâmetro inválido")
+        return false;
     }
 
     // Criação:
     try {
-        const response = await addDoc(collection(db, FORUM_COLLECTION), forum.toFirestoreData())
-        return response
+        return await addDoc(collection(db, FORUM_COLLECTION), forum.toFirestoreData())
     } catch(err) {
         console.error(err)
-        return err
+        return false
     }
 }
 

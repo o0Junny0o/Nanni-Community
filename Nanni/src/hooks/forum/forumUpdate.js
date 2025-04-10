@@ -7,7 +7,7 @@ async function forumUpdate(forum) {
     // Verificação
     if(!(forum instanceof Forum)) {
         console.error("Informações de Forum invalidas")
-        return null;
+        return false;
     }
 
     try {

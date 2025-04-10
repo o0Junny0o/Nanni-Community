@@ -1,4 +1,4 @@
-import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../service/firebase/conexao";
 import Forum from '../../app/models/Forum'
 import { FORUM_COLLECTION } from "../../app/models/refsCollection";

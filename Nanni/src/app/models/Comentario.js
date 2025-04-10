@@ -2,6 +2,7 @@ import { serverTimestamp } from "firebase/firestore";
 import comentarioCreate from "../../hooks/comentario/comentarioCreate";
 import { COMENTARIOS_COLLECTION } from "./refsCollection";
 import { comentarioDelete } from "../../hooks/comentario/comentarioDelete";
+import comentarioReport from "../../hooks/comentario/comentarioReport";
 
 class Comentario {
     comentarioID;
@@ -19,7 +20,7 @@ class Comentario {
         this.userRef = userRef;
         this.data = data ?? serverTimestamp();
         this.anexo = Array.isArray(anexo) ? anexo : [];
-
+        //
         this.discussaoPath = discussaoPath;
     }
 
@@ -44,8 +45,15 @@ class Comentario {
     }
 
     async deleteDoc() {
-        const resp = await comentarioDelete(this)
-        console.log(`DeleteDOC result : ${resp}`)
+        return await comentarioDelete(this)
+    }
+    
+    async reportComentario() {
+        if(this.comentarioID && this.discussaoPath) {
+            return await comentarioReport({ discussaoPath: this.discussaoPath, comentarioID: this.comentarioID})
+        }
+
+        return false;
     }
 
 
