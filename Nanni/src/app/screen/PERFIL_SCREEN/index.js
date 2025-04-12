@@ -12,7 +12,7 @@ import styles from './styles';
 import * as ImagePicker from 'expo-image-picker'; // 📷 Biblioteca para selecionar imagem
 import { Ionicons } from '@expo/vector-icons';
 import PropTypes from 'prop-types';
-import { db } from '../../../service/firebase/conexao';
+import { db, auth } from '../../../service/firebase/Conexao';
 import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import BotaoVoltar from '../../components/buttons/BotaoVoltar/index';
 import BotaoPadrao from '../../components/buttons/BotaoPadrao/index';
@@ -21,7 +21,6 @@ import {
   convertImageToBase64,
   deconvertBase64ToImage,
 } from '../../../utils/Base64Image';
-import { auth } from '../../../service/firebase/conexao';
 import { updateEmail } from 'firebase/auth';
 import CARREGAMENTO_SCREEN from '../CARREGAMENTO_SCREEN/index';
 
@@ -40,28 +39,26 @@ const PerfilUsuario = ({ navigation }) => {
   useEffect(() => {
     const carregarDadosUsuario = async () => {
       if (authLoading || !user) return;
-  
+
       setIsLoading(true);
-  
+
       try {
         const userRef = doc(db, 'usuarios', user.uid);
         const docSnap = await getDoc(userRef);
-  
+
         if (!docSnap.exists()) return;
-  
+
         const data = docSnap.data();
         setNome(data.nome || '');
         setEmail(data.email || '');
         setDataNaci(
           data.dataNascimento
             ? new Date(data.dataNascimento).toLocaleDateString()
-            : ''
+            : '',
         );
-  
+
         if (data.avatar) {
-          setFotoPerfil(
-            deconvertBase64ToImage(data.avatar) || '',
-          );
+          setFotoPerfil(deconvertBase64ToImage(data.avatar) || '');
         }
       } catch (error) {
         console.error('Erro ao carregar dados:', error);
@@ -70,9 +67,9 @@ const PerfilUsuario = ({ navigation }) => {
         setIsLoading(false);
       }
     };
-  
+
     carregarDadosUsuario();
-  }, [user, authLoading]);  
+  }, [user, authLoading]);
 
   if (authLoading || isLoading) {
     return <CARREGAMENTO_SCREEN />;

@@ -12,17 +12,21 @@ import {
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import styles from './style';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+  signOut,
+} from 'firebase/auth';
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
-import { app, auth } from '../../../service/firebase/conexao';
+import { app, auth } from '../../../service/firebase/Conexao';
 import PropTypes from 'prop-types';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 import calcularIdade from '../../../utils/FuncCalcIdade';
-import {
-  convertImageToBase64,
-} from '../../../utils/Base64Image.js';
+import { convertImageToBase64 } from '../../../utils/Base64Image.js';
 import { Ionicons } from '@expo/vector-icons'; // Importe ícones se desejar
+import Toast from 'react-native-toast-message';
+import { USUARIOS_COLLECTION } from '../../../model/refsCollection.js';
 
 export default function Cadastro({ navigation }) {
   const [nome, setNome] = useState('');
@@ -34,7 +38,9 @@ export default function Cadastro({ navigation }) {
   const [dataNascimento, setDataNascimento] = useState('');
   const [mostrarDatePicker, setMostrarDatePicker] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [fotoPerfil, setFotoPerfil] = useState(null);
+  const [fotoPerfil, setFotoPerfil] = useState(
+    Image.resolveAssetSource(require('../../../assets/perfil2.png')).uri,
+  );
 
   // Inicializa Firestore
   const db = getFirestore(app);
@@ -127,14 +133,25 @@ export default function Cadastro({ navigation }) {
       }
 
       // Salva dados adicionais no Firestore
-      await setDoc(doc(db, 'usuarios', userCredential.user.uid), {
+      await setDoc(doc(db, USUARIOS_COLLECTION, userCredential.user.uid), {
         avatar,
         nome,
         email,
         dataNascimento: dataNascimento.toISOString(),
       });
 
-      Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
+      // Envia o e-mail de verificação
+      await sendEmailVerification(userCredential.user);
+
+      // Desloga o usuário após enviar o e-mail
+      await signOut(auth);
+
+      Toast.show({
+        type: 'success',
+        text1: 'Cadastro realizado!',
+        text2: 'Verifique seu e-mail antes de fazer login',
+      });
+
       navigation.navigate('Login');
     } catch (error) {
       let errorMessage = 'Erro ao cadastrar. Tente novamente.';
@@ -151,7 +168,11 @@ export default function Cadastro({ navigation }) {
           break;
       }
 
-      Alert.alert('Erro', errorMessage);
+      Toast.show({
+        type: 'error',
+        text1: 'Erro',
+        text2: errorMessage,
+      });
     } finally {
       setLoading(false);
     }
@@ -235,7 +256,9 @@ export default function Cadastro({ navigation }) {
             style={styles.input}
             placeholder="Data de Nascimento (DD/MM/AAAA)"
             placeholderTextColor="#A349A4"
-            value={dataNascimento ? dataNascimento.toLocaleDateString('pt-BR') : ''}
+            value={
+              dataNascimento ? dataNascimento.toLocaleDateString('pt-BR') : ''
+            }
             editable={false}
           />
         </TouchableOpacity>

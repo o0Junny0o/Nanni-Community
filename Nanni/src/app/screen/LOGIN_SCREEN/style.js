@@ -5,6 +5,7 @@ const colors = {
   secondary: '#42FFA3',
   text: '#000000',
   background: '#FFFFFF',
+  overlayBackground: 'rgba(200, 200, 200, 0.4)',
 };
 
 const styles = StyleSheet.create({
@@ -82,6 +83,17 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: 'right',
     width: '100%',
+  },
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: colors.overlayBackground,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10,
   },
 });
 

@@ -11,8 +11,9 @@ import {
 } from 'react-native';
 import styles from './style';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../../service/firebase/conexao';
+import { auth } from '../../../service/firebase/Conexao';
 import PropTypes from 'prop-types';
+import Toast from 'react-native-toast-message';
 
 const logo = require('../../../assets/logo_nanni.png');
 
@@ -32,14 +33,30 @@ export default function Login({ navigation }) {
 
     try {
       // Faz login com o Firebase Auth
-      // eslint-disable-next-line
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
         senha,
       );
-      Alert.alert('Sucesso', 'Login realizado com sucesso!');
-      navigation.navigate('Home'); // Redireciona para a tela principal
+
+      const user = userCredential.user;
+
+      // Atualiza os dados do usuário (pega a versão mais recente do emailVerified)
+      await user.reload();
+
+      // Verifica se o e-mail foi verificado
+      if (user.emailVerified) {
+        navigation.navigate('MainStack');
+      } else {
+        // Faz logout, já que o Firebase loga automaticamente
+        await auth.signOut();
+
+        Toast.show({
+          type: 'warning',
+          text1: 'Verificação pendente!',
+          text2: 'Por favor, verifique seu e-mail antes de fazer login.',
+        });
+      }
     } catch (error) {
       let errorMessage = 'Erro ao fazer login. Tente novamente.';
 
@@ -57,8 +74,11 @@ export default function Login({ navigation }) {
           errorMessage = 'Senha incorreta.';
           break;
       }
-
-      Alert.alert('Erro', errorMessage);
+      Toast.show({
+        type: 'error',
+        text1: 'Erro',
+        text2: errorMessage,
+      });
     } finally {
       setLoading(false);
     }
@@ -98,7 +118,11 @@ export default function Login({ navigation }) {
           </TouchableOpacity>
         </View>
 
-        {loading && <ActivityIndicator size="large" color="#A349A4" />}
+        {loading && (
+          <View style={styles.overlay}>
+            <ActivityIndicator size="large" color="#A349A4" />
+          </View>
+        )}
 
         <TouchableOpacity onPress={() => navigation.navigate('RecuperarSenha')}>
           <Text style={styles.forgotPasswordLink}>Esqueci a senha</Text>

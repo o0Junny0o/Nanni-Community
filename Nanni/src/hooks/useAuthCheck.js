@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../app/components/contexts/AuthContext';
 
 export const useAuthCheck = () => {
   const { user } = useAuth();

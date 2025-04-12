@@ -3,6 +3,7 @@ import { StyleSheet } from 'react-native';
 const colors = {
   verde: '#4BB543',
   vermelho: '#FF4444',
+  amarelo: '#FFEB3B',
   branco: 'white',
 };
 
@@ -10,6 +11,13 @@ const styles = StyleSheet.create({
   toastSuccess: {
     width: '90%',
     backgroundColor: colors.verde,
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 20,
+  },
+  toastWarning: {
+    width: '90%',
+    backgroundColor: colors.amarelo,
     padding: 15,
     borderRadius: 10,
     marginBottom: 20,

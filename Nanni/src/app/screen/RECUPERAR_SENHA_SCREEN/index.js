@@ -7,7 +7,7 @@ import {
   SafeAreaView,
   ActivityIndicator,
 } from 'react-native';
-import { auth } from '../../../service/firebase/conexao';
+import { auth } from '../../../service/firebase/Conexao';
 import Toast from 'react-native-toast-message';
 import styles from './style';
 import PropTypes from 'prop-types';

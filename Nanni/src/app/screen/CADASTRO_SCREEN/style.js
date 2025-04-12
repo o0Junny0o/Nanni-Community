@@ -76,30 +76,30 @@ const styles = StyleSheet.create({
   touchable_opacity: {
     width: '100%',
   },
-  fotoPerfilContainerCircular: { 
-    width: 80, 
-    height: 80, 
-    borderRadius: 40, 
+  fotoPerfilContainerCircular: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
     borderWidth: 1,
     borderColor: colors.border,
     backgroundColor: colors.backgroundSecondary,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
-    overflow: 'hidden', 
+    overflow: 'hidden',
   },
   fotoPerfilCircular: {
     width: '100%',
     height: '100%',
   },
-  fotoPerfilPlaceholderCircular: { 
+  fotoPerfilPlaceholderCircular: {
     justifyContent: 'center',
     alignItems: 'center',
   },
-  textoFotoPerfilCircular: { 
+  textoFotoPerfilCircular: {
     color: colors.darkBlue,
     textAlign: 'center',
-    fontSize: 12, 
+    fontSize: 12,
   },
 });
 

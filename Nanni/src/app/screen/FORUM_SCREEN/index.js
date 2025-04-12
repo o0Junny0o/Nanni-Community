@@ -15,16 +15,14 @@ import PropTypes from 'prop-types';
 import BotaoPadrao from '../../components/buttons/BotaoPadrao/index';
 import { useAuth } from '../../components/contexts/AuthContext';
 import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../../../service/firebase/conexao';
+import { db } from '../../../service/firebase/Conexao';
 import forumList from '../../../hooks/forum/forumList';
 import forumCreate from '../../../hooks/forum/forumCreate';
 import forumDelete from '../../../hooks/forum/forumDelete';
 import forumUpdate from '../../../hooks/forum/forumUpdate';
-import Forum from '../../models/Forum';
+import Forum from '../../../model/Forum';
 
-import {
-  deconvertBase64ToImage,
-} from '../../../utils/Base64Image';
+import { deconvertBase64ToImage } from '../../../utils/Base64Image';
 
 const ForumScreen = ({ navigation }) => {
   const { user } = useAuth();
@@ -40,11 +38,10 @@ const ForumScreen = ({ navigation }) => {
   const [modal, setModal] = useState(false);
   const [fotoPerfil, setFotoPerfil] = useState('');
 
-
-  // Movido 
+  // Movido
   const carregarTopicosDoForum = async () => {
     try {
-      const listaDeTopicos = await forumList(5) // Carrega os 5 tópicos mais recentes inicialmente
+      const listaDeTopicos = await forumList(5); // Carrega os 5 tópicos mais recentes inicialmente
       setTopicos(listaDeTopicos);
     } catch (error) {
       console.error('Erro ao carregar tópicos:', error);
@@ -63,17 +60,13 @@ const ForumScreen = ({ navigation }) => {
         const data = docSnap.data();
 
         if (data.avatar) {
-          setFotoPerfil(
-            deconvertBase64ToImage(data.avatar) || '',
-          );
+          setFotoPerfil(deconvertBase64ToImage(data.avatar) || '');
         }
       } catch (error) {
         console.error('Erro ao carregar dados:', error);
         alert('Erro ao carregar perfil');
       }
     };
-
-    
 
     carregarDadosUsuario();
     carregarTopicosDoForum();
@@ -94,10 +87,10 @@ const ForumScreen = ({ navigation }) => {
       userRef: user.uid,
       forumName: topicoTitle,
       forumDesc: topicoDesc,
-      forumRating: "pg", 
-    })
+      forumRating: 'pg',
+    });
 
-    const sucesso = await novoForumData.create()
+    const sucesso = await novoForumData.create();
 
     if (sucesso) {
       alert('Tópico criado com sucesso!');
@@ -113,9 +106,13 @@ const ForumScreen = ({ navigation }) => {
     let topicosFiltrados = [...topicos];
 
     if (filtrosAtivos.maisVistos) {
-      topicosFiltrados.sort((a, b) => (b?.forumRating || 0) - (a?.forumRating || 0));
+      topicosFiltrados.sort(
+        (a, b) => (b?.forumRating || 0) - (a?.forumRating || 0),
+      );
     } else if (filtrosAtivos.maisRecentes) {
-      topicosFiltrados.sort((a, b) => new Date(b?.createdAt || 0) - new Date(a?.createdAt || 0));
+      topicosFiltrados.sort(
+        (a, b) => new Date(b?.createdAt || 0) - new Date(a?.createdAt || 0),
+      );
     }
 
     return topicosFiltrados;
@@ -165,10 +162,7 @@ const ForumScreen = ({ navigation }) => {
       <View style={styles.header}>
         <Text style={styles.title}>FÓRUM</Text>
         <TouchableOpacity onPress={() => navigation.navigate('PerfilUsuario')}>
-          <Image
-            source={fotoPerfil ? { uri: fotoPerfil } : require('../../../assets/perfil2.png')}
-            style={styles.perfilImage}
-          />
+          <Image source={fotoPerfil} style={styles.perfilImage} />
         </TouchableOpacity>
       </View>
 
@@ -209,7 +203,7 @@ const ForumScreen = ({ navigation }) => {
                     navigation.navigate('TopicoScreen', {
                       topicoId: item?.forumID,
                       topicoTitle: item?.forumName, // Passando o nome do tópico
-                      topicoDesc: item?.forumDesc,   // Passando a descrição do tópico
+                      topicoDesc: item?.forumDesc, // Passando a descrição do tópico
                     })
                   }
                 >
@@ -217,10 +211,14 @@ const ForumScreen = ({ navigation }) => {
                   <Text style={styles.forumDescription}>
                     Descrição: {item?.forumDesc}
                   </Text>
-                  <Text style={styles.forumDescription}>ID: {item?.forumID}</Text>
+                  <Text style={styles.forumDescription}>
+                    ID: {item?.forumID}
+                  </Text>
                 </TouchableOpacity>
                 {/* Exemplo de botões de deletar e atualizar */}
-                <TouchableOpacity onPress={() => handleDeleteTopico(item?.forumID)}>
+                <TouchableOpacity
+                  onPress={() => handleDeleteTopico(item?.forumID)}
+                >
                   <Text style={{ color: 'red', marginTop: 5 }}>Excluir</Text>
                 </TouchableOpacity>
                 {/* <TouchableOpacity onPress={() => handleUpdateTopico(item?.forumID, 'Novo Nome', 'Nova Descrição')}>
@@ -234,8 +232,9 @@ const ForumScreen = ({ navigation }) => {
 
       <Modal visible={modal} transparent>
         <TouchableOpacity
-         onPressOut={() => setModal(false)}
-         style={styles.modalContainer}>
+          onPressOut={() => setModal(false)}
+          style={styles.modalContainer}
+        >
           {/* <TouchableOpacity
             style={styles.modalOverlayTouchable}
             onPress={() => setModal(false)}
@@ -265,7 +264,7 @@ const ForumScreen = ({ navigation }) => {
           /> */}
         </TouchableOpacity>
       </Modal>
-      
+
       <TouchableOpacity
         style={styles.createNewForumButton}
         onPress={() => setModal(true)}
