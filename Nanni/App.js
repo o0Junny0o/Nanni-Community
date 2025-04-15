@@ -16,7 +16,7 @@ import Login from './src/app/screen/LOGIN_SCREEN/index';
 import Cadastro from './src/app/screen/CADASTRO_SCREEN/index';
 import CARREGAMENTO_SCREEN from './src/app/screen/CARREGAMENTO_SCREEN/index';
 import RecuperarSenha from './src/app/screen/RECUPERAR_SENHA_SCREEN/index';
-import PerfilUsuario from './src/app/screen/PERFIL/index';
+import PerfilUsuario from './src/app/screen/PERFIL_SCREEN/index';
 import Forum from './src/app/screen/FORUM_SCREEN/index';
 import TopicoScreen from './src/app/screen/TOPICOS_SCREEN/index';
 
@@ -72,9 +72,11 @@ function RootNavigator() {
     return <CARREGAMENTO_SCREEN />;
   }
 
+  const isEmailVerified = user?.emailVerified;
+
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {user ? (
+      {user && isEmailVerified ? (
         <Stack.Screen name="MainStack" component={MainNavigator} />
       ) : (
         <Stack.Screen name="AuthStack" component={AuthNavigator} />

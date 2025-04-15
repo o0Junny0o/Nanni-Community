@@ -147,7 +147,7 @@ export const styles = StyleSheet.create({
   },
   modalTopico: {
     backgroundColor: colors.white,
-    padding: 50,
+    padding: 20, // Ajustado padding
     borderRadius: 20,
     width: '90%',
     rowGap: 15,
@@ -159,14 +159,14 @@ export const styles = StyleSheet.create({
     shadowRadius: 5,
   },
   modalTextInput: {
-    padding: 20,
+    padding: 10,  // Ajustado padding
     alignItems: 'center',
     borderWidth: 1,
     borderColor: colors.inputBorder,
-    width: '70%',
+    width: '100%', // Aumentado a largura para 100%
     borderRadius: 15,
+    marginBottom: 10, // Adicionado margem inferior
   },
-
   perfilImage: {
     width: 60,
     height: 60,
@@ -201,6 +201,7 @@ export const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: colors.primaryDark,
+    marginBottom: 10, // Adicionado margem inferior
   },
   fullFlex: {
     flex: 1,

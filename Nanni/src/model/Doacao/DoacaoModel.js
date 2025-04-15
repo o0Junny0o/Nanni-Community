@@ -3,6 +3,7 @@ import { db } from '../../service/firebase/Conexao';
 import { collection, addDoc, getDocs, query, where } from 'firebase/firestore';
 import Toast from 'react-native-toast-message';
 import * as Notifications from 'expo-notifications';
+import { DOACOES_COLLECTION } from '../refsCollection';
 
 class DoacaoModel {
   constructor(data) {
@@ -27,7 +28,10 @@ class DoacaoModel {
       };
 
       // Salva na coleção "Doacao"
-      const docRef = await addDoc(collection(db, 'doacoes'), donationData);
+      const docRef = await addDoc(
+        collection(db, DOACOES_COLLECTION),
+        donationData,
+      );
       this.id = docRef.id; // Atualiza o ID após salvar
 
       Toast.show({
@@ -65,7 +69,7 @@ class DoacaoModel {
   static async fetchByUserRefGive(userRef) {
     try {
       const q = query(
-        collection(db, 'doacoes'),
+        collection(db, DOACOES_COLLECTION),
         where('userRefGive', '==', userRef),
       );
 
