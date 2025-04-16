@@ -18,7 +18,7 @@ import {
   signOut,
 } from 'firebase/auth';
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
-import { app, auth } from '../../../service/firebase/Conexao';
+import { app, auth } from '../../../service/firebase/conexao';
 import PropTypes from 'prop-types';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';

@@ -15,7 +15,7 @@ import PropTypes from 'prop-types';
 import BotaoPadrao from '../../components/buttons/BotaoPadrao/index';
 import { useAuth } from '../../components/contexts/AuthContext';
 import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../../../service/firebase/Conexao';
+import { db } from '../../../service/firebase/conexao';
 import forumList from '../../../hooks/forum/forumList';
 import forumCreate from '../../../hooks/forum/forumCreate';
 import forumDelete from '../../../hooks/forum/forumDelete';

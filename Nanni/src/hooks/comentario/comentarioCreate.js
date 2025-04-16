@@ -1,5 +1,5 @@
 import { addDoc, collection } from 'firebase/firestore';
-import { db } from '../../service/firebase/Conexao';
+import { db } from '../../service/firebase/conexao';
 import { COMENTARIOS_COLLECTION } from '../../model/refsCollection';
 import Comentario from '../../model/Comentario';
 

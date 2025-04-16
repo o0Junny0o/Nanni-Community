@@ -1,7 +1,7 @@
 import forumCreate from '../hooks/forum/forumCreate';
 import forumDelete from '../hooks/forum/forumDelete';
 import forumUpdate from '../hooks/forum/forumUpdate';
-import { FORUM_COLLECTION } from './refsCollection';
+import { FORUNS_COLLECTION } from './refsCollection'
 
 // Model de Forum
 class Forum {
@@ -30,7 +30,7 @@ class Forum {
 
   getForumPath() {
     if (this.forumID) {
-      return `${FORUM_COLLECTION}/${this.forumID}`;
+      return `${FORUNS_COLLECTION}/${this.forumID}`;
     }
 
     return null;

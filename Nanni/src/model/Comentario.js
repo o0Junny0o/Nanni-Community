@@ -31,7 +31,7 @@ class Comentario {
     return null;
   }
 
-  async createDoc() {
+  async create() {
     const resp = await comentarioCreate(this);
 
     if (resp.id) {
@@ -42,7 +42,7 @@ class Comentario {
     return false;
   }
 
-  async deleteDoc() {
+  async delete() {
     return await comentarioDelete(this);
   }
 

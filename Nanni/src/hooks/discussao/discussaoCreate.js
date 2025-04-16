@@ -1,12 +1,11 @@
 import { addDoc, collection } from 'firebase/firestore';
-import { db } from '../../service/firebase/Conexao';
+import { db } from '../../service/firebase/conexao';
 import Discussao from '../../model/Discussao';
 import { DISCUSSAO_COLLECTION } from '../../model/refsCollection';
 
 async function discussaoCreate(discussao) {
   if (!(discussao instanceof Discussao)) {
-    console.error('Tipo de instância errada');
-    return false;
+    return null;
   }
 
   try {
@@ -18,8 +17,7 @@ async function discussaoCreate(discussao) {
 
     return response;
   } catch (error) {
-    console.error(error);
-    return false;
+    return error;
   }
 }
 

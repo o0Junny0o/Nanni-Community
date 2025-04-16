@@ -1,6 +1,6 @@
 import { deleteDoc, doc } from 'firebase/firestore';
 import { FORUNS_COLLECTION } from '../../model/refsCollection';
-import { db } from '../../service/firebase/Conexao';
+import { db } from '../../service/firebase/conexao';
 
 async function forumDelete({ forumID }) {
   if (!forumID || typeof forumID !== 'string') {

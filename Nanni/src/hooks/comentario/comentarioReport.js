@@ -1,5 +1,5 @@
 import { arrayUnion, doc, updateDoc } from 'firebase/firestore';
-import { db } from '../../service/firebase/Conexao';
+import { db } from '../../service/firebase/conexao';
 
 async function comentarioReport({ discussaoPath, comentarioID }) {
   if (typeof comentarioID !== 'string' || comentarioID.trim() == '') {

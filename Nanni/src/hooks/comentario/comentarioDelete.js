@@ -1,5 +1,5 @@
 import { doc, deleteDoc } from 'firebase/firestore';
-import { db } from '../../service/firebase/Conexao';
+import { db } from '../../service/firebase/conexao';
 import { COMENTARIOS_COLLECTION } from '../../model/refsCollection';
 
 export async function comentarioDelete({ discussaoPath, comentarioID }) {
