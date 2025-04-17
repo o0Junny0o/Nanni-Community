@@ -3,6 +3,7 @@ import js from '@eslint/js';
 import react from 'eslint-plugin-react';
 import reactNative from 'eslint-plugin-react-native';
 import prettier from 'eslint-config-prettier';
+import importPlugin from 'eslint-plugin-import';
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
@@ -48,6 +49,19 @@ export default [
       'react-native/no-color-literals': 'error', // Prevents color literals
       'react/react-in-jsx-scope': 'off', // No need to import React with JSX
       'no-console': 'warn', // Warns for console.log()
+      'max-depth': ['warn', 3], // 🚨 Aviso com mais de 3 níveis de aninhamento
+      'import/no-unresolved': [
+        'error',
+        {
+          caseSensitive: true, // Garantir que a verificação seja sensível a maiúsculas/minúsculas
+        },
+      ],
+      //'complexity': ['warn', 5], // (opcional) Limita complexidade ciclomática
+    },
+  },
+  {
+    plugins: {
+      import: importPlugin, // Adicionando o plugin import
     },
   },
   {
