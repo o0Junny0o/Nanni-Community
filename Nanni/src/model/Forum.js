@@ -9,7 +9,7 @@ class Forum {
   userRef;
   forumName;
   forumDesc;
-  forumRating;
+  classificacaoIndicativa;
   reportComentarios;
 
   constructor({
@@ -17,14 +17,14 @@ class Forum {
     userRef,
     forumName,
     forumDesc,
-    forumRating,
+    classificacaoIndicativa,
     reportComentarios,
   }) {
     this.forumID = forumID;
     this.userRef = userRef;
     this.forumName = forumName;
     this.forumDesc = forumDesc;
-    this.forumRating = forumRating;
+    this.classificacaoIndicativa = classificacaoIndicativa;
     this.reportComentarios = reportComentarios ?? [];
   }
 
@@ -68,7 +68,7 @@ class Forum {
       userRef: this.userRef,
       forumName: this.forumName,
       forumDesc: this.forumDesc,
-      forumRating: this.forumRating,
+      classificacaoIndicativa: this.classificacaoIndicativa,
       reportComentarios: this.reportComentarios,
     };
   }
