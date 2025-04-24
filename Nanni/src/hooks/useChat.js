@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import { collection, limit, query } from 'firebase/firestore';
-import { db } from '../service/firebase/Conexao';
+import { db } from '../service/firebase/conexao';
 import { COMENTARIOS_COLLECTION } from '../model/refsCollection';
 import Comentario from '../model/Comentario';
 
 // Retorna [map] de mensagens com atualização em tempo real
-export function useChat({ discussaoPATH, initialLimit }) {
+function useChat({ discussaoPATH, initialLimit }) {
   // Tratamento:
   if (!discussaoPATH || typeof discussaoPATH !== 'string') {
     console.error('Discussão inválida');
@@ -51,5 +51,13 @@ export function useChat({ discussaoPATH, initialLimit }) {
   };
 
   // Retorno do [map de Mensagens], [verificação da conexão], [erro do Firestore]
-  return { messages, loadingMessages, errorMessages, addMessages };
+  return { 
+    data: messages,
+    loading: loadingMessages,
+    error: errorMessages,
+    addToLimit: [addMessages],
+  };
 }
+
+
+export default useChat;

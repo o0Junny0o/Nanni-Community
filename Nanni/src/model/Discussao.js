@@ -1,6 +1,7 @@
 import { serverTimestamp } from 'firebase/firestore';
 import discussaoCreate from '../hooks/discussao/discussaoCreate';
-import { DISCUSSAO_COLLECTION } from './Forum';
+import { DISCUSSAO_COLLECTION } from './refsCollection';
+import TagNormalize from '../utils/TagNormalize';
 
 class Discussao {
   discussaoID;
@@ -14,7 +15,7 @@ class Discussao {
   constructor({ discussaoID, titulo, tag, mensagem, data, forumPath }) {
     this.discussaoID = discussaoID;
     this.titulo = titulo;
-    this.tag = tag ?? [];
+    this.tag = tag ?? '';
     this.mensagem = mensagem ?? '';
     this.data = data ?? serverTimestamp();
     this.forumPath = forumPath;
@@ -28,7 +29,7 @@ class Discussao {
     return null;
   }
 
-  async createDoc() {
+  async create() {
     const resp = await discussaoCreate(this);
     if (resp.id) {
       this.discussaoID = resp.id;
@@ -38,14 +39,20 @@ class Discussao {
     return false;
   }
 
-  async updateDoc() {}
+  async update() {}
 
-  async deleteDoc() {}
+  async delete() {}
 
   toFirestoreData() {
+    // Transforma TAG
+    const retTag = (typeof this.tag === 'string') ?
+      TagNormalize(this.tag)
+      : '';
+
+
     return {
       titulo: this.titulo,
-      tag: this.tag,
+      tag: retTag,
       mensagem: this.mensagem,
       data: this.data,
     };

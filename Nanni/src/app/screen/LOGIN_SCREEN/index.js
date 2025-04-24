@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import styles from './style';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../../service/firebase/Conexao';
+import { auth } from '../../../service/firebase/conexao';
 import PropTypes from 'prop-types';
 import Toast from 'react-native-toast-message';
 

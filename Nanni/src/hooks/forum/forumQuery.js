@@ -1,5 +1,5 @@
 import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../../service/firebase/Conexao';
+import { db } from '../../service/firebase/conexao';
 import Forum from '../../model/Forum';
 import { FORUNS_COLLECTION } from '../../model/refsCollection';
 
