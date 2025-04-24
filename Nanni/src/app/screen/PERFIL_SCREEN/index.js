@@ -190,10 +190,9 @@ const PerfilUsuario = ({ navigation }) => {
           onPress: async () => {
             try {
               await logout();
-              // Após o logout bem-sucedido, navegue o usuário para a tela de login
               navigation.reset({
                 index: 0,
-                routes: [{ name: 'AuthStack' }], // Assumindo que 'AuthStack' é sua pilha de autenticação
+                routes: [{ name: 'AuthStack' }],
               });
             } catch (error) {
               console.error('Erro ao fazer logout:', error);
