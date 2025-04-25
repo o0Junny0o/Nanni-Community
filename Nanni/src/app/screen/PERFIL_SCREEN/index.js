@@ -216,7 +216,9 @@ const PerfilUsuario = ({ navigation }) => {
           text="Histórico de Doações"
         />
         <BotaoPadrao
-          onPress={() => alert('Ir para tela de DADOS')}
+          onPress={() => {
+            auth.signOut();
+          }}
           text="Análise de Dados"
         />
       </View>

@@ -119,6 +119,12 @@ export default function Cadastro({ navigation }) {
     setLoading(true);
 
     try {
+      // Converter para Base64 apenas se houver foto
+      let avatar = null;
+      if (fotoPerfil) {
+        avatar = await convertImageToBase64(fotoPerfil); // Adicionado await
+      } //TODO: Arrumar logica para não cadastrar se o formato da imagem estiver errado ou aceitar qualquer tipo de imagem
+
       // Cria o usuário no Authentication
       const userCredential = await createUserWithEmailAndPassword(
         auth,
@@ -126,18 +132,13 @@ export default function Cadastro({ navigation }) {
         senha,
       );
 
-      // Converter para Base64 apenas se houver foto
-      let avatar = null;
-      if (fotoPerfil) {
-        avatar = await convertImageToBase64(fotoPerfil); // Adicionado await
-      }
-
       // Salva dados adicionais no Firestore
       await setDoc(doc(db, USUARIOS_COLLECTION, userCredential.user.uid), {
         avatar,
         nome,
         email,
         dataNascimento: dataNascimento.toISOString(),
+        cargo: false,
       });
 
       // Envia o e-mail de verificação

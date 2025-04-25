@@ -1,5 +1,5 @@
 // models/User.ts
-import { db } from '../../service/firebase/Conexao';
+import { db } from '../../service/firebase/conexao';
 import { collection, addDoc, getDocs, query, where } from 'firebase/firestore';
 import Toast from 'react-native-toast-message';
 import * as Notifications from 'expo-notifications';

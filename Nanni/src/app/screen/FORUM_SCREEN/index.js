@@ -96,7 +96,7 @@ const ForumScreen = ({ navigation }) => {
       alert('Tópico criado com sucesso!');
       setTopicoTitle('');
       setTopicoDesc('');
-      carregarTopicosDoForum()
+      carregarTopicosDoForum();
       setModal(false); // Recarrega a lista após criar um novo tópico
     } else {
       alert('Erro ao criar o tópico. Tente novamente.');

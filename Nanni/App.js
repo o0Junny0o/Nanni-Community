@@ -10,6 +10,7 @@ import {
 import Toast from 'react-native-toast-message';
 import { toastConfig } from './src/app/components/toasts/ToastConfig';
 import { requestNotificationPermissions } from './src/utils/Notifications';
+//import { bulkFromJSON } from './src/scripts/teste';
 
 // Importa as telas
 import Login from './src/app/screen/LOGIN_SCREEN/index';
@@ -19,6 +20,7 @@ import RecuperarSenha from './src/app/screen/RECUPERAR_SENHA_SCREEN/index';
 import PerfilUsuario from './src/app/screen/PERFIL_SCREEN/index';
 import Forum from './src/app/screen/FORUM_SCREEN/index';
 import TopicoScreen from './src/app/screen/TOPICOS_SCREEN/index';
+import TESTE from './src/app/screen/TESTE_SCREEN/index';
 
 // Criação dos Stacks
 const Stack = createStackNavigator();
@@ -58,6 +60,7 @@ function AuthNavigator() {
 function MainNavigator() {
   return (
     <MainStack.Navigator screenOptions={{ headerShown: false }}>
+      <MainStack.Screen name="Teste" component={TESTE} />
       <MainStack.Screen name="Forum" component={Forum} />
       <MainStack.Screen name="PerfilUsuario" component={PerfilUsuario} />
       <MainStack.Screen name="TopicoScreen" component={TopicoScreen} />

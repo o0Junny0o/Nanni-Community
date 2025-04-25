@@ -9,6 +9,7 @@ export default {
     icon: './src/assets/icon.png',
     userInterfaceStyle: 'light',
     newArchEnabled: true,
+    owner: "",
     splash: {
       image: './src/assets/splash-icon.png',
       resizeMode: 'contain',
@@ -19,8 +20,9 @@ export default {
       supportsTablet: true,
     },
     android: {
+      package: 'com.nanni.community',
       adaptiveIcon: {
-        foregroundImage: './src/assets/adaptive-icon.png',
+        foregroundImage: './src/assets/ic_notification.png',
         backgroundColor: '#ffffff',
       },
     },
@@ -31,7 +33,7 @@ export default {
       [
         'expo-notifications',
         {
-          icon: './src/assets/logo_nanni.png', // TODO: 96x96 all-white png with transparency
+          icon: './src/assets/ic_notification.png',
           color: '#ffffff',
           androidMode: 'collapse', // Modo recomendado
           androidCollapsedTitle: 'Nanni', // Título quando recolhido
@@ -45,6 +47,9 @@ export default {
       FIREBASE_STORAGE_BUCKET: process.env.FIREBASE_STORAGE_BUCKET,
       FIREBASE_MESSAGING_SENDER_ID: process.env.FIREBASE_MESSAGING_SENDER_ID,
       FIREBASE_APP_ID: process.env.FIREBASE_APP_ID,
+      eas: {
+        projectId: 'c6739a76-5728-42c5-a305-ee1ca98c1604',
+      },
     },
   },
 };

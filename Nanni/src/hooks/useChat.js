@@ -51,13 +51,12 @@ function useChat({ discussaoPATH, initialLimit }) {
   };
 
   // Retorno do [map de Mensagens], [verificação da conexão], [erro do Firestore]
-  return { 
+  return {
     data: messages,
     loading: loadingMessages,
     error: errorMessages,
     addToLimit: [addMessages],
   };
 }
-
 
 export default useChat;
