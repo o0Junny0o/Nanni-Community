@@ -220,7 +220,7 @@ const ForumScreen = ({ navigation }) => {
                 <TouchableOpacity
                   onPress={() => handleDeleteTopico(item?.forumID)}
                 >
-                  <Text style={{ color: 'red', marginTop: 5 }}>Excluir</Text>
+                  <Text style={styles.deleteButton}>Excluir</Text>
                 </TouchableOpacity>
                 {/* <TouchableOpacity onPress={() => handleUpdateTopico(item?.forumID, 'Novo Nome', 'Nova Descrição')}>
                   <Text style={{ color: 'blue', marginTop: 5 }}>Atualizar</Text>

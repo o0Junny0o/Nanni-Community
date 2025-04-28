@@ -9,4 +9,4 @@ const CarregandoOverlay = () => {
   );
 };
 
-export { CarregandoOverlay };
+export default CarregandoOverlay;

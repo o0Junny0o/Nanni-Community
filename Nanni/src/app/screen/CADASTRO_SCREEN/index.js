@@ -21,7 +21,7 @@ import { getFirestore, doc, setDoc } from 'firebase/firestore';
 import { app, auth } from '../../../service/firebase/conexao';
 import PropTypes from 'prop-types';
 import * as ImagePicker from 'expo-image-picker';
-import * as Permissions from 'expo-permissions';
+import * as MediaLibrary from 'expo-media-library';
 import calcularIdade from '../../../utils/FuncCalcIdade';
 import { convertImageToBase64 } from '../../../utils/Base64Image.js';
 import { Ionicons } from '@expo/vector-icons'; // Importe ícones se desejar
@@ -51,7 +51,7 @@ export default function Cadastro({ navigation }) {
 
   const pedirPermissaoCameraRoll = async () => {
     if (Platform.OS !== 'web') {
-      const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+      const { status } = await MediaLibrary.requestPermissionsAsync();
       if (status !== 'granted') {
         Alert.alert(
           'Permissão Necessária',

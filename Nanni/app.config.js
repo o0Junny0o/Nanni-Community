@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-export default {
+module.exports = {
   expo: {
     name: 'Nanni',
     slug: 'Nanni',
@@ -9,7 +9,7 @@ export default {
     icon: './src/assets/icon.png',
     userInterfaceStyle: 'light',
     newArchEnabled: true,
-    owner: "",
+    owner: '',
     splash: {
       image: './src/assets/splash-icon.png',
       resizeMode: 'contain',
@@ -22,7 +22,7 @@ export default {
     android: {
       package: 'com.nanni.community',
       adaptiveIcon: {
-        foregroundImage: './src/assets/ic_notification.png',
+        foregroundImage: './src/assets/ic_logo.png',
         backgroundColor: '#ffffff',
       },
     },
@@ -33,7 +33,7 @@ export default {
       [
         'expo-notifications',
         {
-          icon: './src/assets/ic_notification.png',
+          icon: './src/assets/ic_logo.png',
           color: '#ffffff',
           androidMode: 'collapse', // Modo recomendado
           androidCollapsedTitle: 'Nanni', // Título quando recolhido

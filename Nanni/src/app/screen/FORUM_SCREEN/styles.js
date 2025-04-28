@@ -13,6 +13,7 @@ const colors = {
   modalImageShadow: '#00000044',
   inputBorder: '#0006',
   lightBlue: '#ddeeff',
+  red: 'red',
 };
 
 export const styles = StyleSheet.create({
@@ -204,6 +205,10 @@ export const styles = StyleSheet.create({
   },
   fullFlex: {
     flex: 1,
+  },
+  deleteButton: {
+    color: colors.red,
+    marginTop: 5,
   },
 });
 

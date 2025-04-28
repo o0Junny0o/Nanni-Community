@@ -16,7 +16,7 @@ import { auth } from '../../../service/firebase/conexao';
 import PropTypes from 'prop-types';
 import Toast from 'react-native-toast-message';
 
-import { CarregandoOverlay } from '../../components/overlay/CARREGANDO_OVERLAY/loadingOverlay';
+import CarregandoOverlay from '../../components/overlay/CARREGANDO_OVERLAY/loadingOverlay';
 
 const logo = require('../../../assets/logo_nanni.png');
 
@@ -50,7 +50,7 @@ export default function Login({ navigation }) {
 
       // Verifica se o e-mail foi verificado
       if (user.emailVerified) {
-        navigation.navigate('MainStack', { screen: 'Teste' });
+        navigation.navigate('MainStack', { screen: 'Login' });
       } else {
         // Faz logout, já que o Firebase loga automaticamente
         await auth.signOut();
@@ -147,6 +147,5 @@ export default function Login({ navigation }) {
 Login.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
-    getState: PropTypes.func.isRequired,
   }).isRequired,
 };

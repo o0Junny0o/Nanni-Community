@@ -48,7 +48,10 @@ export default function App() {
 // Stack para telas de autenticação (Login, Cadastro e recuperação de senha)
 function AuthNavigator() {
   return (
-    <AuthStack.Navigator screenOptions={{ headerShown: false }}>
+    <AuthStack.Navigator
+      screenOptions={{ headerShown: false }}
+      initialRouteName="Login"
+    >
       <AuthStack.Screen name="Login" component={Login} />
       <AuthStack.Screen name="Cadastro" component={Cadastro} />
       <AuthStack.Screen name="RecuperarSenha" component={RecuperarSenha} />
@@ -59,7 +62,10 @@ function AuthNavigator() {
 // Stack as telas principais
 function MainNavigator() {
   return (
-    <MainStack.Navigator screenOptions={{ headerShown: false }}>
+    <MainStack.Navigator
+      screenOptions={{ headerShown: false }}
+      initialRouteName="Teste"
+    >
       <MainStack.Screen name="Teste" component={TESTE} />
       <MainStack.Screen name="Forum" component={Forum} />
       <MainStack.Screen name="PerfilUsuario" component={PerfilUsuario} />
