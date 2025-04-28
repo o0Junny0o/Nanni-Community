@@ -6,11 +6,14 @@ import {
   TouchableOpacity,
   SafeAreaView,
   ActivityIndicator,
+  Image, // Importe o componente Image
 } from 'react-native';
 import { auth } from '../../../service/firebase/conexao';
 import Toast from 'react-native-toast-message';
 import styles from './style';
 import PropTypes from 'prop-types';
+
+  const logo = require('../../../assets/logo_nanni.png');
 
 // eslint-disable-next-line
 const RecuperarSenha = ({ navigation }) => {
@@ -68,7 +71,8 @@ const RecuperarSenha = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <Text style={styles.titulo}>Recuperar Senha</Text>
+        <Image source={logo} style={styles.logo} />
+        <Text style={styles.titulo}>RECUPERAR SENHA</Text>
 
         <Text style={styles.subtitulo}>
           Informe seu e-mail para receber o código de recuperação.

@@ -1,3 +1,4 @@
+// style.js
 import { StyleSheet } from 'react-native';
 
 const colors = {
@@ -8,6 +9,13 @@ const colors = {
   backgroundSecondary: '#f9f9f9',
   border: '#ccc',
   darkBlue: '#071934',
+  helperText: '#ff0000',
+};
+
+const fonts = {
+  monospaceExtrabold: 'monospace', 
+  robotoMonoBold: 'RobotoMono-Bold', 
+  roboto: 'Roboto-Regular', 
 };
 
 const styles = StyleSheet.create({
@@ -21,12 +29,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
   },
+  logoContainer: {
+    alignItems: 'center',
+    marginBottom: 30,
+  },
+  logo: {
+    width: 100, 
+    height: 100, 
+    resizeMode: 'contain',
+    marginBottom: 10,
+  },
   titulo: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: '800', 
     marginBottom: 20,
     textAlign: 'center',
     color: colors.text,
+    fontFamily: fonts.monospaceExtrabold,
   },
   input: {
     width: '100%',
@@ -36,6 +55,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     borderRadius: 5,
     color: colors.text,
+    fontFamily: fonts.roboto,
   },
   passwordContainer: {
     flexDirection: 'row',
@@ -43,18 +63,20 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.primary,
     paddingHorizontal: 10,
-    marginBottom: 15,
+    marginBottom: 5,
     borderRadius: 5,
   },
   passwordInput: {
     flex: 1,
     paddingVertical: 10,
     color: colors.text,
+    fontFamily: fonts.roboto,
   },
   showPasswordText: {
     color: colors.primary,
     fontWeight: 'bold',
     marginLeft: 10,
+    fontFamily: fonts.robotoMonoBold,
   },
   botao: {
     width: '80%',
@@ -62,16 +84,19 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 5,
     alignItems: 'center',
+    marginTop: 15,
   },
   botaoTexto: {
     color: colors.text,
     fontSize: 16,
     fontWeight: 'bold',
+    fontFamily: fonts.robotoMonoBold,
   },
   link: {
     color: colors.primary,
     marginTop: 15,
     textAlign: 'center',
+    fontFamily: fonts.roboto,
   },
   touchable_opacity: {
     width: '100%',
@@ -100,6 +125,15 @@ const styles = StyleSheet.create({
     color: colors.darkBlue,
     textAlign: 'center',
     fontSize: 12,
+    fontFamily: fonts.roboto,
+  },
+  helperText: {
+    color: colors.helperText,
+    fontSize: 12,
+    marginBottom: 10,
+    textAlign: 'left',
+    width: '100%',
+    fontFamily: fonts.roboto,
   },
 });
 

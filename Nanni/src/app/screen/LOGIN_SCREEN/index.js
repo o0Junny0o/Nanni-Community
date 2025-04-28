@@ -89,7 +89,7 @@ export default function Login({ navigation }) {
       <View style={styles.container}>
         <Image source={logo} style={styles.logo} />
 
-        <Text style={styles.titulo}>Login</Text>
+        <Text style={styles.titulo}>LOGIN</Text>
 
         <TextInput
           style={styles.input}
