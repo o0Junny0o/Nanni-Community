@@ -81,7 +81,7 @@ const RecuperarSenha = ({ navigation }) => {
         <TextInput
           style={styles.input}
           placeholder="E-mail"
-          placeholderTextColor="#A349A4"
+          placeholderTextColor={styles.input.borderColor}
           keyboardType="email-address"
           value={email}
           onChangeText={setEmail}

@@ -5,7 +5,7 @@ import styles from './styles';
 export default function LoadingScreen() {
   return (
     <View style={styles.loadingContainer}>
-      <ActivityIndicator size="large" color="#A349A4" />
+      <ActivityIndicator size="large" color="#1D5DB5" />
       <Text style={styles.loadingText}>Carregando...</Text>
     </View>
   );

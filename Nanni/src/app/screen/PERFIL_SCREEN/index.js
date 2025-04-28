@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   Modal,
   TextInput,
-  Alert, // Importe o Alert
 } from 'react-native';
 import styles from './styles';
 import * as ImagePicker from 'expo-image-picker'; // 📷 Biblioteca para selecionar imagem
@@ -26,7 +25,7 @@ import { updateEmail } from 'firebase/auth';
 import CARREGAMENTO_SCREEN from '../CARREGAMENTO_SCREEN/index';
 
 const PerfilUsuario = ({ navigation }) => {
-  const { user, loading: authLoading, logout } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [isLoading, setIsLoading] = useState(true); // Adicione este state
 
   const [nome, setNome] = useState('');
@@ -176,35 +175,6 @@ const PerfilUsuario = ({ navigation }) => {
     }
   };
 
-  const handleLogout = () => {
-    Alert.alert(
-      'Logout',
-      'Tem certeza que deseja sair?',
-      [
-        {
-          text: 'Cancelar',
-          style: 'cancel',
-        },
-        {
-          text: 'Sair',
-          onPress: async () => {
-            try {
-              await logout();
-              navigation.reset({
-                index: 0,
-                routes: [{ name: 'AuthStack' }],
-              });
-            } catch (error) {
-              console.error('Erro ao fazer logout:', error);
-              alert('Erro ao fazer logout. Tente novamente.');
-            }
-          },
-        },
-      ],
-      { cancelable: false }
-    );
-  };
-
   return (
     <SafeAreaView style={styles.container}>
       {/* Botão de Voltar */}
@@ -249,7 +219,6 @@ const PerfilUsuario = ({ navigation }) => {
           onPress={() => alert('Ir para tela de DADOS')}
           text="Análise de Dados"
         />
-        <BotaoPadrao onPress={handleLogout} text="Logout" />
       </View>
 
       {/* MODAL PARA EDITAR INFORMAÇÕES */}

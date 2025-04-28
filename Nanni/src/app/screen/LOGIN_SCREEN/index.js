@@ -94,7 +94,7 @@ export default function Login({ navigation }) {
         <TextInput
           style={styles.input}
           placeholder="Email"
-          placeholderTextColor="#A349A4"
+          placeholderTextColor="#071934"
           keyboardType="email-address"
           value={email}
           onChangeText={setEmail}
@@ -105,7 +105,7 @@ export default function Login({ navigation }) {
           <TextInput
             style={styles.passwordInput}
             placeholder="Senha"
-            placeholderTextColor="#A349A4"
+            placeholderTextColor="#071934"
             secureTextEntry={!mostrarSenha}
             value={senha}
             onChangeText={setSenha}
@@ -120,7 +120,7 @@ export default function Login({ navigation }) {
 
         {loading && (
           <View style={styles.overlay}>
-            <ActivityIndicator size="large" color="#A349A4" />
+            <ActivityIndicator size="large" color="#071934" />
           </View>
         )}
 

@@ -240,7 +240,7 @@ export default function Cadastro({ navigation }) {
         <TextInput
           style={styles.input}
           placeholder="Nome"
-          placeholderTextColor="#A349A4"
+          placeholderTextColor="#071934"
           value={nome}
           onChangeText={setNome}
         />
@@ -248,7 +248,7 @@ export default function Cadastro({ navigation }) {
         <TextInput
           style={styles.input}
           placeholder="Email"
-          placeholderTextColor="#A349A4"
+          placeholderTextColor="#071934"
           keyboardType="email-address"
           autoCapitalize="none"
           value={email}
@@ -262,7 +262,7 @@ export default function Cadastro({ navigation }) {
           <TextInput
             style={styles.input}
             placeholder="Data de Nascimento (DD/MM/AAAA)"
-            placeholderTextColor="#A349A4"
+            placeholderTextColor="#071934"
             value={
               dataNascimento ? dataNascimento.toLocaleDateString('pt-BR') : ''
             }
@@ -285,7 +285,7 @@ export default function Cadastro({ navigation }) {
             <TextInput
               style={styles.passwordInput}
               placeholder="Senha"
-              placeholderTextColor="#A349A4"
+              placeholderTextColor="#071934"
               secureTextEntry={!mostrarSenha}
               value={senha}
               onChangeText={(text) => {
@@ -314,7 +314,7 @@ export default function Cadastro({ navigation }) {
             <TextInput
               style={styles.passwordInput}
               placeholder="Confirmar Senha"
-              placeholderTextColor="#A349A4"
+              placeholderTextColor="#071934"
               secureTextEntry={!mostrarConfirmarSenha}
               value={confirmarSenha}
               onChangeText={(text) => {
