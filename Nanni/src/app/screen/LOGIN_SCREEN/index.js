@@ -49,9 +49,7 @@ export default function Login({ navigation }) {
       await user.reload();
 
       // Verifica se o e-mail foi verificado
-      if (user.emailVerified) {
-        navigation.navigate('MainStack', { screen: 'Login' });
-      } else {
+      if (!user.emailVerified) {
         // Faz logout, já que o Firebase loga automaticamente
         await auth.signOut();
 
@@ -60,6 +58,8 @@ export default function Login({ navigation }) {
           text1: 'Verificação pendente!',
           text2: 'Por favor, verifique seu e-mail antes de fazer login.',
         });
+
+        return;
       }
     } catch (error) {
       let errorMessage = 'Erro ao fazer login. Tente novamente.';

@@ -21,10 +21,13 @@ import { useAuth } from '../../components/contexts/AuthContext';
 import {
   convertImageToBase64,
   deconvertBase64ToImage,
+  isPngImage
 } from '../../../utils/Base64Image';
+import Toast from 'react-native-toast-message';
 import { updateEmail } from 'firebase/auth';
 import CARREGAMENTO_SCREEN from '../CARREGAMENTO_SCREEN/index';
 import { USUARIOS_COLLECTION } from '../../../model/refsCollection';
+import { navigationRef } from '../../../../App';
 
 const PerfilUsuario = ({ navigation }) => {
   const { user, loading: authLoading, logout } = useAuth();
@@ -110,7 +113,7 @@ const PerfilUsuario = ({ navigation }) => {
       }
 
       // Atualiza o Firestore
-      await updateDoc(doc(db, 'usuarios', user.uid), updates);
+      await updateDoc(doc(db, USUARIOS_COLLECTION, user.uid), updates);
 
       setModalVisible(false);
       alert('Alterações salvas com sucesso!');
@@ -122,10 +125,10 @@ const PerfilUsuario = ({ navigation }) => {
         alert('Este email já está em uso por outra conta');
       } else if (error.code === 'auth/requires-recent-login') {
         try {
-          await auth.signOut();
-          navigation.reset({
+          await logout();
+          navigationRef.current?.resetRoot({
             index: 0,
-            routes: [{ name: 'AuthStack' }],
+            routes: [{ name: 'Login' }],
           });
           alert('Sessão expirada. Faça login novamente para continuar');
         } catch (logoutError) {
@@ -157,11 +160,21 @@ const PerfilUsuario = ({ navigation }) => {
 
       if (!resultado.canceled) {
         const uri = resultado.assets[0].uri;
+
+        if (!isPngImage(uri)) {
+          Toast.show({
+            type: 'warning',
+            text1: 'Formato inválido!',
+            text2: 'Apenas imagens PNG são permitidas.',
+          });
+          return;
+        }
+
         const base64 = await convertImageToBase64(uri);
 
         if (base64) {
           // Referência ao documento do usuário
-          const userRef = doc(db, 'usuarios', user.uid);
+          const userRef = doc(db, USUARIOS_COLLECTION, user.uid);
 
           // Atualize apenas o campo avatar
           await updateDoc(userRef, {
@@ -191,9 +204,9 @@ const PerfilUsuario = ({ navigation }) => {
           onPress: async () => {
             try {
               await logout();
-              navigation.reset({
+              navigationRef.current?.resetRoot({
                 index: 0,
-                routes: [{ name: 'AuthStack' }],
+                routes: [{ name: 'Login' }],
               });
             } catch (error) {
               console.error('Erro ao fazer logout:', error);
@@ -305,7 +318,6 @@ PerfilUsuario.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
     goBack: PropTypes.func.isRequired,
-    reset: PropTypes.func.isRequired,
   }).isRequired,
 };
 

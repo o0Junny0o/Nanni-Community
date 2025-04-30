@@ -17,18 +17,20 @@ import {
   sendEmailVerification,
   signOut,
 } from 'firebase/auth';
-import { getFirestore, doc, setDoc } from 'firebase/firestore';
-import { app, auth } from '../../../service/firebase/conexao';
+import { doc, setDoc } from 'firebase/firestore';
+import { auth, db } from '../../../service/firebase/conexao';
 import PropTypes from 'prop-types';
 import * as ImagePicker from 'expo-image-picker';
 import * as MediaLibrary from 'expo-media-library';
 import calcularIdade from '../../../utils/FuncCalcIdade';
-import { convertImageToBase64 } from '../../../utils/Base64Image.js';
+import { convertImageToBase64, isPngImage } from '../../../utils/Base64Image.js';
 import { Ionicons } from '@expo/vector-icons'; // Importe ícones se desejar
 import Toast from 'react-native-toast-message';
 import { USUARIOS_COLLECTION } from '../../../model/refsCollection.js';
 
 export default function Cadastro({ navigation }) {
+  const defaultImageUri = Image.resolveAssetSource(require('../../../assets/perfil2.png')).uri;
+
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
@@ -38,12 +40,7 @@ export default function Cadastro({ navigation }) {
   const [dataNascimento, setDataNascimento] = useState('');
   const [mostrarDatePicker, setMostrarDatePicker] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [fotoPerfil, setFotoPerfil] = useState(
-    Image.resolveAssetSource(require('../../../assets/perfil2.png')).uri,
-  );
-
-  // Inicializa Firestore
-  const db = getFirestore(app);
+  const [fotoPerfil, setFotoPerfil] = useState(defaultImageUri);
 
   useEffect(() => {
     pedirPermissaoCameraRoll();
@@ -118,12 +115,23 @@ export default function Cadastro({ navigation }) {
 
     setLoading(true);
 
-    try {
+    try { 
+      let avatar;
+
       // Converter para Base64 apenas se houver foto
-      let avatar = null;
       if (fotoPerfil) {
-        avatar = await convertImageToBase64(fotoPerfil); // Adicionado await
-      } //TODO: Arrumar logica para não cadastrar se o formato da imagem estiver errado ou aceitar qualquer tipo de imagem
+        avatar = await convertImageToBase64(fotoPerfil);
+
+        // Validação da imagem
+        if (avatar === null) {
+          Toast.show({
+            type: 'error',
+            text1: 'Avatar inválido!',
+            text2: 'Use um avatar valido.',
+          });
+          return; // Impede o cadastro
+        }
+      }
 
       // Cria o usuário no Authentication
       const userCredential = await createUserWithEmailAndPassword(
@@ -196,7 +204,16 @@ export default function Cadastro({ navigation }) {
       });
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
-        setFotoPerfil(result.assets[0].uri);
+        const uri = result.assets[0].uri;
+        if (!isPngImage(uri)) {
+          Toast.show({
+            type: 'warning',
+            text1: 'Formato inválido!',
+            text2: 'Apenas imagens PNG são permitidas.',
+          });
+          return;
+        }
+        setFotoPerfil(uri);
       }
     } catch (error) {
       console.log('Erro ao selecionar foto:', error);

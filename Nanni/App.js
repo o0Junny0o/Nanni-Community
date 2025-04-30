@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, createRef } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { ConnectionProvider } from './src/app/components/contexts/ConexaoContext';
@@ -27,6 +27,8 @@ const Stack = createStackNavigator();
 const AuthStack = createStackNavigator();
 const MainStack = createStackNavigator();
 
+export const navigationRef = createRef();
+
 export default function App() {
   // Solicita permissões ao iniciar o app
   useEffect(() => {
@@ -35,7 +37,7 @@ export default function App() {
   return (
     <ConnectionProvider>
       <AuthProvider>
-        <NavigationContainer>
+        <NavigationContainer ref={navigationRef}>
           <RootNavigator />
         </NavigationContainer>
         <Toast config={toastConfig} />
@@ -64,7 +66,7 @@ function MainNavigator() {
   return (
     <MainStack.Navigator
       screenOptions={{ headerShown: false }}
-      initialRouteName="Teste"
+      initialRouteName="PerfilUsuario"
     >
       <MainStack.Screen name="Teste" component={TESTE} />
       <MainStack.Screen name="Forum" component={Forum} />

@@ -4,15 +4,6 @@ import Toast from 'react-native-toast-message';
 // Converte uma imagem PNG (local ou remota) para base64
 const convertImageToBase64 = async (uri) => {
   try {
-    if (!isPngImage(uri)) {
-      Toast.show({
-        type: 'warning',
-        text1: 'Formato inválido',
-        text2: 'Apenas imagens PNG são permitidas.',
-      });
-      return null;
-    }
-
     let localUri = uri;
 
     if (uri.startsWith('http')) {
@@ -37,15 +28,6 @@ const convertImageToBase64 = async (uri) => {
 // Faz o download de uma imagem PNG de uma URL
 const downloadPngImage = async (uri) => {
   try {
-    if (!isPngImage(uri)) {
-      Toast.show({
-        type: 'warning',
-        text1: 'Download negado',
-        text2: 'Apenas imagens PNG são permitidas para download.',
-      });
-      return null;
-    }
-
     const fileUri = FileSystem.documentDirectory + 'image_temp.png';
     const downloadResumable = FileSystem.createDownloadResumable(uri, fileUri);
     const { uri: localUri } = await downloadResumable.downloadAsync();
@@ -71,4 +53,4 @@ const deconvertBase64ToImage = (base64) => {
   return { uri: base64 };
 };
 
-export { convertImageToBase64, deconvertBase64ToImage };
+export { convertImageToBase64, deconvertBase64ToImage, isPngImage };

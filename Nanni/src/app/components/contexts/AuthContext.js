@@ -1,7 +1,7 @@
 import React, { createContext, useEffect, useState, useContext } from 'react';
 import { db, auth } from '../../../service/firebase/conexao';
 import { doc, getDoc } from 'firebase/firestore';
-import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 import PropTypes from 'prop-types';
 import { USUARIOS_COLLECTION } from '../../../model/refsCollection';
 
@@ -15,6 +15,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
       if (authUser) {
+        await authUser.reload();
         try {
           const userDoc = await getDoc(
             doc(db, USUARIOS_COLLECTION, authUser.uid),
@@ -37,8 +38,11 @@ export const AuthProvider = ({ children }) => {
     return unsubscribe;
   }, []);
 
+  // Função de logout exposta pelo contexto
+  const logout = () => signOut(auth);
+
   return (
-    <AuthContext.Provider value={{ user, loading }}>
+    <AuthContext.Provider value={{ user, loading, logout }}>
       {children}
     </AuthContext.Provider>
   );
