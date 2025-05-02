@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-  SafeAreaView,
-  ActivityIndicator,
-  Image,
+    View,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    Alert,
+    SafeAreaView,
+    ActivityIndicator,
+    Image,
 } from 'react-native';
 import styles from './style';
 import { signInWithEmailAndPassword } from 'firebase/auth';
@@ -18,130 +18,165 @@ import Toast from 'react-native-toast-message';
 const logo = require('../../../assets/logo_nanni.png');
 
 export default function Login({ navigation }) {
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
-  const [mostrarSenha, setMostrarSenha] = useState(false);
-  const [loading, setLoading] = useState(false);
+    const [email, setEmail] = useState('');
+    const [senha, setSenha] = useState('');
+    const [mostrarSenha, setMostrarSenha] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [senhaInvalidaTexto, setSenhaInvalidaTexto] = useState('');
 
-  const handleLogin = async () => {
-    if (!email || !senha) {
-      Alert.alert('Erro', 'Por favor, preencha todos os campos!');
-      return;
-    }
+    const validarSenha = (senha) => {
+        const regexSenha = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,25}$/;
+        return regexSenha.test(senha);
+    };
 
-    setLoading(true);
+    const handleLogin = async () => {
+        if (!email || !senha) {
+            Alert.alert('Erro', 'Por favor, preencha todos os campos!');
+            return;
+        }
 
-    try {
-      // Faz login com o Firebase Auth
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        senha,
-      );
+        if (!validarSenha(senha)) {
+            setSenhaInvalidaTexto(
+                'A senha deve conter:\n' +
+                '- 8 a 25 caracteres\n' +
+                '- 1 letra maiúscula\n' +
+                '- 1 letra minúscula\n' +
+                '- 1 número\n' +
+                '- 1 caractere especial (@$!%*?&)'
+            );
+            return;
+        } else {
+            setSenhaInvalidaTexto('');
+        }
 
-      const user = userCredential.user;
+        setLoading(true);
 
-      // Atualiza os dados do usuário (pega a versão mais recente do emailVerified)
-      await user.reload();
+        try {
+            const userCredential = await signInWithEmailAndPassword(
+                auth,
+                email,
+                senha,
+            );
 
-      // Verifica se o e-mail foi verificado
-      if (user.emailVerified) {
-        navigation.navigate('MainStack');
-      } else {
-        // Faz logout, já que o Firebase loga automaticamente
-        await auth.signOut();
+            const user = userCredential.user;
+            await user.reload();
 
-        Toast.show({
-          type: 'warning',
-          text1: 'Verificação pendente!',
-          text2: 'Por favor, verifique seu e-mail antes de fazer login.',
-        });
-      }
-    } catch (error) {
-      let errorMessage = 'Erro ao fazer login. Tente novamente.';
+            if (user.emailVerified) {
+                navigation.navigate('MainStack');
+            } else {
+                await auth.signOut();
 
-      switch (error.code) {
-        case 'auth/invalid-email':
-          errorMessage = 'Email inválido.';
-          break;
-        case 'auth/user-disabled':
-          errorMessage = 'Esta conta foi desativada.';
-          break;
-        case 'auth/user-not-found':
-          errorMessage = 'Usuário não encontrado.';
-          break;
-        case 'auth/wrong-password':
-          errorMessage = 'Senha incorreta.';
-          break;
-      }
-      Toast.show({
-        type: 'error',
-        text1: 'Erro',
-        text2: errorMessage,
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+                Toast.show({
+                    type: 'warning',
+                    text1: 'Verificação pendente!',
+                    text2: 'Por favor, verifique seu e-mail antes de fazer login.',
+                });
+            }
+        } catch (error) {
+            let errorMessage = 'Erro ao fazer login. Tente novamente.';
 
-  return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        <Image source={logo} style={styles.logo} />
+            switch (error.code) {
+                case 'auth/invalid-email':
+                    errorMessage = 'Email inválido.';
+                    break;
+                case 'auth/user-disabled':
+                    errorMessage = 'Esta conta foi desativada.';
+                    break;
+                case 'auth/user-not-found':
+                    errorMessage = 'Utilizador não encontrado.';
+                    break;
+                case 'auth/wrong-password':
+                    errorMessage = 'Senha incorreta.';
+                    break;
+            }
+            Toast.show({
+                type: 'error',
+                text1: 'Erro',
+                text2: errorMessage,
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
 
-        <Text style={styles.titulo}>LOGIN</Text>
+    return (
+        <SafeAreaView style={styles.safeArea}>
+            <View style={styles.container}>
+                <Image source={logo} style={styles.logo} />
 
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          placeholderTextColor="#071934"
-          keyboardType="email-address"
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-        />
+                <Text style={styles.titulo}>LOGIN</Text>
 
-        <View style={styles.passwordContainer}>
-          <TextInput
-            style={styles.passwordInput}
-            placeholder="Senha"
-            placeholderTextColor="#071934"
-            secureTextEntry={!mostrarSenha}
-            value={senha}
-            onChangeText={setSenha}
-            autoCapitalize="none"
-          />
-          <TouchableOpacity onPress={() => setMostrarSenha(!mostrarSenha)}>
-            <Text style={styles.showPasswordText}>
-              {mostrarSenha ? 'Ocultar' : 'Mostrar'}
-            </Text>
-          </TouchableOpacity>
-        </View>
+                <TextInput
+                    style={[styles.input, { borderColor: '#B88CB4'}]}
+                    placeholder="Email"
+                    placeholderTextColor={styles.input.borderColor}
+                    keyboardType="email-address"
+                    value={email}
+                    onChangeText={setEmail}
+                    autoCapitalize="none"
+                />
 
-        {loading && (
-          <View style={styles.overlay}>
-            <ActivityIndicator size="large" color="#071934" />
-          </View>
-        )}
+                <View>
+                    <View style={[styles.passwordContainer, { borderColor: '#B88CB4'}]}>
+                        <TextInput
+                            style={styles.passwordInput}
+                            placeholder="Senha"
+                            placeholderTextColor={styles.input.borderColor}
+                            secureTextEntry={!mostrarSenha}
+                            value={senha}
+                            onChangeText={(text) => {
+                                setSenha(text);
+                                if (!validarSenha(text)) {
+                                    setSenhaInvalidaTexto(
+                                        'A senha deve conter:\n' +
+                                        '- 8 a 25 caracteres\n' +
+                                        '- 1 letra maiúscula\n' +
+                                        '- 1 letra minúscula\n' +
+                                        '- 1 número\n' +
+                                        '- 1 caractere especial (@$!%*?&)'
+                                    );
+                                } else {
+                                    setSenhaInvalidaTexto('');
+                                }
+                            }}
+                            autoCapitalize="none"
+                        />
+                        <TouchableOpacity onPress={() => setMostrarSenha(!mostrarSenha)}>
+                            <Text style={styles.showPasswordText}>
+                                {mostrarSenha ? 'Ocultar' : 'Mostrar'}
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                    <Text style={styles.helperText}>A senha deve conter: 8 a 25 caracteres, 1 maiúscula, 1 minúscula, 1 número e 1 especial (@$!%*&).</Text>
+                    {senhaInvalidaTexto ? (
+                        <Text style={styles.errorText}>{senhaInvalidaTexto}</Text>
+                    ) : null}
+                </View>
 
-        <TouchableOpacity onPress={() => navigation.navigate('RecuperarSenha')}>
-          <Text style={styles.forgotPasswordLink}>Esqueci a senha</Text>
-        </TouchableOpacity>
+                {loading && (
+                    <View style={styles.overlay}>
+                        <ActivityIndicator size="large" color="#071934" />
+                    </View>
+                )}
 
-        <TouchableOpacity style={styles.botao} onPress={handleLogin}>
-          <Text style={styles.botaoTexto}>Entrar</Text>
-        </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate('RecuperarSenha')}>
+                    <Text style={styles.forgotPasswordLink}>Esqueci a senha</Text>
+                </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => navigation.navigate('Cadastro')}>
-          <Text style={styles.link}>Não possui uma conta? Cadastre-se</Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
-  );
+                <TouchableOpacity style={styles.botao} onPress={handleLogin}>
+                    <Text style={styles.botaoTexto}>Entrar</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity onPress={() => navigation.navigate('Cadastro')}>
+                    <Text style={styles.link}>Não possui uma conta? Cadastre-se</Text>
+                </TouchableOpacity>
+            </View>
+        </SafeAreaView>
+    );
 }
 
 Login.propTypes = {
-  navigation: PropTypes.shape({
-    navigate: PropTypes.func.isRequired,
-  }).isRequired,
+    navigation: PropTypes.shape({
+        navigate: PropTypes.func.isRequired,
+    }).isRequired,
 };
