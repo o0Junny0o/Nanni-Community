@@ -24,7 +24,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as MediaLibrary from 'expo-media-library';
 import calcularIdade from '../../../utils/FuncCalcIdade';
 import { convertImageToBase64, isPngImage } from '../../../utils/Base64Image.js';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons'; // Importe o Ionicons
 import Toast from 'react-native-toast-message';
 import { USUARIOS_COLLECTION } from '../../../model/refsCollection.js';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -287,8 +287,8 @@ export default function Cadastro({ navigation }) {
                         }
                         editable={false}
                     />
-                    <Icon 
-                        name="event"  
+                    <Icon
+                        name="event"
                         size={24}
                         color={styles.input.borderColor}
                         style={styles.calendarIcon}
@@ -324,9 +324,11 @@ export default function Cadastro({ navigation }) {
                             autoCapitalize="none"
                         />
                         <TouchableOpacity onPress={() => setMostrarSenha(!mostrarSenha)}>
-                            <Text style={styles.showPasswordText}>
-                                {mostrarSenha ? 'Ocultar' : 'Mostrar'}
-                            </Text>
+                            <Ionicons
+                                name={mostrarSenha ? 'eye-outline' : 'eye-off-outline'}
+                                size={24}
+                                color={styles.softLilac} 
+                            />
                         </TouchableOpacity>
                     </View>
                     <Text style={styles.helperText}>A senha deve conter: 8 a 25 caracteres, 1 maiúscula, 1 minúscula, 1 número e 1 especial (@$!%*&).</Text>
@@ -356,9 +358,11 @@ export default function Cadastro({ navigation }) {
                         <TouchableOpacity
                             onPress={() => setMostrarConfirmarSenha(!mostrarConfirmarSenha)}
                         >
-                            <Text style={styles.showPasswordText}>
-                                {mostrarConfirmarSenha ? 'Ocultar' : 'Mostrar'}
-                            </Text>
+                            <Ionicons
+                                name={mostrarConfirmarSenha ? 'eye-outline' : 'eye-off-outline'}
+                                size={24}
+                                color={styles.softLilac}
+                            />
                         </TouchableOpacity>
                     </View>
                     {confirmarSenhaInvalidaTexto ? (

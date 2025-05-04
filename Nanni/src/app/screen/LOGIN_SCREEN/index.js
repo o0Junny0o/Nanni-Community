@@ -14,6 +14,7 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../../service/firebase/conexao';
 import PropTypes from 'prop-types';
 import Toast from 'react-native-toast-message';
+import { Ionicons } from '@expo/vector-icons';
 
 const logo = require('../../../assets/logo_nanni.png');
 
@@ -107,7 +108,7 @@ export default function Login({ navigation }) {
                 <Text style={styles.titulo}>LOGIN</Text>
 
                 <TextInput
-                    style={[styles.input, { borderColor: '#B88CB4'}]}
+                    style={[styles.input, { borderColor: styles.input.borderColor }]}
                     placeholder="Email"
                     placeholderTextColor={styles.input.borderColor}
                     keyboardType="email-address"
@@ -116,10 +117,10 @@ export default function Login({ navigation }) {
                     autoCapitalize="none"
                 />
 
-                <View>
-                    <View style={[styles.passwordContainer, { borderColor: '#B88CB4'}]}>
+<View>
+                    <View style={styles.passwordContainer}>
                         <TextInput
-                            style={styles.passwordInput}
+                            style={[styles.passwordInput, { borderColor: styles.input.borderColor }]}
                             placeholder="Senha"
                             placeholderTextColor={styles.input.borderColor}
                             secureTextEntry={!mostrarSenha}
@@ -129,10 +130,10 @@ export default function Login({ navigation }) {
                                 if (!validarSenha(text)) {
                                     setSenhaInvalidaTexto(
                                         'A senha deve conter:\n' +
-                                        '- 8 a 25 caracteres\n' +
-                                        '- 1 letra maiúscula\n' +
-                                        '- 1 letra minúscula\n' +
-                                        '- 1 número\n' +
+                                        '- 8 a 25 caracteres \n' +
+                                        '- 1 letra maiúscula \n' +
+                                        '- 1 letra minúscula \n' +
+                                        '- 1 número \n' +
                                         '- 1 caractere especial (@$!%*?&)'
                                     );
                                 } else {
@@ -142,9 +143,11 @@ export default function Login({ navigation }) {
                             autoCapitalize="none"
                         />
                         <TouchableOpacity onPress={() => setMostrarSenha(!mostrarSenha)}>
-                            <Text style={styles.showPasswordText}>
-                                {mostrarSenha ? 'Ocultar' : 'Mostrar'}
-                            </Text>
+                            <Ionicons
+                                name={mostrarSenha ? 'eye-outline' : 'eye-off-outline'}
+                                size={24}
+                                color={styles.softLilac}
+                            />
                         </TouchableOpacity>
                     </View>
                     <Text style={styles.helperText}>A senha deve conter: 8 a 25 caracteres, 1 maiúscula, 1 minúscula, 1 número e 1 especial (@$!%*&).</Text>
