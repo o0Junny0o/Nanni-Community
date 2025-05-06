@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useLinkBuilder } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { ConnectionProvider } from './src/app/components/contexts/ConexaoContext';
 import { ConnectionMonitor } from './src/hooks/MonitorConexao';
@@ -19,11 +19,17 @@ import RecuperarSenha from './src/app/screen/RECUPERAR_SENHA_SCREEN/index';
 import PerfilUsuario from './src/app/screen/PERFIL_SCREEN/index';
 import Forum from './src/app/screen/FORUM_SCREEN/index';
 import TopicoScreen from './src/app/screen/TOPICOS_SCREEN/index';
+import HomeScreen from './src/app/screen/HOME/index'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
+// Importar a Tabbar
+import customTabBarStyle from './src/app/components/TabBarStyle';
 
 // Criação dos Stacks
 const Stack = createStackNavigator();
 const AuthStack = createStackNavigator();
 const MainStack = createStackNavigator();
+const TabStack = createBottomTabNavigator();
 
 export default function App() {
   // Solicita permissões ao iniciar o app
@@ -54,13 +60,23 @@ function AuthNavigator() {
   );
 }
 
+
+
+function TabNavigator() {
+  return (
+    <TabStack.Navigator screenOptions={customTabBarStyle}>
+      <TabStack.Screen name="Home" component={HomeScreen} />
+      {/* <MainStack.Tab.Screen name="PerfilUsuario" component={PerfilUsuario} />
+      <MainStack.Tab.Screen name="TopicoScreen" component={TopicoScreen} /> */}
+    </TabStack.Navigator>
+  )
+}
+
 // Stack as telas principais
 function MainNavigator() {
   return (
     <MainStack.Navigator screenOptions={{ headerShown: false }}>
-      <MainStack.Screen name="Forum" component={Forum} />
-      <MainStack.Screen name="PerfilUsuario" component={PerfilUsuario} />
-      <MainStack.Screen name="TopicoScreen" component={TopicoScreen} />
+      <MainStack.Screen name="Tabs" component={TabNavigator} />
     </MainStack.Navigator>
   );
 }
