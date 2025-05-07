@@ -268,7 +268,7 @@ const PerfilUsuario = ({ navigation }) => {
             renderItem={({ item }) => (
               <Text style={styles.historicoItem}>* Doação em {item.data}</Text>
             )}
-            style={{ maxHeight: 300 }} // define altura máxima rolável
+            style={{ maxHeight: 290 }} // define altura máxima rolável
           />
         )}
       </View>
