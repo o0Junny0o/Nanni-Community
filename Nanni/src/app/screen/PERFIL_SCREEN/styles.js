@@ -53,7 +53,8 @@ const styles = StyleSheet.create({
     flexDirection:'column',
     width: '80%',
     marginTop: 30,
-    marginBottom: 30,
+    paddingBottom: 60,
+    borderBottomWidth: 1,
   },
   infoBox: {
     flexDirection: 'row',
@@ -133,14 +134,12 @@ const styles = StyleSheet.create({
   },
 
   linkButtonContainer:{
-    padding: 30,
   },
 
   linkButton:{
     flexDirection: 'row',
     justifyContent: 'space-between',
     gap: 100,
-    borderTopWidth: 1,
     paddingTop: 10
   },
 
