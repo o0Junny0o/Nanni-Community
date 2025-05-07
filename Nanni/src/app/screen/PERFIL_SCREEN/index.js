@@ -277,7 +277,7 @@ const PerfilUsuario = ({ navigation }) => {
                 <Text style={{color:"#B88CB4", fontWeight: "bold", fontSize: 20}}>{item.valor} R$</Text>
               </View>
             )}
-            style={{ maxHeight: 290 }} // define altura máxima rolável
+            style={{ maxHeight: 240 }} // define altura máxima rolável
           />
         )}
       </View>
