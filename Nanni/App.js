@@ -24,6 +24,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 // Importar a Tabbar
 import customTabBarStyle from './src/app/components/TabBarStyle';
+import ExplorarScreen from './src/app/screen/EXPLORAR';
+import ConfigurarForumScreen from './src/app/screen/CRIAR_FORUM';
 
 // Criação dos Stacks
 const Stack = createStackNavigator();
@@ -66,8 +68,7 @@ function TabNavigator() {
   return (
     <TabStack.Navigator screenOptions={customTabBarStyle}>
       <TabStack.Screen name="Home" component={HomeScreen} />
-      {/* <MainStack.Tab.Screen name="PerfilUsuario" component={PerfilUsuario} />
-      <MainStack.Tab.Screen name="TopicoScreen" component={TopicoScreen} /> */}
+      <TabStack.Screen name="Explorar" component={ExplorarScreen} />
     </TabStack.Navigator>
   )
 }
@@ -77,6 +78,7 @@ function MainNavigator() {
   return (
     <MainStack.Navigator screenOptions={{ headerShown: false }}>
       <MainStack.Screen name="Tabs" component={TabNavigator} />
+      <MainStack.Screen name="ConfigurarForum" component={ConfigurarForumScreen} />
     </MainStack.Navigator>
   );
 }

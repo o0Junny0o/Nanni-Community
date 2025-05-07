@@ -5,13 +5,6 @@ import { FORUNS_COLLECTION } from './refsCollection'
 
 // Model de Forum
 class Forum {
-  forumID;
-  userRef;
-  forumName;
-  forumDesc;
-  classificacaoIndicativa;
-  reportComentarios;
-
   constructor({
     forumID,
     userRef,
