@@ -10,6 +10,7 @@ import {
 import Toast from 'react-native-toast-message';
 import { toastConfig } from './src/app/components/toasts/ToastConfig';
 import { requestNotificationPermissions } from './src/utils/Notifications';
+import {Feather} from '@expo/vector-icons'
 
 // Importa as telas
 import Login from './src/app/screen/LOGIN_SCREEN/index';
@@ -19,7 +20,7 @@ import RecuperarSenha from './src/app/screen/RECUPERAR_SENHA_SCREEN/index';
 import PerfilUsuario from './src/app/screen/PERFIL_SCREEN/index';
 import Forum from './src/app/screen/FORUM_SCREEN/index';
 import TopicoScreen from './src/app/screen/TOPICOS_SCREEN/index';
-import HomeScreen from './src/app/screen/HOME/index'
+import HomeScreen from './src/app/screen/HOME/index';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 // Importar a Tabbar
@@ -60,16 +61,22 @@ function AuthNavigator() {
   );
 }
 
-
-
 function TabNavigator() {
   return (
     <TabStack.Navigator screenOptions={customTabBarStyle}>
-      <TabStack.Screen name="Home" component={HomeScreen} />
-      {/* <MainStack.Tab.Screen name="PerfilUsuario" component={PerfilUsuario} />
-      <MainStack.Tab.Screen name="TopicoScreen" component={TopicoScreen} /> */}
+      <TabStack.Screen name="PerfilUsuario" component={PerfilUsuario} 
+      options={{
+        tabBarIcon: ({color, size}) => <Feather name="user" color={color} size={size}/>
+      }}/>
+      <TabStack.Screen name="Home" component={HomeScreen} 
+      options={{
+        tabBarIcon: ({color, size}) => <Feather name="home" color={color} size={size}/>
+      }}/>
+      <TabStack.Screen name="TopicoScreen" component={TopicoScreen} options={{
+        tabBarIcon: ({color, size}) => <Feather name="message-square" color={color} size={size}/>
+      }}/>
     </TabStack.Navigator>
-  )
+  );
 }
 
 // Stack as telas principais

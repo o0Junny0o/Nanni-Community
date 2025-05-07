@@ -13,11 +13,11 @@ const colors = {
 
 const styles = StyleSheet.create({
   label: {
-    fontSize: 16,
+    fontSize: 10,
   },
   backGround: {
     flex: 1,
-    backgroundColor: colors.p3 
+    backgroundColor: colors.p3
   }
 })
 
@@ -26,7 +26,7 @@ const tabBarBackgroundStyle = () => <View style={styles.backGround}/>
 
 const customTabBarStyle = { 
   headerShown: false,
-  tabBarLabelStyle: tabBarStyles.label,
+  tabBarLabelStyle: styles.label,
   tabBarActiveTintColor: colors.p1,
   tabBarInactiveTintColor: colors.p6,
   tabBarStyle: { padding: 20},
