@@ -74,6 +74,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.infoText
   },
+  infoLabel:{
+    color: "gray"
+  },
   buttonContainer: {
     marginTop: 20,
     width: '80%',
@@ -152,9 +155,13 @@ const styles = StyleSheet.create({
 
   historicoItem:{
     marginBottom: 10,
-    backgroundColor: "#55555511",
     lineHeight: 50,
-    padding: 10
+    padding: 15,
+    flexDirection: "row",
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderBottomWidth: 1,
+    borderColor: colors.buttonBorder
   }
 });
 

@@ -38,35 +38,37 @@ const PerfilUsuario = ({ navigation }) => {
   const [valorEdicao, setValorEdicao] = useState('');
   const [mostrarHistorico, setMostrarHistorico] = useState(false);
   const historicoDoacoes = [
-    { id: '1', data: '10/02/2024' },
-    { id: '2', data: '22/11/2023' },
-    { id: '3', data: '03/08/2023' },
-    { id: '4', data: '10/02/2024' },
-    { id: '5', data: '22/11/2023' },
-    { id: '6', data: '03/08/2023' },
-    { id: '7', data: '10/02/2024' },
-    { id: '8', data: '22/11/2023' },
-    { id: '9', data: '03/08/2023' },
-    { id: '10', data: '10/02/2024' },
-    { id: '11', data: '10/02/2024' },
-    { id: '12', data: '22/11/2023' },
-    { id: '13', data: '03/08/2023' },
-    { id: '14', data: '10/02/2024' },
-    { id: '15', data: '22/11/2023' },
-    { id: '16', data: '03/08/2023' },
-    { id: '17', data: '10/02/2024' },
-    { id: '18', data: '22/11/2023' },
-    { id: '19', data: '03/08/2023' },
-    { id: '20', data: '10/02/2024' },
-    { id: '21', data: '10/02/2024' },
-    { id: '22', data: '22/11/2023' },
-    { id: '23', data: '03/08/2023' },
-    { id: '24', data: '10/02/2024' },
-    { id: '25', data: '22/11/2023' },
-    { id: '26', data: '03/08/2023' },
-    { id: '27', data: '10/02/2024' },
-    { id: '28', data: '22/11/2023' },
-    { id: '29', data: '03/08/2023' },
+    { id: '1', name: "Forum", data: '10/02/2024' , valor: "20,15"},
+    { id: '2', name: "Forum", data: '22/11/2023' , valor: "32,40"},
+    { id: '3', name: "Forum", data: '03/08/2023' , valor: "32,40"},
+    { id: '4', name: "Forum", data: '10/02/2024' , valor: "32,40"},
+    { id: '5', name: "Forum", data: '22/11/2023' , valor: "32,40"},
+    { id: '6', name: "Forum", data: '03/08/2023' , valor: "32,40"},
+    { id: '7', name: "Forum", data: '10/02/2024' , valor: "32,40"},
+    { id: '8', name: "Forum", data: '22/11/2023' , valor: "32,40"},
+    { id: '9', name: "Forum", data: '03/08/2023' , valor: "32,40"},
+    { id: '10', name: "Forum", data: '03/08/2023' , valor: "50,00"},
+    { id: '11', name: "Forum", data: '10/02/2024' , valor: "50,00"},
+    { id: '12', name: "Forum", data: '22/11/2023' , valor: "50,00"},
+    { id: '13', name: "Forum", data: '03/08/2023' , valor: "50,00"},
+    { id: '14', name: "Forum", data: '10/02/2024' , valor: "50,00"},
+    { id: '15', name: "Forum", data: '22/11/2023' , valor: "50,00"},
+    { id: '16', name: "Forum", data: '03/08/2023' , valor: "50,00"},
+    { id: '17', name: "Forum", data: '10/02/2024' , valor: "50,00"},
+    { id: '18', name: "Forum", data: '22/11/2023' , valor: "50,00"},
+    { id: '19', name: "Forum", data: '03/08/2023' , valor: "50,00"},
+    { id: '20', name: "Forum", data: '03/08/2023' , valor: "50,00"},
+    { id: '21', name: "Forum", data: '10/02/2024' , valor: "50,00"},
+    { id: '22', name: "Forum", data: '22/11/2023' , valor: "50,00"},
+    { id: '23', name: "Forum", data: '03/08/2023' , valor: "50,00"},
+    { id: '24', name: "Forum", data: '10/02/2024' , valor: "50,00"},
+    { id: '25', name: "Forum", data: '22/11/2023' , valor: "50,00"},
+    { id: '26', name: "Forum", data: '03/08/2023' , valor: "50,00"},
+    { id: '27', name: "Forum", data: '10/02/2024' , valor: "50,00"},
+    { id: '28', name: "Forum", data: '22/11/2023' , valor: "50,00"},
+    { id: '29', name: "Forum", data: '03/08/2023' , valor: "50,00"},
+    { id: '30', name: "Forum", data: '03/08/2023' , valor: "50,00"},
+
   ];
 
 
@@ -265,8 +267,15 @@ const PerfilUsuario = ({ navigation }) => {
           <FlatList
             data={historicoDoacoes}
             keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <Text style={styles.historicoItem}>* Doação em {item.data}</Text>
+            renderItem={({ item }) => ( //historicoItem
+              <View style={styles.historicoItem}>
+                <View>
+                  <Text style={{color: "#5D90D6"}}>ID: {item.id}</Text>
+                  <Text style={{fontWeight: 'bold'}}>Forum: {item.name}</Text>
+                  <Text style={{color:"gray"}}>{item.data}</Text>
+                </View>
+                <Text style={{color:"#B88CB4", fontWeight: "bold", fontSize: 20}}>{item.valor} R$</Text>
+              </View>
             )}
             style={{ maxHeight: 290 }} // define altura máxima rolável
           />
@@ -310,9 +319,10 @@ const PerfilUsuario = ({ navigation }) => {
 const InfoItem = ({ label, value, onEdit }) => {
   return (
     <View style={styles.infoBox}>
-      <Text style={styles.infoText}>
-        {label}: {value}
-      </Text>
+      <View>
+        <Text style={styles.infoLabel}>{label}</Text>
+        <Text style={styles.infoText}>{value}</Text>
+      </View>
       {onEdit && (
         <TouchableOpacity onPress={onEdit}>
           <Ionicons name="pencil" size={20} color="#1D5DB5" />
