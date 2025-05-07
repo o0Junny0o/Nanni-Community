@@ -25,8 +25,10 @@ const styles = StyleSheet.create({
   },
   header: {
     width: '100%',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     paddingHorizontal: 20,
+    justifyContent: 'flex-end',
+    flexDirection: 'row'
   },
   profileContainer: {
     alignItems: 'center',
@@ -36,7 +38,6 @@ const styles = StyleSheet.create({
     width: 150,
     height: 150,
     borderRadius: 75,
-    backgroundColor: colors.profileBackground,
     borderWidth: 3,
     borderColor: colors.profileBorder,
   },
@@ -49,8 +50,10 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   infoContainer: {
+    flexDirection:'column',
     width: '80%',
     marginTop: 30,
+    marginBottom: 30,
   },
   infoBox: {
     flexDirection: 'row',
@@ -68,7 +71,7 @@ const styles = StyleSheet.create({
   },
   infoText: {
     fontSize: 16,
-    color: colors.infoText,
+    color: colors.infoText
   },
   buttonContainer: {
     marginTop: 20,
@@ -125,6 +128,35 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: colors.buttonText,
   },
+  logoutButton:{
+    padding: 10,
+  },
+
+  linkButtonContainer:{
+    padding: 30,
+  },
+
+  linkButton:{
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 100,
+    borderTopWidth: 1,
+    paddingTop: 10
+  },
+
+  linkText:{
+    color: "#5D90D6",
+    fontSize: 20,
+    marginBottom: 15,
+    alignItems:"center"
+  },
+
+  historicoItem:{
+    marginBottom: 10,
+    backgroundColor: "#55555511",
+    lineHeight: 50,
+    padding: 10
+  }
 });
 
 export default styles;

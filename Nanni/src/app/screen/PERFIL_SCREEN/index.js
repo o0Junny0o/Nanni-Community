@@ -8,6 +8,7 @@ import {
   Modal,
   TextInput,
 } from 'react-native';
+import { FlatList } from 'react-native';
 import styles from './styles';
 import * as ImagePicker from 'expo-image-picker'; // 📷 Biblioteca para selecionar imagem
 import { Ionicons } from '@expo/vector-icons';
@@ -35,6 +36,39 @@ const PerfilUsuario = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [campoEdicao, setCampoEdicao] = useState('');
   const [valorEdicao, setValorEdicao] = useState('');
+  const [mostrarHistorico, setMostrarHistorico] = useState(false);
+  const historicoDoacoes = [
+    { id: '1', data: '10/02/2024' },
+    { id: '2', data: '22/11/2023' },
+    { id: '3', data: '03/08/2023' },
+    { id: '4', data: '10/02/2024' },
+    { id: '5', data: '22/11/2023' },
+    { id: '6', data: '03/08/2023' },
+    { id: '7', data: '10/02/2024' },
+    { id: '8', data: '22/11/2023' },
+    { id: '9', data: '03/08/2023' },
+    { id: '10', data: '10/02/2024' },
+    { id: '11', data: '10/02/2024' },
+    { id: '12', data: '22/11/2023' },
+    { id: '13', data: '03/08/2023' },
+    { id: '14', data: '10/02/2024' },
+    { id: '15', data: '22/11/2023' },
+    { id: '16', data: '03/08/2023' },
+    { id: '17', data: '10/02/2024' },
+    { id: '18', data: '22/11/2023' },
+    { id: '19', data: '03/08/2023' },
+    { id: '20', data: '10/02/2024' },
+    { id: '21', data: '10/02/2024' },
+    { id: '22', data: '22/11/2023' },
+    { id: '23', data: '03/08/2023' },
+    { id: '24', data: '10/02/2024' },
+    { id: '25', data: '22/11/2023' },
+    { id: '26', data: '03/08/2023' },
+    { id: '27', data: '10/02/2024' },
+    { id: '28', data: '22/11/2023' },
+    { id: '29', data: '03/08/2023' },
+  ];
+
 
   useEffect(() => {
     const carregarDadosUsuario = async () => {
@@ -177,9 +211,15 @@ const PerfilUsuario = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Botão de Voltar */}
+      {/* Botão de Deslogar */}
+
       <View style={styles.header}>
-        <BotaoVoltar onPress={() => navigation.goBack()} />
+        <View style={styles.logoutButton}>
+          <TouchableOpacity style={{flexDirection:"row", gap: 10}} onPress={()=> alert("Saindo da Conta...")}>
+            <Text style={{fontSize: 15}}>SAIR</Text>
+            <Ionicons name="log-out-outline" size={24} color="black" />
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Área de Foto de Perfil */}
@@ -205,21 +245,34 @@ const PerfilUsuario = ({ navigation }) => {
         <InfoItem
           label="Data de nascimento"
           value={dataNaci}
-          onEdit={() => editarCampo('Data de nascimento', dataNaci)}
         />
       </View>
 
-      {/* Botões de Navegação */}
-      <View style={styles.buttonContainer}>
-        <BotaoPadrao
-          onPress={() => alert('Ir para tela de DOAÇÕES')}
-          text="Histórico de Doações"
-        />
-        <BotaoPadrao
-          onPress={() => alert('Ir para tela de DADOS')}
-          text="Análise de Dados"
-        />
+      {/* Botão de texto com seta */}
+      <View style={styles.linkButtonContainer}>
+        <TouchableOpacity onPress={() => setMostrarHistorico(!mostrarHistorico)}>
+          <View style={styles.linkButton}>
+            <Text style={styles.linkText}>HISTÓRICO DE DOAÇÕES</Text>
+            <Ionicons
+              name={mostrarHistorico ? 'chevron-up-outline' : 'chevron-down-outline'}
+              size={18}
+              color="#1D3557"
+            />
+          </View>
+        </TouchableOpacity>
+
+        {mostrarHistorico && (
+          <FlatList
+            data={historicoDoacoes}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <Text style={styles.historicoItem}>* Doação em {item.data}</Text>
+            )}
+            style={{ maxHeight: 300 }} // define altura máxima rolável
+          />
+        )}
       </View>
+
 
       {/* MODAL PARA EDITAR INFORMAÇÕES */}
       <Modal transparent={true} visible={modalVisible}>
@@ -260,9 +313,11 @@ const InfoItem = ({ label, value, onEdit }) => {
       <Text style={styles.infoText}>
         {label}: {value}
       </Text>
-      <TouchableOpacity onPress={onEdit}>
-        <Ionicons name="pencil" size={20} color="#1D5DB5" />
-      </TouchableOpacity>
+      {onEdit && (
+        <TouchableOpacity onPress={onEdit}>
+          <Ionicons name="pencil" size={20} color="#1D5DB5" />
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
@@ -278,7 +333,7 @@ PerfilUsuario.propTypes = {
 InfoItem.propTypes = {
   label: PropTypes.string.isRequired,
   value: PropTypes.string.isRequired,
-  onEdit: PropTypes.func.isRequired,
+  onEdit: PropTypes.func,
 };
 
 export default PerfilUsuario;
