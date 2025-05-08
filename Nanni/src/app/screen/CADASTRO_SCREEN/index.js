@@ -23,13 +23,18 @@ import PropTypes from 'prop-types';
 import * as ImagePicker from 'expo-image-picker';
 import * as MediaLibrary from 'expo-media-library';
 import calcularIdade from '../../../utils/FuncCalcIdade';
-import { convertImageToBase64, isPngImage } from '../../../utils/Base64Image.js';
+import {
+  convertImageToBase64,
+  isPngImage,
+} from '../../../utils/Base64Image.js';
 import { Ionicons } from '@expo/vector-icons'; // Importe ícones se desejar
 import Toast from 'react-native-toast-message';
 import { USUARIOS_COLLECTION } from '../../../model/refsCollection.js';
 
 export default function Cadastro({ navigation }) {
-  const defaultImageUri = Image.resolveAssetSource(require('../../../assets/perfil2.png')).uri;
+  const defaultImageUri = Image.resolveAssetSource(
+    require('../../../assets/perfil2.png'),
+  ).uri;
 
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
@@ -115,7 +120,7 @@ export default function Cadastro({ navigation }) {
 
     setLoading(true);
 
-    try { 
+    try {
       let avatar;
 
       // Converter para Base64 apenas se houver foto

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, SafeAreaView } from 'react-native';
 import ChartScreen from '../../components/graficos/ChartScreen';
 import { useAuth } from '../../components/contexts/AuthContext';
-import { calcularVendasPorJogo } from '../../../service/firebase/vendasService';
+import { calcularVendasPorJogo } from '../../../service/firebase/analytics/vendasService';
 import styles from './style';
 
 export default function TESTE() {
@@ -13,7 +13,7 @@ export default function TESTE() {
   useEffect(() => {
     const carregarVendas = async () => {
       try {
-        const resultado = await calcularVendasPorJogo(user.uid); // Await dentro de uma função async
+        const resultado = await calcularVendasPorJogo(user.uid, 2024); // Await dentro de uma função async
         setVendas(resultado);
       } catch (error) {
         console.error('Erro ao buscar vendas:', error);

@@ -5,12 +5,13 @@ import {
   getDocs,
   query,
   where,
+  Timestamp,
 } from 'firebase/firestore';
-import { db } from './conexao';
+import { db } from '../conexao';
 import {
   USUARIOS_COLLECTION,
   VENDAS_COLLECTION,
-} from '../../model/refsCollection';
+} from '../../../model/refsCollection';
 const MESES = [
   'Jan',
   'Feb',
@@ -42,7 +43,9 @@ async function getJogosDoUsuario(userId) {
 }
 
 // Função principal
-export async function calcularVendasPorJogo(userId) {
+export async function calcularVendasPorJogo(userId, ano) {
+  const anoInicio = Timestamp.fromDate(new Date(ano, 0, 1));
+  const anoFim = Timestamp.fromDate(new Date(ano + 1, 0, 1));
   try {
     const jogosRefs = await getJogosDoUsuario(userId);
 
@@ -54,7 +57,12 @@ export async function calcularVendasPorJogo(userId) {
 
     for (let i = 0; i < jogosRefs.length; i += CHUNK_SIZE) {
       const chunk = jogosRefs.slice(i, i + CHUNK_SIZE);
-      const q = query(vendasRef, where('itensComprados', 'in', chunk));
+      const q = query(
+        vendasRef,
+        where('itensComprados', 'in', chunk),
+        where('data', '>=', anoInicio),
+        where('data', '<', anoFim),
+      );
       chunks.push(getDocs(q));
     }
 

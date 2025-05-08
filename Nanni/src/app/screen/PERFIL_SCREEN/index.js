@@ -21,7 +21,7 @@ import { useAuth } from '../../components/contexts/AuthContext';
 import {
   convertImageToBase64,
   deconvertBase64ToImage,
-  isPngImage
+  isPngImage,
 } from '../../../utils/Base64Image';
 import Toast from 'react-native-toast-message';
 import { updateEmail } from 'firebase/auth';

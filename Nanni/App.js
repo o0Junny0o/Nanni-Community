@@ -87,7 +87,7 @@ function MainNavigator() {
   return (
     <MainStack.Navigator
       screenOptions={{ headerShown: false }}
-      initialRouteName="Tabs"
+      initialRouteName="Teste"
     >
       <MainStack.Screen name="Tabs" component={TabNavigator} />
       <MainStack.Screen name="ConfigurarForum" component={ConfigurarForumScreen} />
