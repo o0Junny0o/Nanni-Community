@@ -2,71 +2,94 @@ import globals from 'globals';
 import js from '@eslint/js';
 import react from 'eslint-plugin-react';
 import reactNative from 'eslint-plugin-react-native';
-import prettier from 'eslint-config-prettier';
 import importPlugin from 'eslint-plugin-import';
+import prettier from 'eslint-config-prettier';
 
-/** @type {import('eslint').Linter.Config[]} */
+/** @type {import('eslint').Linter.FlatConfig[]} */
 export default [
   {
-    files: ['**/*.{js,mjs,cjs,jsx}'], // Applies to JS and JSX files
+    ignores: ['**/node_modules/**'], // Ignorar node_modules para evitar erros de parse
+  },
+  // Configuração recomendada básica do ESLint
+  js.configs.recommended,
+  {
+    files: ['**/*.{js,jsx}'],
+    ignores: ['**/node_modules/**'],
     languageOptions: {
+      parserOptions: {
+        requireConfigFile: false,
+        babelOptions: {
+          presets: ['@babel/preset-react'],
+        },
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
       globals: {
-        ...globals.node, // Adds Node.js globals
-        ...globals.browser, // Adds browser globals (useful for React Native)
+        ...globals.node,
+        ...globals.browser,
         __DEV__: 'readonly',
       },
-      parserOptions: {
-        ecmaFeatures: {
-          jsx: true, // Enable JSX parsing
-        },
-        ecmaVersion: 'latest', // Use the latest ECMAScript version
-        sourceType: 'module', // Use ES modules
-      },
+    },
+    plugins: {
+      react,
+      'react-native': reactNative,
+      import: importPlugin,
     },
     settings: {
       react: {
-        version: 'detect', // Automatically detect the React version
+        version: 'detect',
+      },
+      // Resolver de módulos:
+      'import/resolver': {
+        node: {
+          paths: ['node_modules'],
+          extensions: ['.js', '.jsx', '.ts', '.tsx'],
+        },
+        'react-native': {
+          paths: ['node_modules'],
+          extensions: ['.js', '.jsx', '.ts', '.tsx'],
+        },
       },
     },
-  },
-  js.configs.recommended, // Recommended config for JavaScript
-  {
-    plugins: {
-      react: react, // Plugin object for React
-    },
     rules: {
-      ...react.configs.recommended.rules, // Include recommended React rules
-    },
-  },
-  {
-    plugins: {
-      'react-native': reactNative, // Plugin object for React Native
-    },
-    rules: {
-      'react-native/no-unused-styles': 'error', // Prevents unused styles
-      'react-native/split-platform-components': 'error', // Splits components by platform
-      'react-native/no-inline-styles': 'error', // Prevents inline styles
-      'react-native/no-color-literals': 'error', // Prevents color literals
-      'react/react-in-jsx-scope': 'off', // No need to import React with JSX
-      'no-console': 'warn', // Warns for console.log()
-      'max-depth': ['warn', 3], // 🚨 Aviso com mais de 3 níveis de aninhamento
+      ...react.configs.recommended.rules,
+      // Regras de React Native
+      'react-native/no-unused-styles': 'error',
+      'react-native/split-platform-components': 'error',
+      'react-native/no-inline-styles': 'error',
+      'react-native/no-color-literals': 'error',
+
+      // Regras Gerais
+      'react/react-in-jsx-scope': 'off',
+      'no-console': 'warn',
+      'max-depth': ['warn', 3],
+      // 'complexity': ['warn', 5], // opcional
+
+      // Import
       'import/no-unresolved': [
         'error',
         {
-          caseSensitive: true, // Garantir que a verificação seja sensível a maiúsculas/minúsculas
+          caseSensitive: true,
         },
       ],
-      //'complexity': ['warn', 5], // (opcional) Limita complexidade ciclomática
+      'import/no-duplicates': 'error',
+      'import/named': 'error',
+      'import/default': 'error',
+      'import/namespace': 'off',
     },
   },
   {
-    plugins: {
-      import: importPlugin, // Adicionando o plugin import
+    files: ['src/service/firebase/conexao.js'],
+    rules: {
+      'import/named': 'off',
     },
   },
   {
     rules: {
-      ...prettier.rules, // Disable conflicting rules for Prettier
+      ...prettier.rules, // Desativa regras que conflitam com o Prettier
     },
   },
 ];

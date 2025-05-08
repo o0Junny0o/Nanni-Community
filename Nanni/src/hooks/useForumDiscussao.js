@@ -1,5 +1,5 @@
 import { collection, limit, query } from 'firebase/firestore';
-import { db } from '../service/firebase/Conexao';
+import { db } from '../service/firebase/conexao';
 import { useEffect, useState } from 'react';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import Discussao from '../model/Discussao';

@@ -1,5 +1,5 @@
 import { fetch } from 'expo/fetch';
-import { GIPHY_API_KEY } from '../firebase/Conexao';
+import { GIPHY_API_KEY } from '../firebase/conexao';
 
 const GIPHY_URL = 'https://api.giphy.com/v1/gifs/';
 

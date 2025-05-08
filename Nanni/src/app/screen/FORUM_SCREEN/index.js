@@ -135,8 +135,10 @@ const ForumScreen = ({ navigation }) => {
 
     if (sucesso) {
       alert('Tópico criado com sucesso!');
-      closeModal()
-      carregarTopicosDoForum()
+      setTopicoTitle('');
+      setTopicoDesc('');
+      carregarTopicosDoForum();
+      setModal(false); // Recarrega a lista após criar um novo tópico
     } else {
       alert('Erro ao criar o tópico. Tente novamente.');
     }
@@ -263,7 +265,7 @@ const ForumScreen = ({ navigation }) => {
                 <TouchableOpacity
                   onPress={() => handleDeleteTopico(item?.forumID)}
                 >
-                  <Text style={{ color: 'red', marginTop: 5 }}>Excluir</Text>
+                  <Text style={styles.deleteButton}>Excluir</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => modalForumConfig(item)}>
                   <Text style={{ color: 'blue', marginTop: 5 }}>Atualizar</Text>

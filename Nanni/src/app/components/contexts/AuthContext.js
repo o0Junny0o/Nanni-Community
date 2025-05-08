@@ -1,6 +1,9 @@
 import React, { createContext, useEffect, useState, useContext } from 'react';
-import { auth } from '../../../service/firebase/conexao';
+import { db, auth } from '../../../service/firebase/conexao';
+import { doc, getDoc } from 'firebase/firestore';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 import PropTypes from 'prop-types';
+import { USUARIOS_COLLECTION } from '../../../model/refsCollection';
 
 // Criação do contexto
 export const AuthContext = createContext(null);
@@ -10,23 +13,36 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(
-      (user) => {
-        setUser(user);
-        setLoading(false);
-      },
-      (error) => {
-        // eslint-disable-next-line
-        console.error('Erro de autenticação:', error);
-        setLoading(false);
-      },
-    );
+    const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
+      if (authUser) {
+        await authUser.reload();
+        try {
+          const userDoc = await getDoc(
+            doc(db, USUARIOS_COLLECTION, authUser.uid),
+          );
+          setUser((prev) => ({
+            ...prev,
+            ...authUser,
+            cargo: userDoc.data().cargo,
+          }));
+        } catch (e) {
+          console.error('Erro ao buscar dados do usuário:', e);
+          setUser(null);
+        }
+      } else {
+        setUser(null);
+      }
+      setLoading(false);
+    });
 
     return unsubscribe;
   }, []);
 
+  // Função de logout exposta pelo contexto
+  const logout = () => signOut(auth);
+
   return (
-    <AuthContext.Provider value={{ user, loading }}>
+    <AuthContext.Provider value={{ user, loading, logout }}>
       {children}
     </AuthContext.Provider>
   );

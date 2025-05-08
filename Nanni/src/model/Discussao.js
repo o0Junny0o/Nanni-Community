@@ -45,10 +45,7 @@ class Discussao {
 
   toFirestoreData() {
     // Transforma TAG
-    const retTag = (typeof this.tag === 'string') ?
-      TagNormalize(this.tag)
-      : '';
-
+    const retTag = typeof this.tag === 'string' ? TagNormalize(this.tag) : '';
 
     return {
       titulo: this.titulo,

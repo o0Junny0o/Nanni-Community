@@ -6,14 +6,17 @@ import {
   TouchableOpacity,
   Alert,
   SafeAreaView,
-  ActivityIndicator,
   Image,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import styles from './style';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../../service/firebase/conexao';
 import PropTypes from 'prop-types';
 import Toast from 'react-native-toast-message';
+
+import CarregandoOverlay from '../../components/overlay/CARREGANDO_OVERLAY/loadingOverlay';
 
 const logo = require('../../../assets/logo_nanni.png');
 
@@ -32,6 +35,7 @@ export default function Login({ navigation }) {
     setLoading(true);
 
     try {
+      Keyboard.dismiss();
       // Faz login com o Firebase Auth
       const userCredential = await signInWithEmailAndPassword(
         auth,
@@ -45,9 +49,7 @@ export default function Login({ navigation }) {
       await user.reload();
 
       // Verifica se o e-mail foi verificado
-      if (user.emailVerified) {
-        navigation.navigate('MainStack');
-      } else {
+      if (!user.emailVerified) {
         // Faz logout, já que o Firebase loga automaticamente
         await auth.signOut();
 
@@ -56,6 +58,8 @@ export default function Login({ navigation }) {
           text1: 'Verificação pendente!',
           text2: 'Por favor, verifique seu e-mail antes de fazer login.',
         });
+
+        return;
       }
     } catch (error) {
       let errorMessage = 'Erro ao fazer login. Tente novamente.';
@@ -86,56 +90,56 @@ export default function Login({ navigation }) {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        <Image source={logo} style={styles.logo} />
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.container}>
+          <Image source={logo} style={styles.logo} />
 
-        <Text style={styles.titulo}>Login</Text>
+          <Text style={styles.titulo}>Login</Text>
 
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          placeholderTextColor="#A349A4"
-          keyboardType="email-address"
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-        />
-
-        <View style={styles.passwordContainer}>
           <TextInput
-            style={styles.passwordInput}
-            placeholder="Senha"
+            style={styles.input}
+            placeholder="Email"
             placeholderTextColor="#A349A4"
-            secureTextEntry={!mostrarSenha}
-            value={senha}
-            onChangeText={setSenha}
+            keyboardType="email-address"
+            value={email}
+            onChangeText={setEmail}
             autoCapitalize="none"
           />
-          <TouchableOpacity onPress={() => setMostrarSenha(!mostrarSenha)}>
-            <Text style={styles.showPasswordText}>
-              {mostrarSenha ? 'Ocultar' : 'Mostrar'}
-            </Text>
+
+          <View style={styles.passwordContainer}>
+            <TextInput
+              style={styles.passwordInput}
+              placeholder="Senha"
+              placeholderTextColor="#A349A4"
+              secureTextEntry={!mostrarSenha}
+              value={senha}
+              onChangeText={setSenha}
+              autoCapitalize="none"
+            />
+            <TouchableOpacity onPress={() => setMostrarSenha(!mostrarSenha)}>
+              <Text style={styles.showPasswordText}>
+                {mostrarSenha ? 'Ocultar' : 'Mostrar'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {loading && <CarregandoOverlay />}
+
+          <TouchableOpacity
+            onPress={() => navigation.navigate('RecuperarSenha')}
+          >
+            <Text style={styles.forgotPasswordLink}>Esqueci a senha</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.botao} onPress={handleLogin}>
+            <Text style={styles.botaoTexto}>Entrar</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => navigation.navigate('Cadastro')}>
+            <Text style={styles.link}>Não possui uma conta? Cadastre-se</Text>
           </TouchableOpacity>
         </View>
-
-        {loading && (
-          <View style={styles.overlay}>
-            <ActivityIndicator size="large" color="#A349A4" />
-          </View>
-        )}
-
-        <TouchableOpacity onPress={() => navigation.navigate('RecuperarSenha')}>
-          <Text style={styles.forgotPasswordLink}>Esqueci a senha</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.botao} onPress={handleLogin}>
-          <Text style={styles.botaoTexto}>Entrar</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => navigation.navigate('Cadastro')}>
-          <Text style={styles.link}>Não possui uma conta? Cadastre-se</Text>
-        </TouchableOpacity>
-      </View>
+      </TouchableWithoutFeedback>
     </SafeAreaView>
   );
 }

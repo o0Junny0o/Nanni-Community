@@ -1,7 +1,7 @@
 import forumCreate from '../hooks/forum/forumCreate';
 import forumDelete from '../hooks/forum/forumDelete';
 import forumUpdate from '../hooks/forum/forumUpdate';
-import { FORUNS_COLLECTION } from './refsCollection'
+import { FORUNS_COLLECTION } from './refsCollection';
 
 // Model de Forum
 class Forum {
