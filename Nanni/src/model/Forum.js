@@ -5,26 +5,19 @@ import { FORUNS_COLLECTION } from './refsCollection';
 
 // Model de Forum
 class Forum {
-  forumID;
-  userRef;
-  forumName;
-  forumDesc;
-  forumRating;
-  reportComentarios;
-
   constructor({
     forumID,
     userRef,
     forumName,
     forumDesc,
-    forumRating,
+    classificacaoIndicativa,
     reportComentarios,
   }) {
     this.forumID = forumID;
     this.userRef = userRef;
     this.forumName = forumName;
     this.forumDesc = forumDesc;
-    this.forumRating = forumRating;
+    this.classificacaoIndicativa = classificacaoIndicativa;
     this.reportComentarios = reportComentarios ?? [];
   }
 
@@ -68,7 +61,7 @@ class Forum {
       userRef: this.userRef,
       forumName: this.forumName,
       forumDesc: this.forumDesc,
-      forumRating: this.forumRating,
+      classificacaoIndicativa: this.classificacaoIndicativa,
       reportComentarios: this.reportComentarios,
     };
   }
