@@ -3,17 +3,19 @@ import {
     View, 
     FlatList,
     TouchableOpacity,
+    TouchableWithoutFeedback,
+    Alert,
+    Pressable,
 } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context";
-import vForumDono from "./vForumDono";
-import styles from "./styles";
-import vForumSeguidos from "./vForumSeguidos";
+import {styles, forumSeguidosStyles, forumDonoStyles } from "./styles";
 import PropTypes from "prop-types";
 import { useAuth } from "../../components/contexts/AuthContext";
 import { useEffect, useState } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../../service/firebase/conexao";
-
+import forumList from "../../../hooks/forum/forumList";
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 
 export default function HomeScreen({ navigation }) {
@@ -32,12 +34,18 @@ export default function HomeScreen({ navigation }) {
             async function run() {
                 const userRef = doc(db, 'usuarios', user.uid);
                 const docSnap = await getDoc(userRef);
+                
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
     
-                if (!docSnap.exists()) return;
-                const data = docSnap.data();
-    
-                // setForumDono()
-                if(data.seguindo && data.seguindo.length > 0) setForumSeguidos(data.seguindo)
+                    // setForumDono()
+                    
+                    if(data.seguindo?.length > 0) { 
+                        const foruns = await forumList({ qIDs: data.seguindo})
+                        setForumSeguidos(foruns)
+                    }
+                }
+                
                 setLoading(false)
             }
     
@@ -65,36 +73,45 @@ export default function HomeScreen({ navigation }) {
         : undefined
     )
 
+
     return (
         <SafeAreaView style={styles.safeArea}>
             {loading ? (
                 <View style={styles.loadingScreen}>
                     <Text style={styles.loadingText}>Carregando...</Text>
                 </View>
-            ): (
-                <View>
-                    <View style={styles.container}>
-                        {(forumDono ? 
-                            <>
-                                <Text style={styles.pageTitle}>{titleForumDono}</Text>    
-                                {_sectionForumList(forumDono, vForumDono)}
-                            </>
-                        : null)}
+            ): (forumDono.length > 0 || forumSeguidos.length > 0) ? 
+                (
+                    <View style={{ flex: 1}}>
+                        <View style={styles.container}>
+                            {(forumDono && forumDono.length > 0 ? 
+                                <>
+                                    <Text style={styles.pageTitle}>{titleForumDono}</Text>    
+                                    {_sectionForumList(forumDono, vForumDono)}
+                                </>
+                            : null)}
 
-                        {(forumSeguidos ? 
-                            <>
-                                <Text style={styles.pageTitle}>{titleForumSeguidos}</Text>
-                                {_sectionForumList(forumSeguidos, vForumSeguidos)}
-                            </>
-                        : null)}
+                            {(forumSeguidos && forumSeguidos.length > 0 ? 
+                                <>
+                                    <Text style={styles.pageTitle}>{titleForumSeguidos}</Text>
+                                    {_sectionForumList(forumSeguidos, vForumSeguidos)}
+                                </>
+                            : null)}
+                        </View>
+                        {forumDono && forumDono.length > 0 ?
+                            (
+                                <TouchableOpacity
+                                    onPress={(e) => navigation.push('ConfigurarForum')}
+                                    style={styles.button}>
+                                        <Text style={styles.buttonTxt}>Criar Novo Fórum</Text>
+                                </TouchableOpacity>
+                            ) : null}
                     </View>
-                    <TouchableOpacity
-                        onPress={(e) => navigation.push('ConfigurarForum')}
-                        style={styles.button}>
-                            <Text style={styles.buttonTxt}>Criar Novo Fórum</Text>
-                    </TouchableOpacity>
-                </View>
-            )}
+                ): (
+                    <View style={styles.loadingScreen}>
+                        <Text style={styles.loadingText}>Clique em explorar para começar</Text>
+                    </View>
+                )}
         </SafeAreaView>
     )
 }
@@ -106,7 +123,7 @@ function _sectionForumList(list, funcCard) {
                 style={styles.section}
                 scrollEnabled={false}
                 data={list}
-                keyExtractor={(item) => item?.forumID}
+                keyExtractor={(item) => item.forumID}
                 
                 renderItem={({ item }) => funcCard(item) }
             />
@@ -114,6 +131,50 @@ function _sectionForumList(list, funcCard) {
     )
 }
 
+
+function vForumSeguidos({forumID, forumName, forumDesc}) {
+    if(!forumName && typeof forumName !== 'string') return;
+    if(!forumDesc && typeof forumDesc !== 'string') return;
+    if(!forumID) return;
+
+    return (
+        <TouchableWithoutFeedback
+            onPress={() => Alert.alert(`Olá ${forumID}`)} >
+                <View style={forumSeguidosStyles.container} >
+                    <Text style={forumSeguidosStyles.title}>{forumName}</Text>
+                    <Text style={forumSeguidosStyles.desc}>{forumDesc}</Text>
+                </View>
+        </TouchableWithoutFeedback>
+    )
+}
+
+function vForumDono({ forumID, forumName }) {
+    if(!forumName && typeof forumName !== 'string') return;
+    if(!forumID) return;
+
+    return (
+        <Pressable
+            onPress={(e) => Alert.alert(`Olá ${forumID}`)} >
+                <View style={forumDonoStyles.container}>
+                    <View style={forumDonoStyles.rows}>
+                        <Text style={forumDonoStyles.title}>{forumName}</Text>
+                        <Pressable
+                            style={forumDonoStyles.iconEdit}
+                            onPress={(e) => {
+                                e.stopPropagation();
+                                Alert.alert("TO CONFIG")
+                            }} >
+                                <Ionicons name="settings" size={24} color={colors.p3} />
+                        </Pressable>
+                    </View>
+                    <View style={forumDonoStyles.rows}>
+                        <Text style={forumDonoStyles.extra}>46 seguidores</Text>
+                        <Text style={forumDonoStyles.extra}>12/12/2020</Text>
+                    </View>
+                </View>
+        </Pressable>
+    )
+}
 
 
 HomeScreen.propTypes = {

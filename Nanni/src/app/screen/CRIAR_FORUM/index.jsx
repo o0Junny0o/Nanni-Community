@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Image, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import colors from "../../../utils/colors";
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -9,9 +9,11 @@ import PropTypes from "prop-types";
 import styles from "./styles";
 import { FlatList } from "react-native-gesture-handler";
 import TagNormalize from "../../../utils/TagNormalize";
+import * as ImagePicker from 'expo-image-picker';
+import { convertImageToBase64 } from "../../../utils/Base64Image";
 
 export default function ConfigurarForumScreen({ navigation, route }) {
-    const forumExemplo = undefined;
+    const forum = undefined;
 
     // User:
     const { user, userLoading, authLoading } = useAuth();
@@ -19,6 +21,7 @@ export default function ConfigurarForumScreen({ navigation, route }) {
     if(authLoading || !user) navigation.goBack()
 
     // Fórum:
+    const [forumAvatar, setForumAvatar] = useState('')
     const [forumNome, setForumNome] = useState('')
     const [forumFaixaEtaria, setForumFaixaEtaria] = useState()
     const [forumDesc, setForumDesc] = useState('')
@@ -29,8 +32,8 @@ export default function ConfigurarForumScreen({ navigation, route }) {
     const [cTags, setCTags] = useState('')
 
     // Titulos
-    const titlePage = "Novo Fórum"
-    const btnPage = "Criar"
+    const titlePage = forum ? `Editar ${forum.forumName}` : "Novo Fórum"
+    const btnPage = forum ? "Salvar" : "Criar"
 
     //
     async function criarForum() {
@@ -59,6 +62,8 @@ export default function ConfigurarForumScreen({ navigation, route }) {
         }
     }
 
+    
+
     function addForumTag() {
         if(cTags.length < 3) return;
         
@@ -74,10 +79,39 @@ export default function ConfigurarForumScreen({ navigation, route }) {
         setForumTags(nTags)
     }
 
+    async function changeForumAvatar() {
+        try {
+            let resultado = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: 'Images',
+                allowsEditing: true,
+                aspect: [1, 1],
+                quality: 1,
+            });
+    
+            if (!resultado.canceled) {
+                const uri = resultado.assets[0].uri;
+                setForumAvatar(uri)
+            }
+        } catch (error) {
+            console.error('Erro ao atualizar foto:', error);
+            alert('Erro ao salvar nova foto');
+        }
+    }
+
+
+
+
+
     return (
         <SafeAreaView style={styles.safeArea}>
             <View style={{ flex: 1}}>
                 <Text style={styles.pageTitle}>{titlePage}</Text>
+
+                <Image source={forumAvatar} />
+                <TouchableOpacity onPress={changeForumAvatar}>
+                    <Ionicons name="camera" size={24} color="white" />
+                </TouchableOpacity>
+
                 <TextInput 
                     onChangeText={setForumNome}
                     value={forumNome}
