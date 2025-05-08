@@ -9,6 +9,7 @@ import {
     Image,
 } from 'react-native';
 import styles from './style';
+
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '../../../service/firebase/conexao';
 import PropTypes from 'prop-types';
@@ -18,7 +19,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 const logo = require('../../../assets/logo_nanni.png');
 
 const RecuperarSenha = ({ navigation }) => {
-    const [email, setEmail] = useState(''); // Corrigido: useState('')
+    const [email, setEmail] = useState('');
     const [isEnviandoEmail, setIsEnviandoEmail] = useState(false);
 
     const handleEnviarEmail = async () => {
@@ -45,7 +46,6 @@ const RecuperarSenha = ({ navigation }) => {
             navigation.goBack();
         } catch (error) {
             let mensagemErro = 'Ocorreu um erro ao enviar o email. Tente novamente.';
-
             switch (error.code) {
                 case 'auth/user-not-found':
                     mensagemErro = 'Nenhum usuário encontrado com este email.';
@@ -57,7 +57,6 @@ const RecuperarSenha = ({ navigation }) => {
                     mensagemErro = 'Muitas tentativas. Tente novamente mais tarde.';
                     break;
             }
-
             Toast.show({
                 type: 'error',
                 text1: 'Erro',
@@ -72,10 +71,10 @@ const RecuperarSenha = ({ navigation }) => {
         <SafeAreaView style={styles.safeArea}>
             <View style={styles.container}>
                 <TouchableOpacity
-                    style={{ position: 'absolute', top: 20, left: 20, zIndex: 1 }}
-                    onPress={() => navigation.goBack()}
+                    style={styles.backButton}
+                    onPress={() => navigation.navigate('Login')}
                 >
-                    <Icon name="arrow-back" size={24} color="#071934" />
+                    <Icon name="arrow-back" size={28} color="#071934" />
                 </TouchableOpacity>
 
                 <Image source={logo} style={styles.logo} />
@@ -88,7 +87,7 @@ const RecuperarSenha = ({ navigation }) => {
                 <TextInput
                     style={styles.input}
                     placeholder="E-mail"
-                    placeholderTextColor={styles.input.borderColor}
+                    placeholderTextColor={styles.input.borderColor || '#B88CB4'} 
                     keyboardType="email-address"
                     value={email}
                     onChangeText={setEmail}
