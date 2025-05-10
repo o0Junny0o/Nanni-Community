@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Modal,
   TextInput,
+  Alert, // Importe o Alert
 } from 'react-native';
 import styles from './styles';
 import * as ImagePicker from 'expo-image-picker'; // 📷 Biblioteca para selecionar imagem
@@ -20,12 +21,16 @@ import { useAuth } from '../../components/contexts/AuthContext';
 import {
   convertImageToBase64,
   deconvertBase64ToImage,
+  isPngImage,
 } from '../../../utils/Base64Image';
+import Toast from 'react-native-toast-message';
 import { updateEmail } from 'firebase/auth';
 import CARREGAMENTO_SCREEN from '../CARREGAMENTO_SCREEN/index';
+import { USUARIOS_COLLECTION } from '../../../model/refsCollection';
+import { navigationRef } from '../../../../App';
 
 const PerfilUsuario = ({ navigation }) => {
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, logout } = useAuth();
   const [isLoading, setIsLoading] = useState(true); // Adicione este state
 
   const [nome, setNome] = useState('');
@@ -43,7 +48,7 @@ const PerfilUsuario = ({ navigation }) => {
       setIsLoading(true);
 
       try {
-        const userRef = doc(db, 'usuarios', user.uid);
+        const userRef = doc(db, USUARIOS_COLLECTION, user.uid);
         const docSnap = await getDoc(userRef);
 
         if (!docSnap.exists()) return;
@@ -108,7 +113,7 @@ const PerfilUsuario = ({ navigation }) => {
       }
 
       // Atualiza o Firestore
-      await updateDoc(doc(db, 'usuarios', user.uid), updates);
+      await updateDoc(doc(db, USUARIOS_COLLECTION, user.uid), updates);
 
       setModalVisible(false);
       alert('Alterações salvas com sucesso!');
@@ -120,10 +125,10 @@ const PerfilUsuario = ({ navigation }) => {
         alert('Este email já está em uso por outra conta');
       } else if (error.code === 'auth/requires-recent-login') {
         try {
-          await auth.signOut();
-          navigation.reset({
+          await logout();
+          navigationRef.current?.resetRoot({
             index: 0,
-            routes: [{ name: 'AuthStack' }],
+            routes: [{ name: 'Login' }],
           });
           alert('Sessão expirada. Faça login novamente para continuar');
         } catch (logoutError) {
@@ -155,11 +160,21 @@ const PerfilUsuario = ({ navigation }) => {
 
       if (!resultado.canceled) {
         const uri = resultado.assets[0].uri;
+
+        if (!isPngImage(uri)) {
+          Toast.show({
+            type: 'warning',
+            text1: 'Formato inválido!',
+            text2: 'Apenas imagens PNG são permitidas.',
+          });
+          return;
+        }
+
         const base64 = await convertImageToBase64(uri);
 
         if (base64) {
           // Referência ao documento do usuário
-          const userRef = doc(db, 'usuarios', user.uid);
+          const userRef = doc(db, USUARIOS_COLLECTION, user.uid);
 
           // Atualize apenas o campo avatar
           await updateDoc(userRef, {
@@ -173,6 +188,35 @@ const PerfilUsuario = ({ navigation }) => {
       console.error('Erro ao atualizar foto:', error);
       alert('Erro ao salvar nova foto');
     }
+  };
+
+  const handleLogout = () => {
+    Alert.alert(
+      'Logout',
+      'Tem certeza que deseja sair?',
+      [
+        {
+          text: 'Cancelar',
+          style: 'cancel',
+        },
+        {
+          text: 'Sair',
+          onPress: async () => {
+            try {
+              await logout();
+              navigationRef.current?.resetRoot({
+                index: 0,
+                routes: [{ name: 'Login' }],
+              });
+            } catch (error) {
+              console.error('Erro ao fazer logout:', error);
+              alert('Erro ao fazer logout. Tente novamente.');
+            }
+          },
+        },
+      ],
+      { cancelable: false },
+    );
   };
 
   return (
@@ -216,9 +260,12 @@ const PerfilUsuario = ({ navigation }) => {
           text="Histórico de Doações"
         />
         <BotaoPadrao
-          onPress={() => alert('Ir para tela de DADOS')}
+          onPress={() => {
+            alert('Ir para tela de DADOS');
+          }}
           text="Análise de Dados"
         />
+        <BotaoPadrao onPress={handleLogout} text="Logout" />
       </View>
 
       {/* MODAL PARA EDITAR INFORMAÇÕES */}
@@ -271,7 +318,6 @@ PerfilUsuario.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
     goBack: PropTypes.func.isRequired,
-    reset: PropTypes.func.isRequired,
   }).isRequired,
 };
 

@@ -102,7 +102,7 @@ const RecuperarSenha = ({ navigation }) => {
                     {isEnviandoEmail ? (
                         <ActivityIndicator size="small" color="#FFFFFF" />
                     ) : (
-                        <Text style={styles.botaoTexto}>Enviar Código</Text>
+                        <Text style={styles.botaoTexto}>Enviar Email</Text>
                     )}
                 </TouchableOpacity>
             </View>

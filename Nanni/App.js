@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, createRef } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { ConnectionProvider } from './src/app/components/contexts/ConexaoContext';
@@ -10,6 +10,7 @@ import {
 import Toast from 'react-native-toast-message';
 import { toastConfig } from './src/app/components/toasts/ToastConfig';
 import { requestNotificationPermissions } from './src/utils/Notifications';
+//import { bulkFromJSON } from './src/scripts/teste';
 
 // Importa as telas
 import Login from './src/app/screen/LOGIN_SCREEN/index';
@@ -19,11 +20,24 @@ import RecuperarSenha from './src/app/screen/RECUPERAR_SENHA_SCREEN/index';
 import PerfilUsuario from './src/app/screen/PERFIL_SCREEN/index';
 import Forum from './src/app/screen/FORUM_SCREEN/index';
 import TopicoScreen from './src/app/screen/TOPICOS_SCREEN/index';
+import TESTE from './src/app/screen/TESTE_SCREEN/index';
+import HomeScreen from './src/app/screen/HOME/index'
+
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
+// Importar a Tabbar
+import customTabBarStyle from './src/app/components/TabBarStyle';
+import ExplorarScreen from './src/app/screen/EXPLORAR';
+import ConfigurarForumScreen from './src/app/screen/CRIAR_FORUM';
+
 
 // Criação dos Stacks
 const Stack = createStackNavigator();
 const AuthStack = createStackNavigator();
 const MainStack = createStackNavigator();
+const TabStack = createBottomTabNavigator();
+
+export const navigationRef = createRef();
 
 export default function App() {
   // Solicita permissões ao iniciar o app
@@ -33,7 +47,7 @@ export default function App() {
   return (
     <ConnectionProvider>
       <AuthProvider>
-        <NavigationContainer>
+        <NavigationContainer ref={navigationRef}>
           <RootNavigator />
         </NavigationContainer>
         <Toast config={toastConfig} />
@@ -46,7 +60,10 @@ export default function App() {
 // Stack para telas de autenticação (Login, Cadastro e recuperação de senha)
 function AuthNavigator() {
   return (
-    <AuthStack.Navigator screenOptions={{ headerShown: false }}>
+    <AuthStack.Navigator
+      screenOptions={{ headerShown: false }}
+      initialRouteName="Login"
+    >
       <AuthStack.Screen name="Login" component={Login} />
       <AuthStack.Screen name="Cadastro" component={Cadastro} />
       <AuthStack.Screen name="RecuperarSenha" component={RecuperarSenha} />
@@ -54,12 +71,28 @@ function AuthNavigator() {
   );
 }
 
+
+
+function TabNavigator() {
+  return (
+    <TabStack.Navigator screenOptions={customTabBarStyle}>
+      <TabStack.Screen name="Home" component={HomeScreen} />
+      <TabStack.Screen name="Explorar" component={ExplorarScreen} />
+    </TabStack.Navigator>
+  )
+}
+
 // Stack as telas principais
 function MainNavigator() {
   return (
-    <MainStack.Navigator screenOptions={{ headerShown: false }}>
+    <MainStack.Navigator
+      screenOptions={{ headerShown: false }}
+      initialRouteName="Teste"
+    >
+      <MainStack.Screen name="Tabs" component={TabNavigator} />
+      <MainStack.Screen name="ConfigurarForum" component={ConfigurarForumScreen} />
+      <MainStack.Screen name="Teste" component={TESTE} />
       <MainStack.Screen name="Forum" component={Forum} />
-      <MainStack.Screen name="PerfilUsuario" component={PerfilUsuario} />
       <MainStack.Screen name="TopicoScreen" component={TopicoScreen} />
     </MainStack.Navigator>
   );
