@@ -104,6 +104,14 @@ const forumDonoStyles = StyleSheet.create({
         paddingVertical: 5,
         paddingLeft: 10,
     },
+    avatar: { 
+        width: 60, 
+        height: 60, 
+        borderRadius: 75, 
+        backgroundColor: colors.overlayBackground, 
+        borderWidth: .5, 
+        borderColor: colors.p2,
+    },
     rows: {
         flexDirection: "row", 
         justifyContent: "space-between"

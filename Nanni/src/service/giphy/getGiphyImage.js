@@ -19,12 +19,10 @@ async function getGiphy({ uri }) {
     const data = await resp.json();
 
     if (!Array.isArray(data.data)) {
-      return [data.data.images.original.url];
+      return [data.data];
     }
 
     return data.data
-      .map((imgData) => imgData.images.original.url)
-      .filter(Boolean);
   } catch (err) {
     console.error('ERROR in getGiphy : ' + err);
     return [];

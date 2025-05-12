@@ -1,9 +1,6 @@
 import getGiphy from './getGiphyImage';
 
-class GiphyService {
-  rating;
-  extra_uri;
-
+export default class GiphyService {
   constructor() {
     this.rating = 'g';
     this.extra_uri = `&rating=${this.rating}`;
@@ -24,6 +21,11 @@ class GiphyService {
     return getGiphy({ uri: giphyReference });
   }
 
+  getSearch({ q, limit, offset}) {
+    const giphyReference = `search?api_key=[*]&q=${q}&limit=${limit}&offset=${offset}&bundle=messaging_non_clips${this.extra_uri}`;
+    return getGiphy({ uri: giphyReference });
+  }
+
   setRating({ rating = 'g' }) {
     if (['g', 'pg', 'pg-13', 'r'].indexOf(rating) !== -1) {
       this.rating = rating;
@@ -32,6 +34,6 @@ class GiphyService {
   }
 
   setExtraURI() {
-    this.extra_uri = `&rating=${this.rating}&country_code=${this.country_code}`;
+    this.extra_uri = `&rating=${this.rating}`;
   }
 }

@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Image, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { useEffect, useState } from "react";
+import { Alert, Image, KeyboardAvoidingView, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import colors from "../../../utils/colors";
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -10,20 +10,23 @@ import styles from "./styles";
 import { FlatList } from "react-native-gesture-handler";
 import TagNormalize from "../../../utils/TagNormalize";
 import * as ImagePicker from 'expo-image-picker';
-import { convertImageToBase64 } from "../../../utils/Base64Image";
+import { Picker } from '@react-native-picker/picker'
+import { convertImageToBase64, deconvertBase64ToImage } from "../../../utils/Base64Image";
+import forumQuery from "../../../hooks/forum/forumQuery";
 
 export default function ConfigurarForumScreen({ navigation, route }) {
-    const forum = undefined;
-
+    const params = route.params;
+    
     // User:
     const { user, userLoading, authLoading } = useAuth();
     // > Verificação:
     if(authLoading || !user) navigation.goBack()
 
+    const faixas = Forum.classificacaoIndicativa;
     // Fórum:
     const [forumAvatar, setForumAvatar] = useState('')
     const [forumNome, setForumNome] = useState('')
-    const [forumFaixaEtaria, setForumFaixaEtaria] = useState()
+    const [forumFaixaEtaria, setForumFaixaEtaria] = useState(faixas?.[0] ?? '')
     const [forumDesc, setForumDesc] = useState('')
     const [forumTags, setForumTags] = useState([])
     // 
@@ -32,37 +35,93 @@ export default function ConfigurarForumScreen({ navigation, route }) {
     const [cTags, setCTags] = useState('')
 
     // Titulos
-    const titlePage = forum ? `Editar ${forum.forumName}` : "Novo Fórum"
-    const btnPage = forum ? "Salvar" : "Criar"
+    const [titulos, setTitulos] = useState({
+        titlePage: "Criação de Fórum", 
+        btnPage: "Criar",
+        existe: false,
+    })
+    
+    
+    // Carregar Fórum
+    useEffect(() => {
+        async function run() {
+            if(!params) return;
+            setLoading(true)
+            
+            const forum = await forumQuery({ forumID: params.forumID })
+            if(forum) {
+                // dados
+                const fAvatar = forum.avatar
+                if(fAvatar) { 
+                    setForumAvatar(deconvertBase64ToImage(forum.avatar).uri)
+                }
+                setForumNome(forum.forumName)
+                setForumFaixaEtaria(forum.classificacaoIndicativa)
+                setForumDesc(forum.forumDesc)
+                setForumTags(forum.tagsDisponiveis)
+                // titulos
+                setTitulos(prev => ({
+                    ...prev,
+                    titlePage: `Editar ${forum.forumName}`,
+                    btnPage: "Salvar",
+                    existe: true 
+                }))
+            } 
 
-    //
-    async function criarForum() {
-        if(forumNome.length < 3) return;
-        if(forumFaixaEtaria.length < 1) return;
-        if(forumTags.length < 1) return;
-
-        setLoading(true)
-        
-        const fr = new Forum({
-            forumName: forumNome,
-            forumDesc: forumDesc,
-            userRef: user.uid,
-            classificacaoIndicativa: "pg",            
-            // forumTags: forumTags,
-        })
-
-        const resp = await fr.create()
-        
-        
-        setLoading(false)
-        if(resp) {
-            navigation.goBack()
-        } else {
-            console.log("ERRO AO CRIAR")
+            setLoading(false)
         }
+
+        run()
+    }, [])
+    
+    //
+    async function criarForum(fr) {        
+        return await fr.create()
     }
 
+    async function atualizarForum(fr) {
+        return await fr.update()
+    }
     
+    async function eventHandler(e) {
+        if(forumNome.length < 3) return;
+        if(forumFaixaEtaria == '') return;
+        if(forumTags.length < 1) return;
+        setLoading(true)
+        
+        try {
+            
+            const fr = new Forum({
+                forumName: forumNome,
+                forumDesc: forumDesc,
+                userRef: user.uid,
+                classificacaoIndicativa: forumFaixaEtaria,            
+                tagsDisponiveis: forumTags,
+            })
+
+            
+            if(forumAvatar && forumAvatar !== '') {
+                fr.setAvatar(await convertImageToBase64(forumAvatar))
+            }
+            
+            if(titulos.existe) {
+                fr.setID(params.forumID)
+            }
+            
+            
+            const resp = titulos.existe ? await atualizarForum(fr) : await criarForum(fr)
+            
+            if(resp) { 
+                navigation.goBack()
+            } else{ 
+                Alert.alert("Erro Inesperado", "Houve um erro ao tentar registrar Fórum")
+            }
+        } catch(err) {
+            Alert.alert("Erro ao registrar Fórum", err)
+        }
+
+        setLoading(false)
+    }
 
     function addForumTag() {
         if(cTags.length < 3) return;
@@ -99,18 +158,18 @@ export default function ConfigurarForumScreen({ navigation, route }) {
     }
 
 
-
-
-
     return (
         <SafeAreaView style={styles.safeArea}>
-            <View style={{ flex: 1}}>
-                <Text style={styles.pageTitle}>{titlePage}</Text>
-
-                <Image source={forumAvatar} />
-                <TouchableOpacity onPress={changeForumAvatar}>
-                    <Ionicons name="camera" size={24} color="white" />
-                </TouchableOpacity>
+            <KeyboardAvoidingView behavior={undefined}>
+                <Text style={styles.pageTitle}>{titulos.titlePage}</Text>
+                
+                <View style={styles.avatarView}>
+                    <TouchableOpacity
+                        onPress={changeForumAvatar}>
+                            <Image source={{ uri: forumAvatar}} style={styles.avatar} />
+                            <Ionicons name="camera" size={16} style={styles.avatarIcon}/>
+                    </TouchableOpacity>
+                </View>
 
                 <TextInput 
                     onChangeText={setForumNome}
@@ -125,14 +184,20 @@ export default function ConfigurarForumScreen({ navigation, route }) {
                     multiline={true}
                     placeholder="Descrição"
                     editable={!loading}
-                    style={[styles.textInput, styles.multilineTextInput, loading ? styles.textInputInactive : null]} />
+                    style={[styles.textInput, styles.multilineTextInput, loading ? styles.textInputInactive: null]} />
 
-                <TextInput 
-                    onChangeText={setForumFaixaEtaria}
-                    value={forumFaixaEtaria}
-                    placeholder="Classificação Indicativa"
-                    editable={!loading}
-                    style={[styles.textInput, loading ? styles.textInputInactive : null]} />
+                <View style={[styles.textInput, styles.pickerView, loading ? styles.textInputInactive: null]}>
+                    <Picker
+                        selectedValue={faixas ? faixas[0] : ''}
+                        enabled={!loading && Array.isArray(faixas) && faixas.length > 0}
+                        onValueChange={(itemValue, itemIndex) =>
+                            setForumFaixaEtaria(itemValue)
+                        }>
+                            {faixas && faixas.map((item, index) => (
+                                <Picker.Item key={index} label={item} value={item} />
+                            ))}
+                    </Picker>
+                </View>
                 
         
                 {/* [TAGS] */}
@@ -140,6 +205,7 @@ export default function ConfigurarForumScreen({ navigation, route }) {
                 <View style={styles.tagsSection}>
                     <View style={[tagChipStyle.container, tagChipStyle.containerInput]}>
                         <Pressable
+                            enabled={!loading}
                             onPress={(e) => { addForumTag()}} >
                                 <Ionicons name="add" size={20} color={colors.p3} />
                         </Pressable>
@@ -147,12 +213,15 @@ export default function ConfigurarForumScreen({ navigation, route }) {
                             onChangeText={setCTags}
                             value={cTags}
                             multiline={false}
+                            enabled={!loading}
                             style={[tagChipStyle.text, tagChipStyle.textInput]}/>
                     </View>
                     <FlatList
                         data={forumTags}
                         keyExtractor={(item, index) => index.toString()}
-                        scrollEnabled={false}
+                        scrollEnabled={true}
+                        enabled={!loading}
+                        horizontal
                         renderItem={({ item }) => (
                             <View style={tagChipStyle.container}>
                                 <Pressable
@@ -164,14 +233,13 @@ export default function ConfigurarForumScreen({ navigation, route }) {
                         )} 
                     />
                 </View>
-            </View>
-            <Pressable
-                onPress={(e) => {
-                    criarForum()
-                }}
-                style={styles.button}>
-                    <Text style={styles.buttonTxt}>{btnPage}</Text>
-            </Pressable>
+                <Pressable
+                    onPress={eventHandler}
+                    style={[styles.button, {marginTop: 60}]}>
+                        <Text style={styles.buttonTxt}>{titulos.btnPage}</Text>
+                </Pressable>
+            </KeyboardAvoidingView>
+            
         </SafeAreaView>
     )
 }

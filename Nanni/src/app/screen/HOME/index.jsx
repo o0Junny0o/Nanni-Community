@@ -6,27 +6,36 @@ import {
     TouchableWithoutFeedback,
     Alert,
     Pressable,
+    ScrollView,
+    Image,
 } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useEffect, useState } from "react";
+import { useNavigation } from '@react-navigation/native'
 import {styles, forumSeguidosStyles, forumDonoStyles } from "./styles";
 import PropTypes from "prop-types";
 import { useAuth } from "../../components/contexts/AuthContext";
-import { useEffect, useState } from "react";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, serverTimestamp, Timestamp } from "firebase/firestore";
 import { db } from "../../../service/firebase/conexao";
 import forumList from "../../../hooks/forum/forumList";
 import Ionicons from '@expo/vector-icons/Ionicons';
+import colors from "../../../utils/colors";
+import { deconvertBase64ToImage } from "../../../utils/Base64Image";
+import DChat from "../../components/chat";
 
 
 export default function HomeScreen({ navigation }) {
 
     const [forumSeguidos, setForumSeguidos] = useState([])
     const [forumDono, setForumDono] = useState([])
+    const [isDev, setIsDev] = useState(false)
     const [loading, setLoading] = useState(true)
 
     // User:
     const { user, userLoading, authLoading } = useAuth();
     // > Verificação:
+
+    
     useEffect(() => {
         if(authLoading || !user) {
             navigation.navigate('AuthStack')
@@ -37,15 +46,26 @@ export default function HomeScreen({ navigation }) {
                 
                 if (docSnap.exists()) {
                     const data = docSnap.data();
-    
-                    // setForumDono()
                     
+                    if(data.cargo) {
+                        setIsDev(Boolean(data.cargo))
+
+                        const snapForuns = await forumList({ qUserRef: userRef })
+                        
+                        if(snapForuns && snapForuns.length > 0) { 
+                            setForumDono(snapForuns)
+                        }
+                    }
+
                     if(data.seguindo?.length > 0) { 
                         const foruns = await forumList({ qIDs: data.seguindo})
                         setForumSeguidos(foruns)
                     }
                 }
                 
+                
+
+
                 setLoading(false)
             }
     
@@ -84,21 +104,37 @@ export default function HomeScreen({ navigation }) {
                 (
                     <View style={{ flex: 1}}>
                         <View style={styles.container}>
-                            {(forumDono && forumDono.length > 0 ? 
-                                <>
-                                    <Text style={styles.pageTitle}>{titleForumDono}</Text>    
-                                    {_sectionForumList(forumDono, vForumDono)}
-                                </>
-                            : null)}
+                            <ScrollView>
+                                {(isDev && forumDono && forumDono.length > 0 ? 
+                                    <>
+                                        <Text style={styles.pageTitle}>{titleForumDono}</Text>    
+                                        <FlatList 
+                                            style={styles.section}
+                                            scrollEnabled={false}
+                                            data={forumDono}
+                                            keyExtractor={(item) => item.forumID}
+                                            
+                                            renderItem={({ item }) => <VForumDono {...item} /> }
+                                        />
+                                    </>
+                                : null)}
 
-                            {(forumSeguidos && forumSeguidos.length > 0 ? 
-                                <>
-                                    <Text style={styles.pageTitle}>{titleForumSeguidos}</Text>
-                                    {_sectionForumList(forumSeguidos, vForumSeguidos)}
-                                </>
-                            : null)}
+                                {(forumSeguidos && forumSeguidos.length > 0 ? 
+                                    <>
+                                        <Text style={styles.pageTitle}>{titleForumSeguidos}</Text>
+                                        <FlatList 
+                                            style={styles.section}
+                                            scrollEnabled={false}
+                                            data={forumSeguidos}
+                                            keyExtractor={(item) => item.forumID}
+                                            
+                                            renderItem={({ item }) => <VForumSeguidos {...item} />}
+                                        />
+                                    </>
+                                : null)}
+                            </ScrollView>
                         </View>
-                        {forumDono && forumDono.length > 0 ?
+                        {isDev ?
                             (
                                 <TouchableOpacity
                                     onPress={(e) => navigation.push('ConfigurarForum')}
@@ -112,27 +148,14 @@ export default function HomeScreen({ navigation }) {
                         <Text style={styles.loadingText}>Clique em explorar para começar</Text>
                     </View>
                 )}
+
+            <DChat useRef={user.uid} discussaoPath={"/foruns/YRysh2NmguCosrq8HVzN/discussao/ZnLXVEaWiCzEZuUL9j3R"}/>
         </SafeAreaView>
     )
 }
 
 
-function _sectionForumList(list, funcCard) {
-    return (
-        <FlatList 
-                style={styles.section}
-                scrollEnabled={false}
-                data={list}
-                keyExtractor={(item) => item.forumID}
-                
-                renderItem={({ item }) => funcCard(item) }
-            />
-        
-    )
-}
-
-
-function vForumSeguidos({forumID, forumName, forumDesc}) {
+function VForumSeguidos({forumID, forumName, forumDesc}) {
     if(!forumName && typeof forumName !== 'string') return;
     if(!forumDesc && typeof forumDesc !== 'string') return;
     if(!forumID) return;
@@ -148,28 +171,31 @@ function vForumSeguidos({forumID, forumName, forumDesc}) {
     )
 }
 
-function vForumDono({ forumID, forumName }) {
+function VForumDono({ forumID, avatar, forumName, data }) {
     if(!forumName && typeof forumName !== 'string') return;
     if(!forumID) return;
+    if(!(data instanceof Timestamp)) return;
+
 
     return (
         <Pressable
             onPress={(e) => Alert.alert(`Olá ${forumID}`)} >
                 <View style={forumDonoStyles.container}>
                     <View style={forumDonoStyles.rows}>
+                        <Image source={deconvertBase64ToImage(avatar)} style={forumDonoStyles.avatar}/>
                         <Text style={forumDonoStyles.title}>{forumName}</Text>
                         <Pressable
                             style={forumDonoStyles.iconEdit}
                             onPress={(e) => {
-                                e.stopPropagation();
-                                Alert.alert("TO CONFIG")
+                                navigation.push('ConfigurarForum', {
+                                    forumID: forumID,
+                                })
                             }} >
                                 <Ionicons name="settings" size={24} color={colors.p3} />
                         </Pressable>
                     </View>
-                    <View style={forumDonoStyles.rows}>
-                        <Text style={forumDonoStyles.extra}>46 seguidores</Text>
-                        <Text style={forumDonoStyles.extra}>12/12/2020</Text>
+                    <View style={[forumDonoStyles.rows, {justifyContent: 'flex-end'}]}>
+                        {data && <Text style={forumDonoStyles.extra}>{data.toDate().toLocaleDateString("pt-br")}</Text>}
                     </View>
                 </View>
         </Pressable>
