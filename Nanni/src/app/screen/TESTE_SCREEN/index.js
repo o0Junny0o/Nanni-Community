@@ -7,39 +7,32 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { styles } from './style';
 
 export default function TESTE() {
-    const [selectedJogo, setSelectedJogo] = useState('Jogo 1');
+    const { jogoSelecionado: jogoNavegado } = route.params;
+
     const [selectedAno, setSelectedAno] = useState('2024');
     const [vendas, setVendas] = useState({});
-    const [isJogoDropdownOpen, setIsJogoDropdownOpen] = useState(false);
+
     const [isAnoDropdownOpen, setIsAnoDropdownOpen] = useState(false);
-    const [dropdownAnimation] = useState(new Animated.Value(0));
     const [anoDropdownAnimation] = useState(new Animated.Value(0));
     const { user } = useAuth();
 
-    const jogos = ['Jogo 1', 'Jogo 2', 'Jogo 3'];
     const anos = ['2023', '2024', '2025'];
 
     useEffect(() => {
         const carregarVendas = async () => {
-            try {
-                const resultado = await calcularVendasPorJogo(user.uid, selectedAno);
-                setVendas(resultado);
-            } catch (error) {
-                console.error('Erro ao buscar vendas:', error);
+            if (user?.uid && jogoNavegado && selectedAno) {
+                try {
+                    const resultado = await calcularVendasPorJogo(user.uid, selectedAno);
+                    setVendas(resultado);
+                } catch (error) {
+                    console.error('Erro ao buscar vendas:', error);
+                    setVendas({});
+                }
             }
         };
 
         carregarVendas();
-    }, [user.uid, selectedAno]);
-
-      const toggleJogoDropdown = useCallback(() => {
-        setIsJogoDropdownOpen(prev => !prev);
-        Animated.timing(dropdownAnimation, {
-            toValue: isJogoDropdownOpen ? 0 : 1,
-            duration: 300,
-            useNativeDriver: false,
-        }).start();
-    }, [isJogoDropdownOpen, dropdownAnimation]);
+    }, [user?.uid, jogoNavegado, selectedAno]);
 
     const toggleAnoDropdown = useCallback(() => {
         setIsAnoDropdownOpen(prev => !prev);
@@ -50,21 +43,16 @@ export default function TESTE() {
         }).start();
     }, [isAnoDropdownOpen, anoDropdownAnimation]);
 
-    const dropdownHeight = dropdownAnimation.interpolate({
-        inputRange: [0, 1],
-        outputRange: [0, jogos.length * 40],
-    });
-
     const anoDropdownHeight = anoDropdownAnimation.interpolate({
         inputRange: [0, 1],
         outputRange: [0, anos.length * 40],
     });
 
     const getChartData = () => {
-        if (!vendas[selectedJogo] || !vendas[selectedJogo][selectedAno]) {
+        if (!vendas[jogoNavegado] || !vendas[jogoNavegado][selectedAno]) {
             return [];
         }
-        const dadosDoAno = vendas[selectedJogo][selectedAno];
+        const dadosDoAno = vendas[jogoNavegado][selectedAno];
         return dadosDoAno.map(item => ({
             name: item.mes,
             value: item.vendas,
@@ -73,49 +61,33 @@ export default function TESTE() {
 
     const chartData = getChartData();
 
-    const acessos = vendas[selectedJogo]?.acessos || 0;
-    const downloads = vendas[selectedJogo]?.downloads || 0;
-    const compras = vendas[selectedJogo]?.compras || 0;
+    const acessos = vendas[jogoNavegado]?.acessos || 0;
+    const downloads = vendas[jogoNavegado]?.downloads || 0;
+    const compras = vendas[jogoNavegado]?.compras || 0;
+
+    if (!user) {
+        return (
+            <SafeAreaView style={styles.safe}>
+                <View style={styles.view}>
+                    <Text style={styles.loadingText}>Usuário não autenticado.</Text>
+                </View>
+            </SafeAreaView>
+        );
+    }
 
     return (
         <View style={styles.view}>
             <SafeAreaView style={styles.safe}>
                 <Text style={styles.title}>ANÁLISE DE DADOS</Text>
 
-                <View style={styles.jogoSelectContainer}>
-                    <TouchableOpacity
-                        style={styles.jogoSelectHeader}
-                        onPress={toggleJogoDropdown}
-                    >
-                        <Text style={styles.jogoSelectText}>{selectedJogo}</Text>
-                        <Icon
-                            name={isJogoDropdownOpen ? 'arrow-drop-up' : 'arrow-drop-down'}
-                            size={24}
-                            color="#000"
-                        />
-                    </TouchableOpacity>
-                    <Animated.View style={{ height: dropdownHeight, overflow: 'hidden' }}>
-                        {isJogoDropdownOpen && (
-                            <View style={styles.jogoSelectList}>
-                                {jogos.map((jogo) => (
-                                    <TouchableOpacity
-                                        key={jogo}
-                                        style={styles.jogoSelectItem}
-                                         onPress={() => {
-                                            setSelectedJogo(jogo);
-                                            setIsJogoDropdownOpen(false);
-                                        }}
-                                    >
-                                        <Text style={styles.jogoSelectText}>{jogo}</Text>
-                                    </TouchableOpacity>
-                                ))}
-                            </View>
-                        )}
-                    </Animated.View>
+
+                <View style={styles.jogoDisplayContainer}>
+                    <Text style={styles.jogoDisplayTextTitle}>Jogo: </Text>
+                    <Text style={styles.jogoDisplayText}>{jogoNavegado}</Text>
                 </View>
 
                 <View style={styles.anoContainer}>
-                     <TouchableOpacity
+                    <TouchableOpacity
                         style={styles.jogoSelectHeader}
                         onPress={toggleAnoDropdown}
                     >
@@ -133,7 +105,7 @@ export default function TESTE() {
                                     <TouchableOpacity
                                         key={ano}
                                         style={styles.jogoSelectItem}
-                                         onPress={() => {
+                                        onPress={() => {
                                             setSelectedAno(ano);
                                             setIsAnoDropdownOpen(false);
                                         }}
