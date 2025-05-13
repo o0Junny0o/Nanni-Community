@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import colors from "../../../utils/colors";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Comentario from "../../../model/Comentario";
-import VGifView from "./GifView/VGiphyView";
+import VGifView from "./GifView/";
 import GiphyService from "../../../service/giphy/GiphyService";
 
 
@@ -36,7 +36,9 @@ export default function DChat({ discussaoPath, useRef }) {
 
 
     useEffect(() => {
-        setText(prev => prev + `[giphy:${gif}]`)
+        if(gif !== '') {
+            setText(prev => prev + `[giphy:${gif}]`)
+        }
     }, [gif])
 
     async function anexoPicker() {
@@ -89,7 +91,7 @@ export default function DChat({ discussaoPath, useRef }) {
     return (
         <View>
             {/* Grid de Gifs */}
-            {showGiphy ? <VGifView service={servGiphy} selection={setGif} show={setShowGiphy} /> : null}
+            {showGiphy && <VGifView selection={setGif} show={setShowGiphy} />}
 
             {/* Componentes de Chat */}
             <View style={styles.container}>

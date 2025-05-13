@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Dimensions, FlatList, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Dimensions, FlatList, TextInput, TouchableOpacity, View } from "react-native";
 import { VGifGridStyles } from "../styles";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Image } from "expo-image";
@@ -74,15 +74,10 @@ export default function VGifView({selection, show}) {
                             <Image
                                 source={item.images.original.webp} 
                                 style={VGifGridStyles.gifs} 
+                                contentFit="contain"
                             />
-                    </TouchableOpacity>                    
-            )} />
-
-            {/* <View style={[VGifGridStyles.resultView, {flex: 4, marginHorizontal: 'auto'}]}>
-                {gifs && gifs.length > 0 ? (
-                    gifs.map((g, i) => )
-                ): null}
-            </View> */}
+                    </TouchableOpacity>  
+                )} />
 
             {/* Logo */}
             <View style={VGifGridStyles.logoView}>

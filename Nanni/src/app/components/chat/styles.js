@@ -89,9 +89,18 @@ const VGifGridStyles = StyleSheet.create({
         paddingHorizontal: 10,
         backgroundColor: colors.p2,
     },
+    gifs: { 
+        height: 150, 
+        width: 180,
+    },
     logoView: {
-        alignSelf: 'center',
-        backgroundColor: colors.p6
+        width: "100%",
+        height: 36,
+        alignItems: 'center',
+    },
+    logoMark: {
+        width: "50%",
+        height: "100%"
     }
 })
 

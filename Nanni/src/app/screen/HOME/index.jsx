@@ -15,14 +15,12 @@ import { useNavigation } from '@react-navigation/native'
 import {styles, forumSeguidosStyles, forumDonoStyles } from "./styles";
 import PropTypes from "prop-types";
 import { useAuth } from "../../components/contexts/AuthContext";
-import { doc, getDoc, serverTimestamp, Timestamp } from "firebase/firestore";
+import { doc, getDoc, Timestamp } from "firebase/firestore";
 import { db } from "../../../service/firebase/conexao";
 import forumList from "../../../hooks/forum/forumList";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import colors from "../../../utils/colors";
 import { deconvertBase64ToImage } from "../../../utils/Base64Image";
-import DChat from "../../components/chat";
-import VComentario from "../../components/chat/comentario";
 
 
 export default function HomeScreen({ navigation }) {
@@ -149,8 +147,6 @@ export default function HomeScreen({ navigation }) {
                         <Text style={styles.loadingText}>Clique em explorar para começar</Text>
                     </View>
                 )}
-
-            <DChat useRef={user.uid} discussaoPath={"/foruns/YRysh2NmguCosrq8HVzN/discussao/ZnLXVEaWiCzEZuUL9j3R"}/>
         </SafeAreaView>
     )
 }
