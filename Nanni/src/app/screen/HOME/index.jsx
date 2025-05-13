@@ -22,6 +22,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import colors from "../../../utils/colors";
 import { deconvertBase64ToImage } from "../../../utils/Base64Image";
 import DChat from "../../components/chat";
+import VComentario from "../../components/chat/comentario";
 
 
 export default function HomeScreen({ navigation }) {

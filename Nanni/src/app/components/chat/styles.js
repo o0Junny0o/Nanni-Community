@@ -56,4 +56,43 @@ const styles = StyleSheet.create({
 })
 
 
-export default styles
+
+
+
+const VGifGridStyles = StyleSheet.create({
+    container: { 
+        marginBottom: 5, 
+        borderRadius: 8, 
+        marginHorizontal: 5,
+        padding: 16,
+        paddingTop: 20,
+        gap: 14,
+        backgroundColor: colors.p3, 
+    },
+    inputView: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 10,
+        paddingVertical: 4,
+        borderRadius: 16,
+        gap: 5,
+        backgroundColor: colors.p6,
+    },
+    inputText: {
+        flex: 1,
+    },
+    inputIcon: {
+        color: colors.p3,
+        opacity: .56,
+    },
+    resultView: {
+        paddingHorizontal: 10,
+        backgroundColor: colors.p2,
+    },
+    logoView: {
+        alignSelf: 'center',
+        backgroundColor: colors.p6
+    }
+})
+
+export { styles, VGifGridStyles}

@@ -1,12 +1,16 @@
 import { fetch } from 'expo/fetch';
-import { GIPHY_API_KEY } from '../firebase/conexao';
+import { giphy } from '../firebase/conexao';
 
 const GIPHY_URL = 'https://api.giphy.com/v1/gifs/';
 
 async function getGiphy({ uri }) {
-  if (!uri || typeof uri !== 'string' || uri.trim() === '') return null;
-
-  const reference = `${GIPHY_URL}${uri.replace('[*]', GIPHY_API_KEY)}`;
+  if (!uri || typeof uri !== 'string' || uri.trim() === '') return;
+  if (!giphy || typeof giphy !== 'string') {
+    console.error(`Chave de API GIPHY inválida : ${typeof giphy}`)
+    return;
+  }
+  
+  const reference = `${GIPHY_URL}${uri.replace('[*]', giphy)}`;
   try {
     const resp = await fetch(reference, {
       headers: { Accept: 'application/json' },
