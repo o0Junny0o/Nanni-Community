@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: colors.softLilac,
         padding: 10,
-        marginBottom: 5,
+        marginBottom: 15,
         borderRadius: 5,
         color: colors.black,
         fontFamily: fonts.roboto,
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: colors.softLilac,
         paddingHorizontal: 10,
-        marginBottom: 5,
+        marginBottom: 10,
         borderRadius: 5,
         width: '100%',
     },
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
         color: colors.black,
         fontFamily: fonts.roboto,
     },
-    showPasswordText: {
+    showPasswordText: { 
         color: colors.softLilac,
         fontWeight: 'bold',
         marginLeft: 10,
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
         width: '100%',
         fontFamily: fonts.roboto,
     },
-    touchable_opacity: {
+     touchable_opacity: {
         width: '100%',
         marginBottom: 5,
     },

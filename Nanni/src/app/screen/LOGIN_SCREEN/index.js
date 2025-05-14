@@ -116,8 +116,7 @@ export default function Login({ navigation }) {
                     onChangeText={setEmail}
                     autoCapitalize="none"
                 />
-
-<View>
+                <View>
                     <View style={styles.passwordContainer}>
                         <TextInput
                             style={[styles.passwordInput, { borderColor: styles.input.borderColor }]}
