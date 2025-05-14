@@ -18,6 +18,12 @@ A “Nanni?!” é um sistema pensado para solucionar problemas na comercializa�
 - [@CoracaoDeLeao](https://github.com/CoracaoDeLeao)
 - [@Somnel](https://github.com/Somnel)
 - Jeferson Ribeiro
+## Documentação de cores
 
-
-
+| Cor               | Hexadecimal                                                |
+| ----------------- | ---------------------------------------------------------------- |
+| MidnightBlue       | ![#071934](https://corhexa.com/png/100x100/071934) #071934 |
+| DarkRoyalBlue      | ![#163690](https://corhexa.com/png/100x100/163690) #163690 |
+| VividBlue       | ![#1D5DB5](https://corhexa.com/png/100x100/1D5DB5) #1D5DB5 |
+| MediumSkyBlue      | ![#5d90d6](https://corhexa.com/png/100x100/5d90d6) #5d90d6 |
+| SoftLilac       | ![#B88CB4](https://corhexa.com/png/100x100/B88CB4) #B88CB4 |
