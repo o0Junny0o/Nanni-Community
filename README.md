@@ -20,7 +20,4 @@ A “Nanni?!” é um sistema pensado para solucionar problemas na comercializa�
 - Jeferson Ribeiro
 
 
-## Documentação
-
-[Documentação da Empresa e Projeto](https://drive.google.com/file/d/1D2LNWdkccnOMLilm1WMqSPwbleVOb_8E/view?usp=drive_link)
 
