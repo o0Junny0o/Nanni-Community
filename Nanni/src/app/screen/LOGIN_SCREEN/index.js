@@ -9,7 +9,7 @@ import {
     ActivityIndicator,
     Image,
 } from 'react-native';
-import styles from './style';
+import styles from './style'; // Seus estilos existentes
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../../service/firebase/conexao';
 import PropTypes from 'prop-types';
@@ -18,6 +18,15 @@ import { Ionicons } from '@expo/vector-icons';
 
 const logo = require('../../../assets/logo_nanni.png');
 
+// Definição dos critérios de senha para reutilização
+const passwordRules = [
+    { id: 'length', text: '8 a 25 caracteres', regexFull: /^.{8,25}$/, regexPart: (val) => val.length >= 8 && val.length <= 25 },
+    { id: 'uppercase', text: '1 letra maiúscula', regexFull: /(?=.*[A-Z])/, regexPart: /[A-Z]/ },
+    { id: 'lowercase', text: '1 letra minúscula', regexFull: /(?=.*[a-z])/, regexPart: /[a-z]/ },
+    { id: 'number', text: '1 número', regexFull: /(?=.*\d)/, regexPart: /\d/ },
+    { id: 'special', text: '1 caractere especial (@$!%*?&)', regexFull: /(?=.*[\W_])/, regexPart: /[\W_]/ },
+];
+
 export default function Login({ navigation }) {
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
@@ -25,9 +34,29 @@ export default function Login({ navigation }) {
     const [loading, setLoading] = useState(false);
     const [senhaInvalidaTexto, setSenhaInvalidaTexto] = useState('');
 
-    const validarSenha = (senha) => {
+    const [passwordCriteria, setPasswordCriteria] = useState({
+        length: false,
+        uppercase: false,
+        lowercase: false,
+        number: false,
+        special: false,
+    });
+
+    const validarSenhaCompleta = (senhaInput) => {
         const regexSenha = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,25}$/;
-        return regexSenha.test(senha);
+        return regexSenha.test(senhaInput);
+    };
+
+    const checkPasswordCriteria = (senhaValue) => {
+        const criteriaMet = {};
+        passwordRules.forEach(rule => {
+            if (rule.id === 'length') {
+                criteriaMet[rule.id] = rule.regexPart(senhaValue);
+            } else {
+                criteriaMet[rule.id] = rule.regexPart.test(senhaValue);
+            }
+        });
+        return criteriaMet;
     };
 
     const handleLogin = async () => {
@@ -36,18 +65,14 @@ export default function Login({ navigation }) {
             return;
         }
 
-        if (!validarSenha(senha)) {
+        if (!validarSenhaCompleta(senha)) {
             setSenhaInvalidaTexto(
-                'A senha deve conter:\n' +
-                '- 8 a 25 caracteres\n' +
-                '- 1 letra maiúscula\n' +
-                '- 1 letra minúscula\n' +
-                '- 1 número\n' +
-                '- 1 caractere especial (@$!%*?&)'
+                'A senha não atende aos critérios:\n' +
+                passwordRules.map(rule => `- ${rule.text}`).join('\n')
             );
             return;
         } else {
-            setSenhaInvalidaTexto('');
+            setSenhaInvalidaTexto(''); 
         }
 
         setLoading(true);
@@ -66,7 +91,6 @@ export default function Login({ navigation }) {
                 navigation.navigate('MainStack');
             } else {
                 await auth.signOut();
-
                 Toast.show({
                     type: 'warning',
                     text1: 'Verificação pendente!',
@@ -75,7 +99,6 @@ export default function Login({ navigation }) {
             }
         } catch (error) {
             let errorMessage = 'Erro ao fazer login. Tente novamente.';
-
             switch (error.code) {
                 case 'auth/invalid-email':
                     errorMessage = 'Email inválido.';
@@ -100,11 +123,20 @@ export default function Login({ navigation }) {
         }
     };
 
+    const handleSenhaChange = (text) => {
+        setSenha(text);
+        const criteriaMet = checkPasswordCriteria(text);
+        setPasswordCriteria(criteriaMet);
+
+        if (senhaInvalidaTexto) {
+            setSenhaInvalidaTexto('');
+        }
+    };
+
     return (
         <SafeAreaView style={styles.safeArea}>
             <View style={styles.container}>
                 <Image source={logo} style={styles.logo} />
-
                 <Text style={styles.titulo}>LOGIN</Text>
 
                 <TextInput
@@ -124,21 +156,7 @@ export default function Login({ navigation }) {
                             placeholderTextColor={styles.input.borderColor}
                             secureTextEntry={!mostrarSenha}
                             value={senha}
-                            onChangeText={(text) => {
-                                setSenha(text);
-                                if (!validarSenha(text)) {
-                                    setSenhaInvalidaTexto(
-                                        'A senha deve conter:\n' +
-                                        '- 8 a 25 caracteres \n' +
-                                        '- 1 letra maiúscula \n' +
-                                        '- 1 letra minúscula \n' +
-                                        '- 1 número \n' +
-                                        '- 1 caractere especial (@$!%*?&)'
-                                    );
-                                } else {
-                                    setSenhaInvalidaTexto('');
-                                }
-                            }}
+                            onChangeText={handleSenhaChange}
                             autoCapitalize="none"
                         />
                         <TouchableOpacity onPress={() => setMostrarSenha(!mostrarSenha)}>
@@ -149,7 +167,26 @@ export default function Login({ navigation }) {
                             />
                         </TouchableOpacity>
                     </View>
-                    <Text style={styles.helperText}>A senha deve conter: 8 a 25 caracteres, 1 maiúscula, 1 minúscula, 1 número e 1 especial (@$!%*&).</Text>
+
+                    {/* Helper dinâmico da senha */}
+                    {senha.length > 0 && (
+                        <View style={styles.passwordHelperContainer}>
+                            {passwordRules.map((rule) => (
+                                <Text
+                                    key={rule.id}
+                                    style={[
+                                        styles.passwordHelperTextItem,
+                                        passwordCriteria[rule.id]
+                                            ? styles.passwordHelperTextValid
+                                            : styles.passwordHelperTextInvalid,
+                                    ]}
+                                >
+                                        {rule.text}
+                                </Text>
+                            ))}
+                        </View>
+                    )}
+
                     {senhaInvalidaTexto ? (
                         <Text style={styles.errorText}>{senhaInvalidaTexto}</Text>
                     ) : null}

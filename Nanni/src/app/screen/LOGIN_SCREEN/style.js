@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-const colors = {
+export const colors = {
     background: '#FFFFFF',
     mediumSkyBlue: '#5d90d6',
     darkRoyalBlue: '#163690',
@@ -9,10 +9,11 @@ const colors = {
     softLilac: '#B88CB4',
     helperText: '#ff0000',
     white: '#FFFFFF',
-    black: '#000000'
+    black: '#000000',
+    successGreen: '#28a745',
 };
 
-const fonts = {
+export const fonts = {
     monospaceExtrabold: 'monospace',
     robotoMonoBold: 'RobotoMono-Bold',
     roboto: 'Roboto-Regular',
@@ -59,7 +60,6 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: colors.softLilac,
         paddingHorizontal: 10,
-        marginBottom: 10,
         borderRadius: 5,
         width: '100%',
     },
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
         color: colors.black,
         fontFamily: fonts.roboto,
     },
-    showPasswordText: { 
+    showPasswordText: {
         color: colors.softLilac,
         fontWeight: 'bold',
         marginLeft: 10,
@@ -114,25 +114,34 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         zIndex: 10,
     },
-    helperText: {
-        color: colors.helperText,
-        fontSize: 12,
-        marginBottom: 10,
-        textAlign: 'left',
-        width: '100%',
-        fontFamily: fonts.roboto,
-    },
     errorText: {
         color: colors.helperText,
         fontSize: 12,
+        marginTop: 8,
         marginBottom: 10,
         textAlign: 'left',
         width: '100%',
         fontFamily: fonts.roboto,
     },
-     touchable_opacity: {
+    touchable_opacity: {
         width: '100%',
         marginBottom: 5,
+    },
+    passwordHelperContainer: {
+        width: '100%',
+        marginTop: 8,
+    },
+    passwordHelperTextItem: {
+        fontSize: 12,
+        fontFamily: fonts.roboto,
+        marginBottom: 4,
+        textAlign: 'left',
+    },
+    passwordHelperTextValid: {
+        color: colors.successGreen,
+    },
+    passwordHelperTextInvalid: {
+        color: colors.helperText,
     },
 });
 
