@@ -34,53 +34,50 @@ const ForumScreen = ({ navigation }) => {
   const [topicos, setTopicos] = useState([]);
   const [topicoTitle, setTopicoTitle] = useState('');
   const [topicoDesc, setTopicoDesc] = useState('');
-  
+
   const [fotoPerfil, setFotoPerfil] = useState('');
   // Modal Config:
   const [modal, setModal] = useState(false);
   const [modalConfig, setModalConfig] = useState({
-    titulo: "",
-    btn: "",
-    cancelar: "Cancelar",
-    placeholderNome: "Nome do Tópico",
-    placeholderDescricao: "Descrição",
+    titulo: '',
+    btn: '',
+    cancelar: 'Cancelar',
+    placeholderNome: 'Nome do Tópico',
+    placeholderDescricao: 'Descrição',
     callFunction: () => {},
-  })
+  });
 
   const closeModal = () => {
-    setModal(false)
+    setModal(false);
     setTopicoTitle('');
     setTopicoDesc('');
-    setModalConfig({})
-  }
+    setModalConfig({});
+  };
 
   const modalForumConfig = (forum) => {
     setModalConfig({
-      titulo: forum ? "Atualizar Fórum" : "Criar Fórum",
-      btn: forum ? "Atualizar Fórum" : "Criar novo tópico",
-      callFunction: forum ? 
-        () => handleUpdateTopico(forum) 
-        : CriarNovoTopico,
-      cancelar: "Cancelar",
-      placeholderNome: "Nome do Tópico",
-      placeholderDescricao: "Descrição",
-    })
+      titulo: forum ? 'Atualizar Fórum' : 'Criar Fórum',
+      btn: forum ? 'Atualizar Fórum' : 'Criar novo tópico',
+      callFunction: forum ? () => handleUpdateTopico(forum) : CriarNovoTopico,
+      cancelar: 'Cancelar',
+      placeholderNome: 'Nome do Tópico',
+      placeholderDescricao: 'Descrição',
+    });
 
-    if(forum instanceof Forum) {
+    if (forum instanceof Forum) {
       setTopicoTitle(forum.forumName);
-      setTopicoDesc(forum.forumDesc)
+      setTopicoDesc(forum.forumDesc);
     } else {
-      setTopicoTitle("");
-      setTopicoDesc("")
+      setTopicoTitle('');
+      setTopicoDesc('');
     }
 
-    setModal(true)  
-  }
-
+    setModal(true);
+  };
 
   const carregarTopicosDoForum = async () => {
     try {
-      const listaDeTopicos = await forumList({}); 
+      const listaDeTopicos = await forumList({});
       setTopicos(listaDeTopicos);
     } catch (error) {
       console.error('Erro ao carregar tópicos:', error);
@@ -112,7 +109,7 @@ const ForumScreen = ({ navigation }) => {
   }, [user]);
 
   const CriarNovoTopico = async () => {
-    console.log(`${topicoTitle.trim() === ''} | ${topicoDesc.trim() === ''}`)
+    console.log(`${topicoTitle.trim() === ''} | ${topicoDesc.trim() === ''}`);
 
     if (topicoTitle.trim() === '' || topicoDesc.trim() === '') {
       alert('Preencha todos os campos!');
@@ -149,7 +146,8 @@ const ForumScreen = ({ navigation }) => {
 
     if (filtrosAtivos.maisVistos) {
       topicosFiltrados.sort(
-        (a, b) => (b?.classificacaoIndicativa || 0) - (a?.classificacaoIndicativa || 0),
+        (a, b) =>
+          (b?.classificacaoIndicativa || 0) - (a?.classificacaoIndicativa || 0),
       );
     } else if (filtrosAtivos.maisRecentes) {
       topicosFiltrados.sort(
@@ -174,7 +172,7 @@ const ForumScreen = ({ navigation }) => {
       alert('Usuário não autenticado.');
       return;
     }
-    console.log(forumID)
+    console.log(forumID);
     const sucesso = await forumDelete({ forumID: forumID });
     if (sucesso) {
       alert(`Tópico com ID ${forumID} excluído com sucesso!`);
@@ -189,14 +187,13 @@ const ForumScreen = ({ navigation }) => {
       alert('Fórum não é válido.');
       return;
     }
-    
-    
-    modalForumConfig(forum)
 
-    const sucesso = await forum.update()
+    modalForumConfig(forum);
+
+    const sucesso = await forum.update();
     if (sucesso) {
       alert(`Fórum ${forum.forumName} atualizado com sucesso!`);
-      closeModal()
+      closeModal();
       carregarTopicosDoForum(); // Recarrega a lista após atualizar um tópico
     } else {
       alert('Erro ao atualizar o tópico. Verifique as permissões.');
@@ -269,7 +266,7 @@ const ForumScreen = ({ navigation }) => {
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => modalForumConfig(item)}>
                   <Text style={{ color: 'blue', marginTop: 5 }}>Atualizar</Text>
-                </TouchableOpacity> 
+                </TouchableOpacity>
               </View>
             )}
           />
@@ -277,31 +274,37 @@ const ForumScreen = ({ navigation }) => {
       )}
 
       <Modal visible={modal} transparent>
-          <TouchableOpacity
-            onPressOut={() => setModal(false)}
-            style={styles.modalContainer}
-          >
-            <TouchableWithoutFeedback>
-              <View style={styles.modalTopico}>
-                <Text style={styles.modalTitle}>{modalConfig.titulo}</Text>
-                <TextInput
-                  style={styles.modalTextInput}
-                  placeholder={modalConfig.placeholderNome}
-                  onChangeText={setTopicoTitle}
-                  value={topicoTitle}
-                />
-                <TextInput
-                  style={styles.modalTextInput}
-                  placeholder={modalConfig.placeholderDescricao}
-                  onChangeText={setTopicoDesc}
-                  value={topicoDesc}
-                />
-                <BotaoPadrao onPress={modalConfig.callFunction} text={modalConfig.btn} />
-                <BotaoPadrao onPress={() => setModal(false)} text={modalConfig.cancelar} />
-              </View>
-            </TouchableWithoutFeedback>
-          </TouchableOpacity>
-        </Modal>
+        <TouchableOpacity
+          onPressOut={() => setModal(false)}
+          style={styles.modalContainer}
+        >
+          <TouchableWithoutFeedback>
+            <View style={styles.modalTopico}>
+              <Text style={styles.modalTitle}>{modalConfig.titulo}</Text>
+              <TextInput
+                style={styles.modalTextInput}
+                placeholder={modalConfig.placeholderNome}
+                onChangeText={setTopicoTitle}
+                value={topicoTitle}
+              />
+              <TextInput
+                style={styles.modalTextInput}
+                placeholder={modalConfig.placeholderDescricao}
+                onChangeText={setTopicoDesc}
+                value={topicoDesc}
+              />
+              <BotaoPadrao
+                onPress={modalConfig.callFunction}
+                text={modalConfig.btn}
+              />
+              <BotaoPadrao
+                onPress={() => setModal(false)}
+                text={modalConfig.cancelar}
+              />
+            </View>
+          </TouchableWithoutFeedback>
+        </TouchableOpacity>
+      </Modal>
 
       <TouchableOpacity
         style={styles.createNewForumButton}

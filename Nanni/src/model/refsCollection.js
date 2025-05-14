@@ -5,3 +5,5 @@ export const COMENTARIOS_COLLECTION = 'comentarios';
 export const USUARIOS_COLLECTION = 'usuarios';
 export const DOACOES_COLLECTION = 'doacoes';
 export const VENDAS_COLLECTION = 'vendas';
+export const AVALIACOES_COLLECTION = 'avaliacoes';
+export const JOGOS_COLLECTION = 'jogos';

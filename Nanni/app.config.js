@@ -6,12 +6,12 @@ module.exports = {
     slug: 'Nanni',
     version: '1.0.0',
     orientation: 'portrait',
-    icon: './src/assets/icon.png',
+    icon: './src/assets/logo_nanni.png',
     userInterfaceStyle: 'light',
     newArchEnabled: true,
     owner: '',
     splash: {
-      image: './src/assets/splash-icon.png',
+      image: './src/assets/ic_logo_azul.png',
       resizeMode: 'contain',
       backgroundColor: '#ffffff',
     },
@@ -22,7 +22,7 @@ module.exports = {
     android: {
       package: 'com.nanni.community',
       adaptiveIcon: {
-        foregroundImage: './src/assets/ic_logo.png',
+        foregroundImage: './src/assets/ic_logo_azul.png',
         backgroundColor: '#ffffff',
       },
     },
@@ -33,7 +33,7 @@ module.exports = {
       [
         'expo-notifications',
         {
-          icon: './src/assets/ic_logo.png',
+          icon: './src/assets/ic_logo_azul.png',
           color: '#ffffff',
           androidMode: 'collapse', // Modo recomendado
           androidCollapsedTitle: 'Nanni', // Título quando recolhido
