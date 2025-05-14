@@ -63,7 +63,7 @@ function AuthNavigator() {
 
 function TabNavigator() {
   return (
-    <TabStack.Navigator screenOptions={customTabBarStyle}>
+    <TabStack.Navigator initialRouteName='Home' screenOptions={customTabBarStyle}>
       <TabStack.Screen name="PerfilUsuario" component={PerfilUsuario} 
       options={{
         tabBarIcon: ({color, size}) => <Feather name="user" color={color} size={size}/>
