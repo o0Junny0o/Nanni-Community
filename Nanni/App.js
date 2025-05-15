@@ -21,6 +21,7 @@ import PerfilUsuario from './src/app/screen/PERFIL_SCREEN/index';
 import Forum from './src/app/screen/FORUM_SCREEN/index';
 import TopicoScreen from './src/app/screen/TOPICOS_SCREEN/index';
 import TESTE from './src/app/screen/TESTE_SCREEN/index';
+import ListaJogos from './src/app/screen/LISTA_JOGOS_SCREEN';
 import HomeScreen from './src/app/screen/HOME/index';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -85,7 +86,7 @@ function MainNavigator() {
   return (
     <MainStack.Navigator
       screenOptions={{ headerShown: false }}
-      initialRouteName="Teste"
+      initialRouteName="Forum"
     >
       <MainStack.Screen name="Tabs" component={TabNavigator} />
       <MainStack.Screen
@@ -93,8 +94,10 @@ function MainNavigator() {
         component={ConfigurarForumScreen}
       />
       <MainStack.Screen name="Teste" component={TESTE} />
+      <MainStack.Screen name="ListaJogos" component={ListaJogos} />
       <MainStack.Screen name="Forum" component={Forum} />
       <MainStack.Screen name="TopicoScreen" component={TopicoScreen} />
+      <MainStack.Screen name="PerfilUsuario" component={PerfilUsuario} />
     </MainStack.Navigator>
   );
 }

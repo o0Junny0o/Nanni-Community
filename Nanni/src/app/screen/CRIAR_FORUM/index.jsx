@@ -18,7 +18,6 @@ import styles from './styles';
 import { FlatList } from 'react-native-gesture-handler';
 import TagNormalize from '../../../utils/TagNormalize';
 import * as ImagePicker from 'expo-image-picker';
-import { convertImageToBase64 } from '../../../utils/Base64Image';
 
 export default function ConfigurarForumScreen({ navigation, route }) {
   const forum = undefined;

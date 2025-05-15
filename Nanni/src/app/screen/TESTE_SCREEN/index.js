@@ -1,79 +1,151 @@
-import { useEffect, useState } from 'react';
-import { View, Text, SafeAreaView } from 'react-native';
-import ChartScreen from '../../components/graficos/ChartScreen';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, SafeAreaView, TouchableOpacity, Animated } from 'react-native';
 import { useAuth } from '../../components/contexts/AuthContext';
-import {
-  calcularVendasPorJogo,
-  getNumVendas,
-} from '../../../service/firebase/analytics/vendasService';
-import { getAvaAvg } from '../../../service/firebase/analytics/avaliacaoService';
-import DoacaoModel from '../../../model/Doacao/DoacaoModel';
-import { getViews } from '../../../service/firebase/analytics/viewsService';
+import { calcularVendasPorJogo } from '../../../service/firebase/analytics/vendasService';
+import { LineChartScreen } from '../../components/graficos/ChartScreen';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import Toast from 'react-native-toast-message';
-import styles from './style';
-
-import { Timestamp } from 'firebase/firestore';
-import { userRef } from '../../../utils/userRef';
+import { styles } from './style';
 
 export default function TESTE() {
-  const [vendas, setVendas] = useState({});
-  const { user } = useAuth();
+    const { jogoSelecionado: jogoNavegado } = route.params;
 
-  // Carregar dados ao montar o componente
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const resultado = await calcularVendasPorJogo(user.uid, 2024); // Await dentro de uma função async
-        setVendas(resultado);
+    const [selectedAno, setSelectedAno] = useState('2024');
+    const [vendas, setVendas] = useState({});
 
-        const vendasTotal = await getNumVendas(user.uid);
-        const views = await getViews(user.uid);
-        const media = await getAvaAvg(user.uid);
+    const [isAnoDropdownOpen, setIsAnoDropdownOpen] = useState(false);
+    const [anoDropdownAnimation] = useState(new Animated.Value(0));
+    const { user } = useAuth();
 
-        const userRefGive = userRef(user.uid);
-        const userRefTake = userRef(user.uid);
+    const anos = ['2023', '2024', '2025'];
 
-        const timestamp = Timestamp.now();
-        const isoString = timestamp.toDate().toISOString();
+    useEffect(() => {
+        const carregarVendas = async () => {
+            if (user?.uid && jogoNavegado && selectedAno) {
+                try {
+                    const resultado = await calcularVendasPorJogo(user.uid, selectedAno);
+                    setVendas(resultado);
+                } catch (error) {
+                    Toast.show({
+                        type: 'error',
+                        text1: 'Erro',
+                        text2: error,
+                    });
+                    console.error('Erro ao buscar vendas:', error);
+                    setVendas({});
+                }
+            }
+        };
 
-        const novaDoacao = new DoacaoModel({
-          userRefGive,
-          userRefTake,
-          data: isoString,
-          valor: 100.0,
-          metodoPag: 'PIX',
-        });
+        carregarVendas();
+    }, [user?.uid, jogoNavegado, selectedAno]);
 
-        //await novaDoacao.save();
+    const toggleAnoDropdown = useCallback(() => {
+        setIsAnoDropdownOpen(prev => !prev);
+        Animated.timing(anoDropdownAnimation, {
+            toValue: isAnoDropdownOpen ? 0 : 1,
+            duration: 300,
+            useNativeDriver: false,
+        }).start();
+    }, [isAnoDropdownOpen, anoDropdownAnimation]);
 
-        const doacoesFeitas = await DoacaoModel.fetchByUserRefGive(userRefGive);
+    const anoDropdownHeight = anoDropdownAnimation.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, anos.length * 40],
+    });
 
-        // Exibindo as doações
-        // doacoesFeitas.forEach((doacao) => {
-        //   console.log(doacao);
-        // });
-      } catch (error) {
-        Toast.show({
-          type: 'error',
-          text1: 'Erro',
-          text2: error,
-        });
-      }
+    const getChartData = () => {
+        if (!vendas[jogoNavegado] || !vendas[jogoNavegado][selectedAno]) {
+            return [];
+        }
+        const dadosDoAno = vendas[jogoNavegado][selectedAno];
+        return dadosDoAno.map(item => ({
+            name: item.mes,
+            value: item.vendas,
+        }));
     };
 
-    loadData();
-  }, [user.uid]);
+    const chartData = getChartData();
 
-  return (
-    <View style={styles.view}>
-      <SafeAreaView style={styles.safe}>
-        <Text>Meu Gráfico:</Text>
-        {vendas[1]?.data ? (
-          <ChartScreen data={vendas[1].data} />
-        ) : (
-          <Text>Carregando dados...</Text>
-        )}
-      </SafeAreaView>
-    </View>
-  );
+    const acessos = vendas[jogoNavegado]?.acessos || 0;
+    const downloads = vendas[jogoNavegado]?.downloads || 0;
+    const compras = vendas[jogoNavegado]?.compras || 0;
+
+    if (!user) {
+        return (
+            <SafeAreaView style={styles.safe}>
+                <View style={styles.view}>
+                    <Text style={styles.loadingText}>Usuário não autenticado.</Text>
+                </View>
+            </SafeAreaView>
+        );
+    }
+
+    return (
+        <View style={styles.view}>
+            <SafeAreaView style={styles.safe}>
+                <Text style={styles.title}>ANÁLISE DE DADOS</Text>
+
+
+                <View style={styles.jogoDisplayContainer}>
+                    <Text style={styles.jogoDisplayTextTitle}>Jogo: </Text>
+                    <Text style={styles.jogoDisplayText}>{jogoNavegado}</Text>
+                </View>
+
+                <View style={styles.anoContainer}>
+                    <TouchableOpacity
+                        style={styles.jogoSelectHeader}
+                        onPress={toggleAnoDropdown}
+                    >
+                        <Text style={styles.jogoSelectText}>Ano: {selectedAno}</Text>
+                        <Icon
+                            name={isAnoDropdownOpen ? 'arrow-drop-up' : 'arrow-drop-down'}
+                            size={24}
+                            color="#000"
+                        />
+                    </TouchableOpacity>
+                    <Animated.View style={{ height: anoDropdownHeight, overflow: 'hidden' }}>
+                        {isAnoDropdownOpen && (
+                            <View style={styles.jogoSelectList}>
+                                {anos.map((ano) => (
+                                    <TouchableOpacity
+                                        key={ano}
+                                        style={styles.jogoSelectItem}
+                                        onPress={() => {
+                                            setSelectedAno(ano);
+                                            setIsAnoDropdownOpen(false);
+                                        }}
+                                    >
+                                        <Text style={styles.jogoSelectText}>{ano}</Text>
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
+                        )}
+                    </Animated.View>
+                </View>
+
+                <View style={styles.dataInfoContainer}>
+                    <View style={styles.dataItem}>
+                        <Text style={styles.dataTitle}>Acessos</Text>
+                        <Text style={styles.dataValue}>{acessos}</Text>
+                    </View>
+                    <View style={styles.dataItem}>
+                        <Text style={styles.dataTitle}>Downloads</Text>
+                        <Text style={styles.dataValue}>{downloads}</Text>
+                    </View>
+                    <View style={styles.dataItem}>
+                        <Text style={styles.dataTitle}>Compras</Text>
+                        <Text style={styles.dataValue}>{compras}</Text>
+                    </View>
+                </View>
+
+                {chartData.length > 0 ? (
+                    <LineChartScreen data={chartData} />
+                ) : (
+                    <Text style={styles.loadingText}>Nenhum dado disponível para o gráfico.</Text>
+                )}
+
+            </SafeAreaView>
+        </View>
+    );
 }

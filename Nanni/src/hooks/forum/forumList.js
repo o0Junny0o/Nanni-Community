@@ -1,9 +1,7 @@
 import {
   collection,
   documentId,
-  FieldPath,
   getDocs,
-  limit,
   query,
   where,
 } from 'firebase/firestore';
@@ -32,7 +30,6 @@ async function forumList({ qLimit, qIDs }) {
     // Query:
     const forumDoc = collection(db, FORUNS_COLLECTION);
     const forumQuery = query(forumDoc, ...queryArgs);
-
     const snapshot = await getDocs(forumQuery);
 
     if (!snapshot) {

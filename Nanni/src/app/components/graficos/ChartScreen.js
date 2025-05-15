@@ -4,7 +4,7 @@ import { Text } from 'react-native';
 import { LineChart } from 'react-native-gifted-charts';
 import { styles } from './style';
 
-export default function ChartScreen({ data }) {
+export function LineChartScreen({ data }) {
   const [focusedIndex, setFocusedIndex] = useState(null);
   return (
     <LineChart
@@ -88,7 +88,7 @@ export default function ChartScreen({ data }) {
   );
 }
 
-ChartScreen.propTypes = {
+LineChartScreen.propTypes = {
   data: PropTypes.arrayOf(
     PropTypes.shape({
       name: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
