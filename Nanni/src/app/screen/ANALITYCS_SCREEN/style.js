@@ -69,9 +69,6 @@ export const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginRight: 5,
     },
-    jogoDisplayPicker: {
-
-    },
     jogoDisplayText: {
         fontSize: 16,
         color: colors.vividBlue,

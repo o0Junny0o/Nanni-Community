@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
   Modal,
   TextInput,
-  Alert, // Importe o Alert
+  Alert,
+  FlatList
 } from 'react-native';
 import styles from './styles';
 import * as ImagePicker from 'expo-image-picker'; // 📷 Biblioteca para selecionar imagem
@@ -21,17 +22,22 @@ import { useAuth } from '../../components/contexts/AuthContext';
 import {
   convertImageToBase64,
   deconvertBase64ToImage,
-  isPngImage
+  isPngImage,
 } from '../../../utils/Base64Image';
 import Toast from 'react-native-toast-message';
 import { updateEmail } from 'firebase/auth';
 import CARREGAMENTO_SCREEN from '../CARREGAMENTO_SCREEN/index';
 import { USUARIOS_COLLECTION } from '../../../model/refsCollection';
 import { navigationRef } from '../../../../App';
+import { userRef } from '../../../utils/userRef';
+import DoacaoModel from '../../../model/Doacao/DoacaoModel';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const PerfilUsuario = ({ navigation }) => {
   const { user, loading: authLoading, logout } = useAuth();
   const [isLoading, setIsLoading] = useState(true); // Adicione este state
+  const insets = useSafeAreaInsets();
 
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
@@ -40,6 +46,8 @@ const PerfilUsuario = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [campoEdicao, setCampoEdicao] = useState('');
   const [valorEdicao, setValorEdicao] = useState('');
+  const [mostrarHistorico, setMostrarHistorico] = useState(false);
+  const [historicoDoacoes, setHistoricoDoacoes] = useState([]);
 
   useEffect(() => {
     const carregarDadosUsuario = async () => {
@@ -48,8 +56,8 @@ const PerfilUsuario = ({ navigation }) => {
       setIsLoading(true);
 
       try {
-        const userRef = doc(db, USUARIOS_COLLECTION, user.uid);
-        const docSnap = await getDoc(userRef);
+        const userRefe = doc(db, USUARIOS_COLLECTION, user.uid);
+        const docSnap = await getDoc(userRefe);
 
         if (!docSnap.exists()) return;
 
@@ -65,6 +73,31 @@ const PerfilUsuario = ({ navigation }) => {
         if (data.avatar) {
           setFotoPerfil(deconvertBase64ToImage(data.avatar) || '');
         }
+
+        const dados = await DoacaoModel.fetchByUserRefGive(userRef(user.uid));
+        console.log(dados);
+
+        // Buscar nome de quem recebeu a doação (userRefTake)
+        const dadosComNome = await Promise.all(
+          dados.map(async (doacao) => {
+            let nomeUsuario = 'Desconhecido';
+            try {
+              const userDoc = await getDoc(doacao.userRefTake);
+              if (userDoc.exists()) {
+                nomeUsuario = userDoc.data().nome || 'Sem nome';
+              }
+            } catch (e) {
+              console.warn('Erro ao buscar userRefTake:', e);
+            }
+
+            return {
+              ...doacao,
+              nomeUsuarioTake: nomeUsuario,
+            };
+          }),
+        );
+
+        setHistoricoDoacoes(dadosComNome);
       } catch (error) {
         console.error('Erro ao carregar dados:', error);
         alert('Erro ao carregar perfil');
@@ -221,9 +254,18 @@ const PerfilUsuario = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Botão de Voltar */}
+      {/* Botão de Deslogar */}
+
       <View style={styles.header}>
-        <BotaoVoltar onPress={() => navigation.goBack()} />
+        <View style={styles.logoutButton}>
+          <TouchableOpacity
+            style={{ flexDirection: 'row', gap: 10 }}
+            onPress={() => handleLogout()}
+          >
+            <Text style={{ fontSize: 15 }}>SAIR</Text>
+            <Ionicons name="log-out-outline" size={24} color="black" />
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Área de Foto de Perfil */}
@@ -246,26 +288,54 @@ const PerfilUsuario = ({ navigation }) => {
           value={email}
           onEdit={() => editarCampo('Email', email)}
         />
-        <InfoItem
-          label="Data de nascimento"
-          value={dataNaci}
-          onEdit={() => editarCampo('Data de nascimento', dataNaci)}
-        />
+        <InfoItem label="Data de nascimento" value={dataNaci} />
       </View>
 
-      {/* Botões de Navegação */}
-      <View style={styles.buttonContainer}>
-        <BotaoPadrao
-          onPress={() => alert('Ir para tela de DOAÇÕES')}
-          text="Histórico de Doações"
-        />
-        <BotaoPadrao
-          onPress={() => {
-            alert('Ir para tela de DADOS');
-          }}
-          text="Análise de Dados"
-        />
-        <BotaoPadrao onPress={handleLogout} text="Logout" />
+      {/* Botão de texto com seta */}
+      <View style={{
+        paddingBottom: insets.bottom,    // respeita altura da barra de navegação
+        flex: 1 
+        }}>
+        <TouchableOpacity
+          onPress={() => setMostrarHistorico(!mostrarHistorico)}
+        >
+          <View style={styles.linkButton}>
+            <Text style={styles.linkText}>HISTÓRICO DE DOAÇÕES</Text>
+            <Ionicons
+              name={
+                mostrarHistorico ? 'chevron-up-outline' : 'chevron-down-outline'
+              }
+              size={18}
+              color="#1D3557"
+            />
+          </View>
+        </TouchableOpacity>
+
+        {mostrarHistorico && (
+          <FlatList
+            data={historicoDoacoes}
+            keyExtractor={(item) => item.id}
+            renderItem={(
+              { item }, //historicoItem
+            ) => (
+              <View style={styles.historicoItem}>
+                <View>
+                  <Text style={{ color: '#5D90D6' }}>ID: {item.id}</Text>
+                  <Text style={{ fontWeight: 'bold' }}>Usuário: {item.nomeUsuarioTake}</Text>
+                  <Text style={{ color: 'gray' }}>
+                      {new Date(item.data).toLocaleDateString('pt-BR')}
+                  </Text>
+                </View>
+                <Text
+                  style={{ color: '#B88CB4', fontWeight: 'bold', fontSize: 20 }}
+                >
+                  {item.valor} R$
+                </Text>
+              </View>
+            )}
+            style={{ maxHeight: 240 }} // define altura máxima rolável
+          />
+        )}
       </View>
 
       {/* MODAL PARA EDITAR INFORMAÇÕES */}
@@ -304,12 +374,15 @@ const PerfilUsuario = ({ navigation }) => {
 const InfoItem = ({ label, value, onEdit }) => {
   return (
     <View style={styles.infoBox}>
-      <Text style={styles.infoText}>
-        {label}: {value}
-      </Text>
-      <TouchableOpacity onPress={onEdit}>
-        <Ionicons name="pencil" size={20} color="#1D5DB5" />
-      </TouchableOpacity>
+      <View>
+        <Text style={styles.infoLabel}>{label}</Text>
+        <Text style={styles.infoText}>{value}</Text>
+      </View>
+      {onEdit && (
+        <TouchableOpacity onPress={onEdit}>
+          <Ionicons name="pencil" size={20} color="#1D5DB5" />
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
@@ -324,7 +397,7 @@ PerfilUsuario.propTypes = {
 InfoItem.propTypes = {
   label: PropTypes.string.isRequired,
   value: PropTypes.string.isRequired,
-  onEdit: PropTypes.func.isRequired,
+  onEdit: PropTypes.func,
 };
 
 export default PerfilUsuario;

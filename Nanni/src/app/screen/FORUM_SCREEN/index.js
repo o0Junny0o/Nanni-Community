@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -21,6 +21,7 @@ import { db } from '../../../service/firebase/conexao';
 import forumList from '../../../hooks/forum/forumList';
 import forumDelete from '../../../hooks/forum/forumDelete';
 import forumUpdate from '../../../hooks/forum/forumUpdate';
+import { Ionicons } from '@expo/vector-icons';
 import Forum from '../../../model/Forum';
 
 import { deconvertBase64ToImage } from '../../../utils/Base64Image';
@@ -91,48 +92,45 @@ export default function ForumScreen ({ navigation, route }) {
   // Modal Config:
   const [modal, setModal] = useState(false);
   const [modalConfig, setModalConfig] = useState({
-    titulo: "",
-    btn: "",
-    cancelar: "Cancelar",
-    placeholderNome: "Nome do Tópico",
-    placeholderDescricao: "Descrição",
+    titulo: '',
+    btn: '',
+    cancelar: 'Cancelar',
+    placeholderNome: 'Nome do Tópico',
+    placeholderDescricao: 'Descrição',
     callFunction: () => {},
-  })
+  });
 
   const closeModal = () => {
-    setModal(false)
+    setModal(false);
     setTopicoTitle('');
     setTopicoDesc('');
-    setModalConfig({})
-  }
+    setModalConfig({});
+  };
 
   const modalForumConfig = (forum) => {
     setModalConfig({
-      titulo: forum ? "Atualizar Fórum" : "Criar Fórum",
-      btn: forum ? "Atualizar Fórum" : "Criar novo tópico",
-      callFunction: forum ? 
-        () => handleUpdateTopico(forum) 
-        : CriarNovoTopico,
-      cancelar: "Cancelar",
-      placeholderNome: "Nome do Tópico",
-      placeholderDescricao: "Descrição",
-    })
+      titulo: forum ? 'Atualizar Fórum' : 'Criar Fórum',
+      btn: forum ? 'Atualizar Fórum' : 'Criar novo tópico',
+      callFunction: forum ? () => handleUpdateTopico(forum) : CriarNovoTopico,
+      cancelar: 'Cancelar',
+      placeholderNome: 'Nome do Tópico',
+      placeholderDescricao: 'Descrição',
+    });
 
-    if(forum instanceof Forum) {
+    if (forum instanceof Forum) {
       setTopicoTitle(forum.forumName);
-      setTopicoDesc(forum.forumDesc)
+      setTopicoDesc(forum.forumDesc);
     } else {
-      setTopicoTitle("");
-      setTopicoDesc("")
+      setTopicoTitle('');
+      setTopicoDesc('');
     }
 
-    setModal(true)  
-  }
-
+    setModal(true);
+  };
 
   const carregarTopicosDoForum = async () => {
     try {
-      const listaDeTopicos = await forumList({}); 
+      const listaDeTopicos = await forumList({});
       setTopicos(listaDeTopicos);
     } catch (error) {
       console.error('Erro ao carregar tópicos:', error);
@@ -164,7 +162,7 @@ export default function ForumScreen ({ navigation, route }) {
   }, [user]);
 
   const CriarNovoTopico = async () => {
-    console.log(`${topicoTitle.trim() === ''} | ${topicoDesc.trim() === ''}`)
+    console.log(`${topicoTitle.trim() === ''} | ${topicoDesc.trim() === ''}`);
 
     if (topicoTitle.trim() === '' || topicoDesc.trim() === '') {
       alert('Preencha todos os campos!');
@@ -201,7 +199,8 @@ export default function ForumScreen ({ navigation, route }) {
 
     if (filtrosAtivos.maisVistos) {
       topicosFiltrados.sort(
-        (a, b) => (b?.classificacaoIndicativa || 0) - (a?.classificacaoIndicativa || 0),
+        (a, b) =>
+          (b?.classificacaoIndicativa || 0) - (a?.classificacaoIndicativa || 0),
       );
     } else if (filtrosAtivos.maisRecentes) {
       topicosFiltrados.sort(
@@ -260,7 +259,7 @@ export default function ForumScreen ({ navigation, route }) {
       alert('Usuário não autenticado.');
       return;
     }
-    console.log(forumID)
+    console.log(forumID);
     const sucesso = await forumDelete({ forumID: forumID });
     if (sucesso) {
       alert(`Tópico com ID ${forumID} excluído com sucesso!`);
@@ -275,14 +274,13 @@ export default function ForumScreen ({ navigation, route }) {
       alert('Fórum não é válido.');
       return;
     }
-    
-    
-    modalForumConfig(forum)
 
-    const sucesso = await forum.update()
+    modalForumConfig(forum);
+
+    const sucesso = await forum.update();
     if (sucesso) {
       alert(`Fórum ${forum.forumName} atualizado com sucesso!`);
-      closeModal()
+      closeModal();
       carregarTopicosDoForum(); // Recarrega a lista após atualizar um tópico
     } else {
       alert('Erro ao atualizar o tópico. Verifique as permissões.');

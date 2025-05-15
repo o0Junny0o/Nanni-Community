@@ -12,7 +12,8 @@ import styles from './styles';
 import forumQuery from '../../../hooks/forum/forumQuery';
 
 export default function TopicoScreen({ route }) {
-  const { topicoId } = route.params;
+  // const { topicoId } = route.params;
+  const topicoId = route?.params?.topicoId;
   const [topicoDetalhes, setTopicoDetalhes] = useState(null);
   const [mensagens, setMensagens] = useState([]);
   const [mensagem, setMensagem] = useState('');

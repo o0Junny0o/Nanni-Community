@@ -6,13 +6,18 @@ import {
   TouchableOpacity,
   SafeAreaView,
   ActivityIndicator,
+  Image,
 } from 'react-native';
-import { auth } from '../../../service/firebase/conexao';
-import Toast from 'react-native-toast-message';
 import styles from './style';
-import PropTypes from 'prop-types';
 
-// eslint-disable-next-line
+import { sendPasswordResetEmail } from 'firebase/auth';
+import { auth } from '../../../service/firebase/conexao';
+import PropTypes from 'prop-types';
+import Toast from 'react-native-toast-message';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+
+const logo = require('../../../assets/logo_nanni.png');
+
 const RecuperarSenha = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [isEnviandoEmail, setIsEnviandoEmail] = useState(false);
@@ -31,18 +36,16 @@ const RecuperarSenha = ({ navigation }) => {
 
     try {
       setIsEnviandoEmail(true);
-
-      // Envia email de redefinição de senha usando Firebase
-      await auth.sendPasswordResetEmail(email);
+      await sendPasswordResetEmail(auth, email);
 
       Toast.show({
         type: 'success',
         text1: 'Email enviado!',
         text2: `Verifique sua caixa de entrada em ${email}`,
       });
+      navigation.goBack();
     } catch (error) {
       let mensagemErro = 'Ocorreu um erro ao enviar o email. Tente novamente.';
-
       switch (error.code) {
         case 'auth/user-not-found':
           mensagemErro = 'Nenhum usuário encontrado com este email.';
@@ -54,7 +57,6 @@ const RecuperarSenha = ({ navigation }) => {
           mensagemErro = 'Muitas tentativas. Tente novamente mais tarde.';
           break;
       }
-
       Toast.show({
         type: 'error',
         text1: 'Erro',
@@ -68,7 +70,15 @@ const RecuperarSenha = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <Text style={styles.titulo}>Recuperar Senha</Text>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.navigate('Login')}
+        >
+          <Icon name="arrow-back" size={28} color="#071934" />
+        </TouchableOpacity>
+
+        <Image source={logo} style={styles.logo} />
+        <Text style={styles.titulo}>RECUPERAR SENHA</Text>
 
         <Text style={styles.subtitulo}>
           Informe seu e-mail para receber o código de recuperação.
@@ -77,7 +87,7 @@ const RecuperarSenha = ({ navigation }) => {
         <TextInput
           style={styles.input}
           placeholder="E-mail"
-          placeholderTextColor="#A349A4"
+          placeholderTextColor={styles.input.borderColor || '#B88CB4'}
           keyboardType="email-address"
           value={email}
           onChangeText={setEmail}
@@ -92,7 +102,7 @@ const RecuperarSenha = ({ navigation }) => {
           {isEnviandoEmail ? (
             <ActivityIndicator size="small" color="#FFFFFF" />
           ) : (
-            <Text style={styles.botaoTexto}>Enviar Código</Text>
+            <Text style={styles.botaoTexto}>Enviar Email</Text>
           )}
         </TouchableOpacity>
       </View>
@@ -103,6 +113,7 @@ const RecuperarSenha = ({ navigation }) => {
 RecuperarSenha.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
+    goBack: PropTypes.func.isRequired,
   }).isRequired,
 };
 

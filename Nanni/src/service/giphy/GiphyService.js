@@ -21,7 +21,7 @@ export default class GiphyService {
     return getGiphy({ uri: giphyReference });
   }
 
-  getSearch({ q, limit, offset}) {
+  getSearch({ q, limit, offset }) {
     const giphyReference = `search?api_key=[*]&q=${q}&limit=${limit}&offset=${offset}&bundle=messaging_non_clips${this.extra_uri}`;
     return getGiphy({ uri: giphyReference });
   }

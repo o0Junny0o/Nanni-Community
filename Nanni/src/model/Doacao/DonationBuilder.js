@@ -1,4 +1,5 @@
 import { Timestamp } from 'firebase/firestore';
+import Toast from 'react-native-toast-message';
 
 class DonationBuilder {
   constructor() {
@@ -23,12 +24,38 @@ class DonationBuilder {
 
   // Define a data (aceita Date ou Timestamp)
   withData(data) {
-    if (data instanceof Date) {
-      this.data = Timestamp.fromDate(data);
-    } else if (data instanceof Timestamp) {
-      this.data = data;
-    } else {
-      throw new Error('Data deve ser um objeto Date ou Timestamp.');
+    try {
+      if (data instanceof Date) {
+        this.data = Timestamp.fromDate(data);
+      } else if (data instanceof Timestamp) {
+        this.data = data;
+      } else if (typeof data === 'string') {
+        const date = new Date(data);
+        if (!isNaN(date)) {
+          this.data = Timestamp.fromDate(date);
+        } else {
+          Toast.show({
+            type: 'error',
+            text1: 'Erro',
+            text2: 'String de data inválida.',
+          });
+          throw new Error('String de data inválida.');
+        }
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: 'Erro',
+          text2: 'Data deve ser um Date, Timestamp ou string ISO.',
+        });
+        throw new Error('Data deve ser um Date, Timestamp ou string ISO.');
+      }
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Erro',
+        text2: error.message || 'Erro ao definir data.',
+      });
+      throw error;
     }
     return this;
   }
@@ -36,6 +63,11 @@ class DonationBuilder {
   // Define o valor
   withValor(valor) {
     if (typeof valor !== 'number' || valor <= 0) {
+      Toast.show({
+        type: 'error',
+        text1: 'Erro',
+        text2: 'Valor deve ser um número positivo.',
+      });
       throw new Error('Valor deve ser um número positivo.');
     }
     this.valor = valor;
@@ -46,6 +78,11 @@ class DonationBuilder {
   withMetodoPag(metodo) {
     const metodosValidos = ['pix', 'cartao', 'boleto'];
     if (!metodosValidos.includes(metodo)) {
+      Toast.show({
+        type: 'error',
+        text1: 'Erro',
+        text2: 'Método de pagamento inválido.',
+      });
       throw new Error('Método de pagamento inválido.');
     }
     this.metodoPag = metodo;
@@ -61,6 +98,11 @@ class DonationBuilder {
       !this.valor ||
       !this.metodoPag
     ) {
+      Toast.show({
+        type: 'error',
+        text1: 'Erro',
+        text2: 'Todos os campos obrigatórios devem ser preenchidos.',
+      });
       throw new Error('Todos os campos obrigatórios devem ser preenchidos.');
     }
 

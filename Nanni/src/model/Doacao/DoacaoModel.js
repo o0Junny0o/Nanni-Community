@@ -7,7 +7,7 @@ import { DOACOES_COLLECTION } from '../refsCollection';
 
 class DoacaoModel {
   constructor(data) {
-    this.id = null; // ID será gerado pelo Firestore
+    this.id = data.id ?? null; // ID será gerado pelo Firestore
     this.userRefGive = data.userRefGive; // Deve ser uma DocumentReference
     this.userRefTake = data.userRefTake; // Deve ser uma DocumentReference
     this.data = data.data; // Timestamp do Firestore
@@ -81,8 +81,8 @@ class DoacaoModel {
         donations.push(
           new DoacaoModel({
             ...data,
-            id: doc.id, // Define o ID do documento
-            data: data.data.toDate(), // Converte Timestamp para Date
+            id: doc.id,
+            data: data.data,
           }),
         );
       });

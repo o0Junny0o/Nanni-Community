@@ -5,12 +5,15 @@ import {
   getDocs,
   query,
   where,
+  Timestamp,
 } from 'firebase/firestore';
-import { db } from './conexao';
+import { db } from '../conexao';
 import {
   USUARIOS_COLLECTION,
   VENDAS_COLLECTION,
-} from '../../model/refsCollection';
+} from '../../../model/refsCollection';
+import Toast from 'react-native-toast-message';
+
 const MESES = [
   'Jan',
   'Feb',
@@ -26,7 +29,7 @@ const MESES = [
   'Dec',
 ];
 
-async function getJogosDoUsuario(userId) {
+export async function getJogosDoUsuario(userId) {
   try {
     const userDocRef = doc(db, USUARIOS_COLLECTION, userId);
     const userDoc = await getDoc(userDocRef);
@@ -39,37 +42,58 @@ async function getJogosDoUsuario(userId) {
       jogosRefs.map((ref) => `/${ref.path}`)
       : Array(jogosRefs[0])
   } catch (error) {
+    Toast.show({
+      type: 'error',
+      text1: 'Erro',
+      text2: error,
+    });
     console.error('Erro ao buscar jogos do usuário:', error);
     return [];
   }
 }
 
-// Função principal
-export async function calcularVendasPorJogo(userId) {
+export async function calcularVendasPorJogo(userId, ano) {
+  const anoNumerico = Number(ano);
+  const anoInicio = Timestamp.fromDate(new Date(anoNumerico, 0, 1));
+  const anoFim = Timestamp.fromDate(new Date(anoNumerico + 1, 0, 1));
   try {
     const jogosRefs = await getJogosDoUsuario(userId);
+<<<<<<< HEAD:Nanni/src/service/firebase/vendasService.js
 <<<<<<< Updated upstream:Nanni/src/service/firebase/vendasService.js
 
 =======
     // console.log('REFS:',jogosRefs)
 >>>>>>> Stashed changes:Nanni/src/service/firebase/analytics/vendasService.js
+=======
+    console.log('REFS:',jogosRefs)
+>>>>>>> origin/Isaac:Nanni/src/service/firebase/analytics/vendasService.js
     if (jogosRefs.length === 0) return {};
     
     const vendasRef = collection(db, VENDAS_COLLECTION);
     const chunks = [];
     const CHUNK_SIZE = 10;
+<<<<<<< HEAD:Nanni/src/service/firebase/vendasService.js
 <<<<<<< Updated upstream:Nanni/src/service/firebase/vendasService.js
 
 =======
     // console.log('VENDAS REF',vendasRef)
 >>>>>>> Stashed changes:Nanni/src/service/firebase/analytics/vendasService.js
+=======
+    console.log('VENDAS REF',vendasRef)
+>>>>>>> origin/Isaac:Nanni/src/service/firebase/analytics/vendasService.js
     for (let i = 0; i < jogosRefs.length; i += CHUNK_SIZE) {
       const chunk = jogosRefs.slice(i, i + CHUNK_SIZE);
-      const q = query(vendasRef, where('itensComprados', 'in', chunk));
+      const q = query(
+        vendasRef,
+        where('itensComprados', 'in', chunk),
+        where('data', '>=', anoInicio),
+        where('data', '<', anoFim),
+      );
       chunks.push(getDocs(q));
     }
 
     const snapshots = await Promise.all(chunks);
+
     const vendasSnapshot = snapshots.flatMap((s) => s.docs);
     
     // 2. Processar apenas vendas filtradas
@@ -81,7 +105,7 @@ export async function calcularVendasPorJogo(userId) {
       const idJogo = caminhoJogo.split('/').pop(); // Extrai o ID
 
       // Extrair mês
-      const data = new Date(venda.data);
+      const data = venda.data.toDate();
       const mes = MESES[data.getUTCMonth()];
 
       // Inicializar estrutura se necessário
@@ -101,13 +125,67 @@ export async function calcularVendasPorJogo(userId) {
         value: meses[name],
       }));
     }
+
     // Converter para array no final
     return Object.entries(resultado).map(([id, meses]) => ({
       id,
       data: meses, // Já está no formato [{name: 'Jan', value: X}, ...]
     }));
   } catch (error) {
+    Toast.show({
+      type: 'error',
+      text1: 'Erro',
+      text2: error,
+    });
     console.error('Erro ao calcular vendas:', error);
+    return {};
+  }
+}
+
+export async function getNumVendas(userId) {
+  try {
+    const jogosRefs = await getJogosDoUsuario(userId);
+
+    if (jogosRefs.length === 0) return {};
+
+    const vendasRef = collection(db, VENDAS_COLLECTION);
+    const chunks = [];
+    const CHUNK_SIZE = 10;
+
+    // Dividir jogosRefs em chunks de 10 para a consulta 'in'
+    for (let i = 0; i < jogosRefs.length; i += CHUNK_SIZE) {
+      const chunk = jogosRefs.slice(i, i + CHUNK_SIZE);
+      const q = query(vendasRef, where('itensComprados', 'in', chunk));
+      chunks.push(getDocs(q));
+    }
+
+    // Executar todas as consultas em paralelo
+    const snapshots = await Promise.all(chunks);
+    const vendasSnapshot = snapshots.flatMap((s) => s.docs);
+
+    // Contar vendas por jogo
+    const contagemJogos = {};
+
+    vendasSnapshot.forEach((doc) => {
+      const venda = doc.data();
+      const caminhoJogo = venda.itensComprados;
+      const idJogo = caminhoJogo.split('/').pop(); // Extrai o ID do jogo
+
+      if (!contagemJogos[idJogo]) {
+        contagemJogos[idJogo] = 0;
+      }
+      contagemJogos[idJogo] += 1;
+    });
+
+    return contagemJogos;
+  } catch (error) {
+    Toast.show({
+      type: 'error',
+      text1: 'Erro',
+      text2: error,
+    });
+    console.error('Erro ao somar vendas:', error);
+
     return {};
   }
 }

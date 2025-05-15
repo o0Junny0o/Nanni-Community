@@ -1,11 +1,22 @@
 import { StyleSheet } from 'react-native';
 
-const colors = {
-  primary: '#A349A4',
-  secondary: '#42FFA3',
-  text: '#000000',
+export const colors = {
   background: '#FFFFFF',
-  overlayBackground: 'rgba(200, 200, 200, 0.4)',
+  mediumSkyBlue: '#5d90d6',
+  darkRoyalBlue: '#163690',
+  midnightBlue: '#071934',
+  vividBlue: '#1D5DB5',
+  softLilac: '#B88CB4',
+  helperText: '#ff0000',
+  white: '#FFFFFF',
+  black: '#000000',
+  successGreen: '#28a745',
+};
+
+export const fonts = {
+  monospaceExtrabold: 'monospace',
+  robotoMonoBold: 'RobotoMono-Bold',
+  roboto: 'Roboto-Regular',
 };
 
 const styles = StyleSheet.create({
@@ -27,62 +38,70 @@ const styles = StyleSheet.create({
   },
   titulo: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: '800',
     marginBottom: 20,
     textAlign: 'center',
-    color: colors.text,
+    color: colors.midnightBlue,
+    fontFamily: fonts.monospaceExtrabold,
   },
   input: {
     width: '100%',
     borderWidth: 1,
-    borderColor: colors.primary,
+    borderColor: colors.softLilac,
     padding: 10,
     marginBottom: 15,
     borderRadius: 5,
-    color: colors.text,
+    color: colors.black,
+    fontFamily: fonts.roboto,
   },
   passwordContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: colors.primary,
+    borderColor: colors.softLilac,
     paddingHorizontal: 10,
-    marginBottom: 15,
     borderRadius: 5,
+    width: '100%',
   },
   passwordInput: {
     flex: 1,
     paddingVertical: 10,
-    color: colors.text,
+    color: colors.black,
+    fontFamily: fonts.roboto,
   },
   showPasswordText: {
-    color: colors.primary,
+    color: colors.softLilac,
     fontWeight: 'bold',
     marginLeft: 10,
+    fontFamily: fonts.robotoMonoBold,
   },
   botao: {
     width: '80%',
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.midnightBlue,
     padding: 15,
     borderRadius: 5,
     alignItems: 'center',
+    marginTop: 15,
   },
   botaoTexto: {
-    color: colors.text,
+    color: colors.background,
     fontSize: 16,
     fontWeight: 'bold',
+    fontFamily: fonts.robotoMonoBold,
   },
   link: {
-    color: colors.primary,
+    color: colors.softLilac,
     marginTop: 15,
     textAlign: 'center',
+    fontFamily: fonts.roboto,
   },
   forgotPasswordLink: {
-    color: colors.primary,
+    color: colors.softLilac,
     marginTop: 10,
     marginBottom: 20,
     textAlign: 'right',
     width: '100%',
+    fontFamily: fonts.roboto,
   },
   overlay: {
     position: 'absolute',
@@ -90,10 +109,39 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: colors.overlayBackground,
+    backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 10,
+  },
+  errorText: {
+    color: colors.helperText,
+    fontSize: 12,
+    marginTop: 8,
+    marginBottom: 10,
+    textAlign: 'left',
+    width: '100%',
+    fontFamily: fonts.roboto,
+  },
+  touchable_opacity: {
+    width: '100%',
+    marginBottom: 5,
+  },
+  passwordHelperContainer: {
+    width: '100%',
+    marginTop: 8,
+  },
+  passwordHelperTextItem: {
+    fontSize: 12,
+    fontFamily: fonts.roboto,
+    marginBottom: 4,
+    textAlign: 'left',
+  },
+  passwordHelperTextValid: {
+    color: colors.successGreen,
+  },
+  passwordHelperTextInvalid: {
+    color: colors.helperText,
   },
 });
 

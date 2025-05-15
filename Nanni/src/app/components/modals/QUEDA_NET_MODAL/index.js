@@ -92,7 +92,7 @@ const ConnectionLostModal = ({ isVisible, onRequestClose }) => {
                 : 'TENTAR RECONECTAR'}
             </Text>
           </TouchableOpacity>
-          </View>
+        </View>
       </Pressable>
     </Modal>
   );

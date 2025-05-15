@@ -5,6 +5,7 @@ const colors = {
   primary: '#5d90d6',
   primaryDark: '#163690',
   textDark: '#071934',
+  textLight: '#F5F5F5',
   white: '#FFFFFF',
   border: '#E0E0E0',
   shadowLight: '#00000033',
@@ -14,21 +15,44 @@ const colors = {
   inputBorder: '#0006',
   lightBlue: '#ddeeff',
   red: 'red',
+  blue: 'blue',
 };
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
     backgroundColor: colors.background,
     width: '100%',
   },
+
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingTop: 30,
-    paddingBottom: 10,
+    paddingTop: 20,
+    paddingBottom: 20,
+    backgroundColor: colors.primaryDark,
+    padding: 20,
+    gap: 20,
+    borderBottomWidth: 0.5,
+    borderColor: colors.lightBlue,
+    boxShadow: '0 3 20 2 #00000066',
+  },
+
+  descHeader: {
+    padding: 20,
+    gap: 20,
+    backgroundColor: colors.primaryDark,
+    justifyContent: 'center',
+    borderBottomRightRadius: 15,
+    borderBottomLeftRadius: 15,
+    boxShadow: '0 10 20  #00000066',
+  },
+  tagsDesc: {
+    padding: 10,
+    borderRadius: 20,
+    color: '#fff',
+    marginRight: 10,
+    marginTop: 10,
+    marginBottom: 10,
   },
   backButton: {
     padding: 8,
@@ -37,6 +61,12 @@ export const styles = StyleSheet.create({
     color: colors.primaryDark,
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  titleDisc: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: colors.primaryDark,
+    paddingBottom: 15,
   },
   title: {
     fontSize: 24,
@@ -67,10 +97,11 @@ export const styles = StyleSheet.create({
   forumItem: {
     backgroundColor: colors.white,
     padding: 16,
-    marginBottom: 12,
+    margin: 10,
     borderRadius: 5,
     borderWidth: 1,
     borderColor: colors.border,
+    boxShadow: '3 6 6 #00000033',
   },
   forumName: {
     fontSize: 18,
@@ -82,12 +113,29 @@ export const styles = StyleSheet.create({
     color: colors.primaryDark,
     marginTop: 5,
   },
+  forumDate: {
+    fontSize: 15,
+    color: '#888',
+    textAlign: 'right',
+  },
+  footerList: {
+    paddingHorizontal: 50,
+    paddingBottom: 90,
+    paddingTop: 20,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    color: '#999',
+  },
   createNewForumButton: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.primaryDark,
     paddingVertical: 12,
     borderRadius: 5,
     alignItems: 'center',
-    marginTop: 20,
+    width: '50%',
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    margin: 10,
   },
   createNewForumButtonText: {
     color: colors.white,
@@ -165,7 +213,6 @@ export const styles = StyleSheet.create({
     width: '70%',
     borderRadius: 15,
   },
-
   perfilImage: {
     width: 60,
     height: 60,
@@ -203,9 +250,16 @@ export const styles = StyleSheet.create({
   },
   fullFlex: {
     flex: 1,
+    position: 'relative',
+    paddingHorizontal: 20,
+    paddingTop: 30,
   },
   deleteButton: {
     color: colors.red,
+    marginTop: 5,
+  },
+  normalButton: {
+    color: colors.blue,
     marginTop: 5,
   },
 });

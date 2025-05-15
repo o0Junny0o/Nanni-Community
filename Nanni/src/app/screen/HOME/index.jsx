@@ -1,97 +1,83 @@
-import { 
-    Text, 
-    View, 
-    FlatList,
-    TouchableOpacity,
-    TouchableWithoutFeedback,
-    Alert,
-    Pressable,
-    ScrollView,
-    Image,
-} from "react-native"
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useEffect, useState } from "react";
-import { useNavigation } from '@react-navigation/native'
-import {styles, forumSeguidosStyles, forumDonoStyles } from "./styles";
-import PropTypes from "prop-types";
-import { useAuth } from "../../components/contexts/AuthContext";
-import { doc, getDoc, Timestamp } from "firebase/firestore";
-import { db } from "../../../service/firebase/conexao";
-import forumList from "../../../hooks/forum/forumList";
+import {
+  Text,
+  View,
+  FlatList,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  Alert,
+  Pressable,
+  ScrollView,
+  Image,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useEffect, useState } from 'react';
+import { styles, forumSeguidosStyles, forumDonoStyles } from './styles';
+import PropTypes from 'prop-types';
+import { useAuth } from '../../components/contexts/AuthContext';
+import { doc, getDoc, Timestamp } from 'firebase/firestore';
+import { db } from '../../../service/firebase/conexao';
+import forumList from '../../../hooks/forum/forumList';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import colors from "../../../utils/colors";
-import { deconvertBase64ToImage } from "../../../utils/Base64Image";
-
+import colors from '../../../utils/colors';
+import { deconvertBase64ToImage } from '../../../utils/Base64Image';
+import { USUARIOS_COLLECTION } from '../../../model/refsCollection';
 
 export default function HomeScreen({ navigation }) {
+  const [forumSeguidos, setForumSeguidos] = useState([]);
+  const [forumDono, setForumDono] = useState([]);
+  const [isDev, setIsDev] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-    const [forumSeguidos, setForumSeguidos] = useState([])
-    const [forumDono, setForumDono] = useState([])
-    const [isDev, setIsDev] = useState(false)
-    const [loading, setLoading] = useState(true)
+  // User:
+  const { user, userLoading, authLoading } = useAuth();
+  // > Verificação:
 
-    // User:
-    const { user, userLoading, authLoading } = useAuth();
-    // > Verificação:
+  useEffect(() => {
+    if (authLoading || !user) {
+      navigation.navigate('AuthStack');
+    } else {
+      async function run() {
+        const userRef = doc(db, USUARIOS_COLLECTION, user.uid);
+        const docSnap = await getDoc(userRef);
 
-    
-    useEffect(() => {
-        if(authLoading || !user) {
-            navigation.navigate('AuthStack')
-        } else {
-            async function run() {
-                const userRef = doc(db, 'usuarios', user.uid);
-                const docSnap = await getDoc(userRef);
-                
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    
-                    if(data.cargo) {
-                        setIsDev(Boolean(data.cargo))
+        if (docSnap.exists()) {
+          const data = docSnap.data();
 
-                        const snapForuns = await forumList({ qUserRef: userRef })
-                        
-                        if(snapForuns && snapForuns.length > 0) { 
-                            setForumDono(snapForuns)
-                        }
-                    }
+          if (data.cargo) {
+            setIsDev(Boolean(data.cargo));
 
-                    if(data.seguindo?.length > 0) { 
-                        const foruns = await forumList({ qIDs: data.seguindo})
-                        setForumSeguidos(foruns)
-                    }
-                }
-                
-                
+            const snapForuns = await forumList({ qUserRef: userRef });
 
-
-                setLoading(false)
+            if (snapForuns && snapForuns.length > 0) {
+              setForumDono(snapForuns);
             }
-    
-            run()
+          }
+
+          if (data.seguindo?.length > 0) {
+            const foruns = await forumList({ qIDs: data.seguindo });
+            setForumSeguidos(foruns);
+          }
         }
-    }, [user, authLoading])
-    
 
-    
+        setLoading(false);
+      }
 
-    const titleForumSeguidos = (
-        forumSeguidos && forumSeguidos.length > 0 ?
-            (forumSeguidos.length > 1 ?
-                "Fóruns Seguidos"
-                : "Fórum Seguido"
-            )
-        : undefined
-    )
-    const titleForumDono = (
-        forumDono && forumDono.length > 0 ?
-            (forumDono.length > 1 ? 
-                  "Seus Fóruns"
-                : "Seu Fórum"
-            )
-        : undefined
-    )
+      run();
+    }
+  }, [user, authLoading]);
 
+  const titleForumSeguidos =
+    forumSeguidos && forumSeguidos.length > 0
+      ? forumSeguidos.length > 1
+        ? 'Fóruns Seguidos'
+        : 'Fórum Seguido'
+      : undefined;
+  const titleForumDono =
+    forumDono && forumDono.length > 0
+      ? forumDono.length > 1
+        ? 'Seus Fóruns'
+        : 'Seu Fórum'
+      : undefined;
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -200,7 +186,7 @@ function VForumDono({ forumID, avatar, forumName, data, path, navigation }) {
         <View style={[forumDonoStyles.rows, { justifyContent: 'flex-end' }]}>
           {data && (
             <Text style={forumDonoStyles.extra}>
-              {data.toDate().toLocaleDateString('pt-br')}
+              {data.toDate().toLocaleDateString('pt-BR')}
             </Text>
           )}
         </View>
@@ -209,7 +195,6 @@ function VForumDono({ forumID, avatar, forumName, data, path, navigation }) {
   );
 }
 
-
 HomeScreen.propTypes = {
   navigation: PropTypes.shape({
     push: PropTypes.func.isRequired,
@@ -217,3 +202,15 @@ HomeScreen.propTypes = {
   }).isRequired,
 };
 
+VForumSeguidos.propTypes = {
+  forumID: PropTypes.string.isRequired,
+  forumName: PropTypes.string.isRequired,
+  forumDesc: PropTypes.string.isRequired,
+};
+
+VForumDono.propTypes = {
+  forumID: PropTypes.string.isRequired,
+  avatar: PropTypes.string,
+  forumName: PropTypes.string.isRequired,
+  data: PropTypes.object.isRequired,
+};

@@ -6,10 +6,10 @@ const GIPHY_URL = 'https://api.giphy.com/v1/gifs/';
 async function getGiphy({ uri }) {
   if (!uri || typeof uri !== 'string' || uri.trim() === '') return;
   if (!giphy || typeof giphy !== 'string') {
-    console.error(`Chave de API GIPHY inválida : ${typeof giphy}`)
+    console.error(`Chave de API GIPHY inválida : ${typeof giphy}`);
     return;
   }
-  
+
   const reference = `${GIPHY_URL}${uri.replace('[*]', giphy)}`;
   try {
     const resp = await fetch(reference, {
@@ -26,7 +26,7 @@ async function getGiphy({ uri }) {
       return [data.data];
     }
 
-    return data.data
+    return data.data;
   } catch (err) {
     console.error('ERROR in getGiphy : ' + err);
     return [];

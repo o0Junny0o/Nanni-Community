@@ -1,62 +1,62 @@
-import { StyleSheet } from "react-native";
-import colors from "../../../utils/colors";
+import { StyleSheet } from 'react-native';
+import colors from '../../../utils/colors';
 
 const styles = StyleSheet.create({
-    view: {
-        width: "100%",
-        height: 'auto',
-    },
-    viewOtherUser: {
-        alignItems: 'flex-start'
-    },
-    viewUser: {
-        alignItems: 'flex-end'
-    },
-    comentarioView: {
-        width: "75%",
-        padding: 16,
-        paddingBottom: 10,
-        gap: 8,
-        backgroundColor: colors.p6,
-        elevation: 4,
-        borderRadius: 16,
-    },
-    comentarioViewOtherUser: {
-        borderTopLeftRadius: 0,
-        paddingTop: 10,
-    },
-    comentarioViewUser: {
-        borderTopRightRadius: 0,
-        backgroundColor: colors.p5,
-    },
-    expandir: {
-        textAlign: 'center',
-        borderTopWidth: .75,
-        opacity: .5,
-    },
-    expandirHover: {
-        opacity: 1,
-        fontWeight: 'bold',
-    },
-    text: {
-        fontFamily: "Roboto",
-        fontSize: 16,
-        letterSpacing: 1.25
-    },
-    gifImage: {
-        width: '100%',
-        height: 100,
-    },
-    date: {
-        textAlign: 'right',
-    },
-    author: {
-        fontFamily: "Roboto",
-        fontSize: 16,
-        fontWeight: 'bold',
-        letterSpacing: 1.25,
-        color: colors.p5
-    }
-})
+  view: {
+    width: '100%',
+    height: 'auto',
+  },
+  viewOtherUser: {
+    alignItems: 'flex-start',
+  },
+  viewUser: {
+    alignItems: 'flex-end',
+  },
+  comentarioView: {
+    width: '75%',
+    padding: 16,
+    paddingBottom: 10,
+    gap: 8,
+    backgroundColor: colors.p6,
+    elevation: 4,
+    borderRadius: 16,
+  },
+  comentarioViewOtherUser: {
+    borderTopLeftRadius: 0,
+    paddingTop: 10,
+  },
+  comentarioViewUser: {
+    borderTopRightRadius: 0,
+    backgroundColor: colors.p5,
+  },
+  expandir: {
+    textAlign: 'center',
+    borderTopWidth: 0.75,
+    opacity: 0.5,
+  },
+  expandirHover: {
+    opacity: 1,
+    fontWeight: 'bold',
+  },
+  text: {
+    fontFamily: 'Roboto',
+    fontSize: 16,
+    letterSpacing: 1.25,
+  },
+  gifImage: {
+    width: '100%',
+    height: 100,
+  },
+  date: {
+    textAlign: 'right',
+  },
+  author: {
+    fontFamily: 'Roboto',
+    fontSize: 16,
+    fontWeight: 'bold',
+    letterSpacing: 1.25,
+    color: colors.p5,
+  },
+});
 
 export default styles;
