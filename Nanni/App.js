@@ -57,7 +57,17 @@ function AuthNavigator() {
 // Stack as telas principais
 function MainNavigator() {
   return (
+<<<<<<< Updated upstream
     <MainStack.Navigator screenOptions={{ headerShown: false }}>
+=======
+    <MainStack.Navigator
+      screenOptions={{ headerShown: false }}
+      initialRouteName="Tabs"
+    >
+      <MainStack.Screen name="Tabs" component={TabNavigator} />
+      <MainStack.Screen name="ConfigurarForum" component={ConfigurarForumScreen} />
+      <MainStack.Screen name="Analytics" component={ANALITYCS_SCREEN} />
+>>>>>>> Stashed changes
       <MainStack.Screen name="Forum" component={Forum} />
       <MainStack.Screen name="PerfilUsuario" component={PerfilUsuario} />
       <MainStack.Screen name="TopicoScreen" component={TopicoScreen} />
