@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   TextInput,
   Image,
   TouchableWithoutFeedback,
+  StatusBar
 } from 'react-native';
 import { styles } from './styles';
 import PropTypes from 'prop-types';
@@ -19,11 +20,14 @@ import { db } from '../../../service/firebase/conexao';
 import forumList from '../../../hooks/forum/forumList';
 import forumDelete from '../../../hooks/forum/forumDelete';
 import forumUpdate from '../../../hooks/forum/forumUpdate';
+import { Ionicons } from '@expo/vector-icons';
 import Forum from '../../../model/Forum';
 
 import { deconvertBase64ToImage } from '../../../utils/Base64Image';
 
 const ForumScreen = ({ navigation }) => {
+  const [seguidor, setSeguidor] = useState(false)
+  const [mostrarDesc, SetMostrarDesc] = useState(false)
   const { user } = useAuth();
 
   const [filtrosAtivos, setFiltrosAtivos] = useState({
@@ -46,6 +50,20 @@ const ForumScreen = ({ navigation }) => {
     placeholderDescricao: 'Descrição',
     callFunction: () => {},
   });
+
+  const categoriaForum  = [
+    {cat: "*18"},
+    {cat: "Exemplo"},
+    {cat: "Exemplo02"},
+    {cat: "Exemplo03"},
+    {cat: "Exemplo04"},
+    {cat: "Exemplo05"},
+  ]
+
+  const categoriaDiscussao  = [
+    {cat: "Exemplo 01"},
+    {cat: "Exemplo 02"},
+  ]
 
   const closeModal = () => {
     setModal(false);
@@ -202,12 +220,47 @@ const ForumScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#163690"/>
+      
       <View style={styles.header}>
-        <Text style={styles.title}>FÓRUM</Text>
         <TouchableOpacity onPress={() => navigation.navigate('PerfilUsuario')}>
           <Image source={fotoPerfil} style={styles.perfilImage} />
         </TouchableOpacity>
+        <View style={{gap: 5}}>
+          <Text style={styles.title}>NOME DO FORUM</Text>
+          <Text style={{color: "#B88CB4", fontWeight: "bold"}}>POR: AUTOR</Text>
+          <TouchableOpacity onPress={() => SetMostrarDesc(!mostrarDesc)}>
+            <Ionicons
+              name={mostrarDesc ? 'close-outline' : 'ellipsis-horizontal'}
+              size={25}
+              color = "#aaa"
+            />
+          </TouchableOpacity>
+        </View>
       </View>
+        {mostrarDesc && (
+          <View style={styles.descHeader}>
+            <Text style={{fontSize: 15, color: "#fff"}}>Descrição...</Text>
+            <View style={{flexDirection: "row", gap: 15}}>
+              
+              <FlatList
+                showsHorizontalScrollIndicator={false}
+                horizontal={true}
+                data={categoriaForum}
+                keyExtractor={item => item.cat}
+                renderItem={({ item, index }) => (
+                  <Text style={[styles.tagsDesc, {backgroundColor: index % 2===0 ? "#ff5555" : "#B88CB4"}]}>{item.cat}</Text>
+                )} />
+
+            </View>
+            <View>
+              <TouchableOpacity style={{alignItems:'flex-end'}} onPress={() => setSeguidor(!seguidor)}>
+                <Text style={{width: 180,fontSize: 15, color: "#ddd", backgroundColor: "#00000044", padding: 15, textAlign: 'center', borderRadius: 15}}>{seguidor? 'PARAR DE SEGUIR' : 'SEGUIR +'}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+
 
       {topicos.length === 0 ? (
         <View style={styles.noTopicsContainer}>
@@ -215,26 +268,9 @@ const ForumScreen = ({ navigation }) => {
         </View>
       ) : (
         <View style={styles.fullFlex}>
-          <View style={styles.filterButtonsContainer}>
-            <TouchableOpacity
-              style={[
-                styles.filterButton,
-                filtrosAtivos.maisVistos && styles.filterButtonActive,
-              ]}
-              onPress={() => handleFiltrar('maisVistos')}
-            >
-              <Text style={styles.filterButtonText}>Mais Vistos</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.filterButton,
-                filtrosAtivos.maisRecentes && styles.filterButtonActive,
-              ]}
-              onPress={() => handleFiltrar('maisRecentes')}
-            >
-              <Text style={styles.filterButtonText}>Mais Recentes</Text>
-            </TouchableOpacity>
-          </View>
+          
+          <Text style={styles.titleDisc}>DISCUSSÕES</Text>
+
           <FlatList
             showsVerticalScrollIndicator={false}
             data={topicosFiltrados}
@@ -252,24 +288,48 @@ const ForumScreen = ({ navigation }) => {
                 >
                   <Text style={styles.forumName}>{item?.forumName}</Text>
                   <Text style={styles.forumDescription}>
-                    Descrição: {item?.forumDesc}
+                    AUTOR: {item?.autor}
                   </Text>
                   <Text style={styles.forumDescription}>
-                    ID: {item?.forumID}
+                    Descrição: {item?.forumDesc}
                   </Text>
                 </TouchableOpacity>
                 {/* Exemplo de botões de deletar e atualizar */}
+                <FlatList
+                  showsHorizontalScrollIndicator={false}
+                  horizontal={true}
+                  data={categoriaDiscussao}
+                  keyExtractor={item => item.cat}
+                  renderItem={({ item }) => (
+                    <Text style={[styles.tagsDesc, {backgroundColor: "#B88CB4"}]}>{item.cat}</Text>
+                  )} />
                 <TouchableOpacity
                   onPress={() => handleDeleteTopico(item?.forumID)}
                 >
-                  <Text style={styles.deleteButton}>Excluir</Text>
+                <Text style={styles.deleteButton}>Excluir</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => modalForumConfig(item)}>
-                  <Text style={{ color: 'blue', marginTop: 5 }}>Atualizar</Text>
-                </TouchableOpacity>
+                  <Text style={styles.normalButton}>Atualizar</Text>
+                </TouchableOpacity> 
+                
+                <Text style={styles.forumDate}>
+                
+                  Ex: 10/10/2010 {  /** Puxar data de criação da Discussão */ }
+                
+                </Text>
               </View>
             )}
+            ListFooterComponent={() => (
+              <Text style={styles.footerList}>SEM MAIS DISCUSSÕES</Text>
+            )}
           />
+
+          <TouchableOpacity
+            style={styles.createNewForumButton}
+            onPress={() => modalForumConfig()}
+          >
+            <Text style={styles.createNewForumButtonText}>Criar Nova Discussão</Text>
+          </TouchableOpacity>
         </View>
       )}
 

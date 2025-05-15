@@ -10,6 +10,7 @@ import {
 import Toast from 'react-native-toast-message';
 import { toastConfig } from './src/app/components/toasts/ToastConfig';
 import { requestNotificationPermissions } from './src/utils/Notifications';
+import {Feather} from '@expo/vector-icons'
 // import { bulkFromJSON } from './src/scripts/jogos';
 
 // Importa as telas
@@ -74,8 +75,18 @@ function AuthNavigator() {
 
 function TabNavigator() {
   return (
-    <TabStack.Navigator screenOptions={customTabBarStyle}>
-      <TabStack.Screen name="Home" component={HomeScreen} />
+    <TabStack.Navigator initialRouteName='Home' screenOptions={customTabBarStyle}>
+      <TabStack.Screen name="PerfilUsuario" component={PerfilUsuario} 
+      options={{
+        tabBarIcon: ({color, size}) => <Feather name="user" color={color} size={size}/>
+      }}/>
+      <TabStack.Screen name="Home" component={HomeScreen} 
+      options={{
+        tabBarIcon: ({color, size}) => <Feather name="home" color={color} size={size}/>
+      }}/>
+      <TabStack.Screen name="TopicoScreen" component={TopicoScreen} options={{
+        tabBarIcon: ({color, size}) => <Feather name="message-square" color={color} size={size}/>
+      }}/>
       <TabStack.Screen name="Explorar" component={ExplorarScreen} />
     </TabStack.Navigator>
   );

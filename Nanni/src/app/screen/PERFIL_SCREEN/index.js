@@ -9,6 +9,7 @@ import {
   TextInput,
   Alert, // Importe o Alert
 } from 'react-native';
+import { FlatList } from 'react-native';
 import styles from './styles';
 import * as ImagePicker from 'expo-image-picker'; // 📷 Biblioteca para selecionar imagem
 import { Ionicons } from '@expo/vector-icons';
@@ -40,6 +41,41 @@ const PerfilUsuario = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [campoEdicao, setCampoEdicao] = useState('');
   const [valorEdicao, setValorEdicao] = useState('');
+  const [mostrarHistorico, setMostrarHistorico] = useState(false);
+  const historicoDoacoes = [
+    { id: '1', name: "Forum", data: '10/02/2024' , valor: "20,15"},
+    { id: '2', name: "Forum", data: '22/11/2023' , valor: "32,40"},
+    { id: '3', name: "Forum", data: '03/08/2023' , valor: "32,40"},
+    { id: '4', name: "Forum", data: '10/02/2024' , valor: "32,40"},
+    { id: '5', name: "Forum", data: '22/11/2023' , valor: "32,40"},
+    { id: '6', name: "Forum", data: '03/08/2023' , valor: "32,40"},
+    { id: '7', name: "Forum", data: '10/02/2024' , valor: "32,40"},
+    { id: '8', name: "Forum", data: '22/11/2023' , valor: "32,40"},
+    { id: '9', name: "Forum", data: '03/08/2023' , valor: "32,40"},
+    { id: '10', name: "Forum", data: '03/08/2023' , valor: "50,00"},
+    { id: '11', name: "Forum", data: '10/02/2024' , valor: "50,00"},
+    { id: '12', name: "Forum", data: '22/11/2023' , valor: "50,00"},
+    { id: '13', name: "Forum", data: '03/08/2023' , valor: "50,00"},
+    { id: '14', name: "Forum", data: '10/02/2024' , valor: "50,00"},
+    { id: '15', name: "Forum", data: '22/11/2023' , valor: "50,00"},
+    { id: '16', name: "Forum", data: '03/08/2023' , valor: "50,00"},
+    { id: '17', name: "Forum", data: '10/02/2024' , valor: "50,00"},
+    { id: '18', name: "Forum", data: '22/11/2023' , valor: "50,00"},
+    { id: '19', name: "Forum", data: '03/08/2023' , valor: "50,00"},
+    { id: '20', name: "Forum", data: '03/08/2023' , valor: "50,00"},
+    { id: '21', name: "Forum", data: '10/02/2024' , valor: "50,00"},
+    { id: '22', name: "Forum", data: '22/11/2023' , valor: "50,00"},
+    { id: '23', name: "Forum", data: '03/08/2023' , valor: "50,00"},
+    { id: '24', name: "Forum", data: '10/02/2024' , valor: "50,00"},
+    { id: '25', name: "Forum", data: '22/11/2023' , valor: "50,00"},
+    { id: '26', name: "Forum", data: '03/08/2023' , valor: "50,00"},
+    { id: '27', name: "Forum", data: '10/02/2024' , valor: "50,00"},
+    { id: '28', name: "Forum", data: '22/11/2023' , valor: "50,00"},
+    { id: '29', name: "Forum", data: '03/08/2023' , valor: "50,00"},
+    { id: '30', name: "Forum", data: '03/08/2023' , valor: "50,00"},
+
+  ];
+
 
   useEffect(() => {
     const carregarDadosUsuario = async () => {
@@ -221,9 +257,15 @@ const PerfilUsuario = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Botão de Voltar */}
+      {/* Botão de Deslogar */}
+
       <View style={styles.header}>
-        <BotaoVoltar onPress={() => navigation.goBack()} />
+        <View style={styles.logoutButton}>
+          <TouchableOpacity style={{flexDirection:"row", gap: 10}} onPress={()=> alert("Saindo da Conta...")}>
+            <Text style={{fontSize: 15}}>SAIR</Text>
+            <Ionicons name="log-out-outline" size={24} color="black" />
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Área de Foto de Perfil */}
@@ -249,24 +291,41 @@ const PerfilUsuario = ({ navigation }) => {
         <InfoItem
           label="Data de nascimento"
           value={dataNaci}
-          onEdit={() => editarCampo('Data de nascimento', dataNaci)}
         />
       </View>
 
-      {/* Botões de Navegação */}
-      <View style={styles.buttonContainer}>
-        <BotaoPadrao
-          onPress={() => alert('Ir para tela de DOAÇÕES')}
-          text="Histórico de Doações"
-        />
-        <BotaoPadrao
-          onPress={() => {
-            alert('Ir para tela de DADOS');
-          }}
-          text="Análise de Dados"
-        />
-        <BotaoPadrao onPress={handleLogout} text="Logout" />
+      {/* Botão de texto com seta */}
+      <View style={styles.linkButtonContainer}>
+        <TouchableOpacity onPress={() => setMostrarHistorico(!mostrarHistorico)}>
+          <View style={styles.linkButton}>
+            <Text style={styles.linkText}>HISTÓRICO DE DOAÇÕES</Text>
+            <Ionicons
+              name={mostrarHistorico ? 'chevron-up-outline' : 'chevron-down-outline'}
+              size={18}
+              color="#1D3557"
+            />
+          </View>
+        </TouchableOpacity>
+
+        {mostrarHistorico && (
+          <FlatList
+            data={historicoDoacoes}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => ( //historicoItem
+              <View style={styles.historicoItem}>
+                <View>
+                  <Text style={{color: "#5D90D6"}}>ID: {item.id}</Text>
+                  <Text style={{fontWeight: 'bold'}}>Forum: {item.name}</Text>
+                  <Text style={{color:"gray"}}>{item.data}</Text>
+                </View>
+                <Text style={{color:"#B88CB4", fontWeight: "bold", fontSize: 20}}>{item.valor} R$</Text>
+              </View>
+            )}
+            style={{ maxHeight: 240 }} // define altura máxima rolável
+          />
+        )}
       </View>
+
 
       {/* MODAL PARA EDITAR INFORMAÇÕES */}
       <Modal transparent={true} visible={modalVisible}>
@@ -304,12 +363,15 @@ const PerfilUsuario = ({ navigation }) => {
 const InfoItem = ({ label, value, onEdit }) => {
   return (
     <View style={styles.infoBox}>
-      <Text style={styles.infoText}>
-        {label}: {value}
-      </Text>
-      <TouchableOpacity onPress={onEdit}>
-        <Ionicons name="pencil" size={20} color="#1D5DB5" />
-      </TouchableOpacity>
+      <View>
+        <Text style={styles.infoLabel}>{label}</Text>
+        <Text style={styles.infoText}>{value}</Text>
+      </View>
+      {onEdit && (
+        <TouchableOpacity onPress={onEdit}>
+          <Ionicons name="pencil" size={20} color="#1D5DB5" />
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
@@ -324,7 +386,7 @@ PerfilUsuario.propTypes = {
 InfoItem.propTypes = {
   label: PropTypes.string.isRequired,
   value: PropTypes.string.isRequired,
-  onEdit: PropTypes.func.isRequired,
+  onEdit: PropTypes.func,
 };
 
 export default PerfilUsuario;
