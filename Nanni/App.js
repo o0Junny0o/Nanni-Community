@@ -91,7 +91,11 @@ function MainNavigator() {
     >
       <MainStack.Screen name="Tabs" component={TabNavigator} />
       <MainStack.Screen name="ConfigurarForum" component={ConfigurarForumScreen} />
+<<<<<<< Updated upstream
       <MainStack.Screen name="Teste" component={TESTE} />
+=======
+      <MainStack.Screen name="Analytics" component={ANALITYCS_SCREEN} />
+>>>>>>> Stashed changes
       <MainStack.Screen name="Forum" component={Forum} />
       <MainStack.Screen name="TopicoScreen" component={TopicoScreen} />
     </MainStack.Navigator>

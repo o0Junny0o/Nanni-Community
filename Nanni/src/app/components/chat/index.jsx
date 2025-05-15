@@ -10,11 +10,18 @@ import GiphyService from "../../../service/giphy/GiphyService";
 
 
 export default function DChat({ discussaoPath, useRef }) {
+<<<<<<< Updated upstream
     if(!discussaoPath || !useRef) return;
     
     const [text, setText] = useState('')
     const [anexos, setAnexos] = useState([])
     const [gif, setGif] = useState('')
+=======
+  if (!discussaoPath || !useRef) {
+    console.error("Parâmetros inválidos") 
+    return;
+  }
+>>>>>>> Stashed changes
 
     const [showOpts, setShowOpts] = useState(false)
     const [showGiphy, setShowGiphy] = useState(false)

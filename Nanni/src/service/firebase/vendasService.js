@@ -34,7 +34,10 @@ async function getJogosDoUsuario(userId) {
 
     // Extrair caminhos completos das referências
     const jogosRefs = userDoc.data().jogos || [];
-    return jogosRefs.map((ref) => `/${ref.path}`);
+    
+    return jogosRefs.length > 1 ?
+      jogosRefs.map((ref) => `/${ref.path}`)
+      : Array(jogosRefs[0])
   } catch (error) {
     console.error('Erro ao buscar jogos do usuário:', error);
     return [];
@@ -45,13 +48,21 @@ async function getJogosDoUsuario(userId) {
 export async function calcularVendasPorJogo(userId) {
   try {
     const jogosRefs = await getJogosDoUsuario(userId);
+<<<<<<< Updated upstream:Nanni/src/service/firebase/vendasService.js
 
+=======
+    // console.log('REFS:',jogosRefs)
+>>>>>>> Stashed changes:Nanni/src/service/firebase/analytics/vendasService.js
     if (jogosRefs.length === 0) return {};
-
+    
     const vendasRef = collection(db, VENDAS_COLLECTION);
     const chunks = [];
     const CHUNK_SIZE = 10;
+<<<<<<< Updated upstream:Nanni/src/service/firebase/vendasService.js
 
+=======
+    // console.log('VENDAS REF',vendasRef)
+>>>>>>> Stashed changes:Nanni/src/service/firebase/analytics/vendasService.js
     for (let i = 0; i < jogosRefs.length; i += CHUNK_SIZE) {
       const chunk = jogosRefs.slice(i, i + CHUNK_SIZE);
       const q = query(vendasRef, where('itensComprados', 'in', chunk));
@@ -60,7 +71,7 @@ export async function calcularVendasPorJogo(userId) {
 
     const snapshots = await Promise.all(chunks);
     const vendasSnapshot = snapshots.flatMap((s) => s.docs);
-
+    
     // 2. Processar apenas vendas filtradas
     const jogos = {};
 

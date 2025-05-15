@@ -9,12 +9,17 @@ import {
   TextInput,
   Image,
   TouchableWithoutFeedback,
+<<<<<<< Updated upstream
+=======
+  StatusBar,
+  Pressable,
+>>>>>>> Stashed changes
 } from 'react-native';
 import { styles } from './styles';
 import PropTypes from 'prop-types';
 import BotaoPadrao from '../../components/buttons/BotaoPadrao/index';
 import { useAuth } from '../../components/contexts/AuthContext';
-import { doc, getDoc } from 'firebase/firestore';
+import { arrayRemove, arrayUnion, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../../../service/firebase/conexao';
 import forumList from '../../../hooks/forum/forumList';
 import forumDelete from '../../../hooks/forum/forumDelete';
@@ -22,20 +27,84 @@ import forumUpdate from '../../../hooks/forum/forumUpdate';
 import Forum from '../../../model/Forum';
 
 import { deconvertBase64ToImage } from '../../../utils/Base64Image';
+import forumQuery from '../../../hooks/forum/forumQuery';
+import useForumDiscussao from '../../../hooks/useForumDiscussao';
 
+export default function ForumScreen ({ navigation, route }) {
+
+  const { forumID, forumPath } = route.params
+
+  const { user } = useAuth();
+  const [forum, setForum] = useState()
+  const [forumAutor, setForumAutor] = useState()
+  const [loadingSeguir, setLoadingSeguir] = useState(false)
+    const categoriaForum = [
+      { cat: '*18' },
+      { cat: 'Exemplo' },
+      { cat: 'Exemplo02' },
+      { cat: 'Exemplo03' },
+      { cat: 'Exemplo04' },
+      { cat: 'Exemplo05' },
+    ];
+  const { listDiscussao: discussoes, loading, error, addLimitDiscussao } = useForumDiscussao({ 
+    forumPath: 'foruns/YRysh2NmguCosrq8HVzN', 
+    initialLimit: 10, 
+  }) || []
+    const [fotoPerfil, setFotoPerfil] = useState('');
+    const [topicos, setTopicos] = useState([]);
+    const [topicoTitle, setTopicoTitle] = useState('');
+    const [topicoDesc, setTopicoDesc] = useState('');
+    const categoriaDiscussao = [{ cat: 'Exemplo 01' }, { cat: 'Exemplo 02' }];
+
+  const [isDev, setIsDev] = useState(false)
+  
+
+  useEffect(() => {
+    async function run() {
+      try {
+        const fr = await forumQuery({ forumID: forumID})
+        
+        if(fr) {
+          setForum(fr)
+
+          const frAutor = await getDoc(doc(db, "usuarios", fr.userRef))
+          
+          if(frAutor) {
+            setForumAutor(frAutor.data().nome)            
+          }
+        }
+      } catch(err) {
+        alert("Problema ao carregar Fórum")
+        console.error(err)
+        navigation.goBack()
+      }
+    }
+
+    run()
+  }, [forumID])
+
+<<<<<<< Updated upstream
 const ForumScreen = ({ navigation }) => {
   const { user } = useAuth();
+=======
+  const [seguidor, setSeguidor] = useState(false);
+  const [mostrarDesc, SetMostrarDesc] = useState(false);
+>>>>>>> Stashed changes
 
   const [filtrosAtivos, setFiltrosAtivos] = useState({
     maisVistos: false,
     maisRecentes: false,
   });
 
+<<<<<<< Updated upstream
   const [topicos, setTopicos] = useState([]);
   const [topicoTitle, setTopicoTitle] = useState('');
   const [topicoDesc, setTopicoDesc] = useState('');
   
   const [fotoPerfil, setFotoPerfil] = useState('');
+=======
+  
+>>>>>>> Stashed changes
   // Modal Config:
   const [modal, setModal] = useState(false);
   const [modalConfig, setModalConfig] = useState({
@@ -45,7 +114,15 @@ const ForumScreen = ({ navigation }) => {
     placeholderNome: "Nome do Tópico",
     placeholderDescricao: "Descrição",
     callFunction: () => {},
+<<<<<<< Updated upstream
   })
+=======
+  });
+
+  
+
+  
+>>>>>>> Stashed changes
 
   const closeModal = () => {
     setModal(false)
@@ -167,6 +244,40 @@ const ForumScreen = ({ navigation }) => {
     }));
   };
 
+  async function handleSeguir() {
+    const pDoc = doc(db, "usuarios", user.uid)
+    
+    try {
+      setLoadingSeguir(true)
+      const pSnap = await getDoc(pDoc)
+
+      if (!pSnap.exists()) {
+        console.error("Erro ao carregar seguir");
+        return;
+      }
+
+      const seguindo = pSnap.data().seguindo || [];
+
+      if(seguindo.includes(forum.forumID)) {
+        await updateDoc(pDoc, {
+          seguindo: arrayRemove(forum.forumID)
+        })
+        
+        setSeguidor(false)
+      } else {
+        await updateDoc(pDoc, {
+          seguindo: arrayUnion(forum.forumID)
+        })
+        
+        setSeguidor(true)
+      }
+    } catch(err) {
+      console.error(err)
+    } finally {
+      setLoadingSeguir(false)
+    }
+  }
+
   const topicosFiltrados = aplicarFiltros();
 
   const handleDeleteTopico = async (forumID) => {
@@ -205,6 +316,7 @@ const ForumScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
+<<<<<<< Updated upstream
       <View style={styles.header}>
         <Text style={styles.title}>FÓRUM</Text>
         <TouchableOpacity onPress={() => navigation.navigate('PerfilUsuario')}>
@@ -309,14 +421,211 @@ const ForumScreen = ({ navigation }) => {
       >
         <Text style={styles.createNewForumButtonText}>Novo Tópico</Text>
       </TouchableOpacity>
+=======
+      <StatusBar barStyle="light-content" backgroundColor="#163690" />
+
+      {forum && forumAutor ? (
+        (
+          <>
+            <View style={styles.header}>
+              <TouchableOpacity onPress={() => navigation.navigate('PerfilUsuario')}>
+                <Image source={fotoPerfil} style={styles.perfilImage} />
+              </TouchableOpacity>
+              <View style={{ gap: 5 }}>
+                <Text style={styles.title}>{forum.forumName}</Text>
+                <Text style={{ color: '#B88CB4', fontWeight: 'bold' }}>
+                  POR: {forumAutor}
+                </Text>
+                <TouchableOpacity onPress={() => SetMostrarDesc(!mostrarDesc)}>
+                  <Ionicons
+                    name={mostrarDesc ? 'close-outline' : 'ellipsis-horizontal'}
+                    size={25}
+                    color="#aaa"
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+            {mostrarDesc && (
+              <View style={styles.descHeader}>
+                <Text style={{ fontSize: 15, color: '#fff' }}>
+                  {forum.forumDesc}
+                </Text>
+                <View style={{ flexDirection: 'row', gap: 15 }}>
+                  <FlatList
+                    showsHorizontalScrollIndicator={false}
+                    horizontal={true}
+                    data={forum.tagsDisponiveis}
+                    keyExtractor={(item, index) => index.toString()}
+                    renderItem={({ item, index }) => (
+                      <Text
+                        style={[
+                          styles.tagsDesc,
+                          {
+                            backgroundColor: index % 2 === 0 ? '#ff5555' : '#B88CB4',
+                          },
+                        ]}
+                      >
+                        {item}
+                      </Text>
+                    )}
+                  />
+                </View>
+                <View >
+                  <TouchableOpacity
+                    disabled={loadingSeguir}
+                    style={{ alignItems: 'flex-end' }}
+                    onPress={() => handleSeguir()}
+                  >
+                    <Text
+                      style={{
+                        width: 180,
+                        fontSize: 15,
+                        color: '#ddd',
+                        backgroundColor: '#00000044',
+                        padding: 15,
+                        textAlign: 'center',
+                        borderRadius: 15,
+                      }}
+                    >
+                      {seguidor ? 'PARAR DE SEGUIR' : 'SEGUIR +'}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
+
+            {!discussoes ? (
+              <View style={styles.noTopicsContainer}>
+                <Text style={styles.noTopicsText}>Ainda não existem Tópicos</Text>
+              </View>
+            ) : (
+              <View style={styles.fullFlex}>
+                <Text style={styles.titleDisc}>DISCUSSÕES</Text>
+
+                <FlatList
+                  showsVerticalScrollIndicator={false}
+                  data={discussoes}
+                  keyExtractor={(item, index) => index.toString()}
+                  renderItem={({ item }) => (
+                    <View style={styles.forumItem}>
+                      <TouchableOpacity
+                        onPress={() =>
+                          navigation.navigate('TopicoScreen', {
+                            topicoId: item?.discussaoID,
+                            topicoTitle: item?.titulo, 
+                            topicoDesc: item?.mensagem,
+                          })
+                        }
+                      >
+                        <Text style={styles.forumName}>{item?.titulo}</Text>
+                        {/* <Text style={styles.forumDescription}>
+                          AUTOR: {item?.mensagem}
+                        </Text> */}
+                        <Text style={styles.forumDescription}>
+                          {item?.mensagem}
+                        </Text>
+                      </TouchableOpacity>
+                      
+                      <FlatList
+                        showsHorizontalScrollIndicator={false}
+                        horizontal={true}
+                        data={item?.tag}
+                        keyExtractor={(item, index) => index.toString()}
+                        renderItem={({ item }) => (
+                          <Text
+                            style={[styles.tagsDesc, { backgroundColor: '#B88CB4' }]}
+                          >
+                            {item.tag}
+                          </Text>
+                        )}
+                      />
+
+                      
+                      {isDev && (
+                        <>
+                          <TouchableOpacity
+                            onPress={() => handleDeleteTopico(item?.discussaoID)}
+                          >
+                            <Text style={styles.deleteButton}>Excluir</Text>
+                          </TouchableOpacity>
+                          <TouchableOpacity onPress={() => modalForumConfig(item)}>
+                            <Text style={styles.normalButton}>Atualizar</Text>
+                          </TouchableOpacity>
+                        </>
+                      )}
+
+                      <Text style={styles.forumDate}>
+                        Ex: 10/10/2010 
+                      </Text>
+                    </View>
+                  )}
+                  ListFooterComponent={() => (
+                    <Text style={styles.footerList}>SEM MAIS DISCUSSÕES</Text>
+                  )}
+                />
+
+                
+              </View>
+            )}
+
+            {/* <Modal visible={modal} transparent>
+              <TouchableOpacity
+                onPressOut={() => setModal(false)}
+                style={styles.modalContainer}
+              >
+                <TouchableWithoutFeedback>
+                  <View style={styles.modalTopico}>
+                    <Text style={styles.modalTitle}>{modalConfig.titulo}</Text>
+                    <TextInput
+                      style={styles.modalTextInput}
+                      placeholder={modalConfig.placeholderNome}
+                      onChangeText={setTopicoTitle}
+                      value={topicoTitle}
+                    />
+                    <TextInput
+                      style={styles.modalTextInput}
+                      placeholder={modalConfig.placeholderDescricao}
+                      onChangeText={setTopicoDesc}
+                      value={topicoDesc}
+                    />
+                    <BotaoPadrao
+                      onPress={modalConfig.callFunction}
+                      text={modalConfig.btn}
+                    />
+                    <BotaoPadrao
+                      onPress={() => setModal(false)}
+                      text={modalConfig.cancelar}
+                    />
+                  </View>
+                </TouchableWithoutFeedback>
+              </TouchableOpacity>
+            </Modal> */}
+
+            <TouchableOpacity
+              style={styles.createNewForumButton}
+              onPress={() => modalForumConfig()}
+            >
+              <Text style={styles.createNewForumButtonText}>
+                Criar Nova Discussão
+              </Text>
+            </TouchableOpacity>
+          </>
+        )
+      ) : null }
+>>>>>>> Stashed changes
     </SafeAreaView>
   );
 };
 
+
 ForumScreen.propTypes = {
   navigation: PropTypes.shape({
-    navigate: PropTypes.func.isRequired,
+    goBack: PropTypes.func.isRequired,
   }).isRequired,
+  route: PropTypes.shape({
+    params: PropTypes.shape({
+      forumID: PropTypes.string,
+      forumPath: PropTypes.string,
+    }),
+  }),
 };
-
-export default ForumScreen;

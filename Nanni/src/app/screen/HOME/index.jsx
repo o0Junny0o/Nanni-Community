@@ -25,10 +25,17 @@ import { deconvertBase64ToImage } from "../../../utils/Base64Image";
 
 export default function HomeScreen({ navigation }) {
 
+<<<<<<< Updated upstream
     const [forumSeguidos, setForumSeguidos] = useState([])
     const [forumDono, setForumDono] = useState([])
     const [isDev, setIsDev] = useState(false)
     const [loading, setLoading] = useState(true)
+=======
+  
+  // User:
+  const { user, userLoading, authLoading } = useAuth();
+  // > Verificação:
+>>>>>>> Stashed changes
 
     // User:
     const { user, userLoading, authLoading } = useAuth();
@@ -93,6 +100,7 @@ export default function HomeScreen({ navigation }) {
     )
 
 
+<<<<<<< Updated upstream
     return (
         <SafeAreaView style={styles.safeArea}>
             {loading ? (
@@ -197,6 +205,122 @@ function VForumDono({ forumID, avatar, forumName, data }) {
                 </View>
         </Pressable>
     )
+=======
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      {loading ? (
+        <View style={styles.loadingScreen}>
+          <Text style={styles.loadingText}>Carregando...</Text>
+        </View>
+      ) : forumDono.length > 0 || forumSeguidos.length > 0 ? (
+        <View style={{ flex: 1 }}>
+          <View style={styles.container}>
+            <ScrollView>
+              {isDev && forumDono && forumDono.length > 0 ? (
+                <>
+                  <Text style={styles.pageTitle}>{titleForumDono}</Text>
+                  <FlatList
+                    style={styles.section}
+                    scrollEnabled={false}
+                    data={forumDono}
+                    keyExtractor={(item) => item.forumID}
+                    renderItem={({ item }) => <VForumDono navigation={navigation} path={item.getForumPath()} {...item} />}
+                  />
+                </>
+              ) : null}
+
+              {forumSeguidos && forumSeguidos.length > 0 ? (
+                <>
+                  <Text style={styles.pageTitle}>{titleForumSeguidos}</Text>
+                  <FlatList
+                    style={styles.section}
+                    scrollEnabled={false}
+                    data={forumSeguidos}
+                    keyExtractor={(item) => item.forumID}
+                    renderItem={({ item }) => <VForumSeguidos navigation={navigation} path={item.getForumPath()} {...item} />}
+                  />
+                </>
+              ) : null}
+            </ScrollView>
+          </View>
+          {isDev ? (
+            <TouchableOpacity
+              onPress={(e) => navigation.push('ConfigurarForum')}
+              style={styles.button}
+            >
+              <Text style={styles.buttonTxt}>Criar Novo Fórum</Text>
+            </TouchableOpacity>
+          ) : null}
+        </View>
+      ) : (
+        <View style={styles.loadingScreen}>
+          <Text style={styles.loadingText}>
+            Clique em explorar para começar
+          </Text>
+        </View>
+      )}
+    </SafeAreaView>
+  );
+}
+
+function VForumSeguidos({ forumID, forumName, forumDesc, path, navigation }) {
+  if (!forumName && typeof forumName !== 'string') return;
+  if (!forumDesc && typeof forumDesc !== 'string') return;
+  if (typeof path !== 'string') return;
+  if (!forumID) return;
+
+  return (
+    <TouchableWithoutFeedback onPress={() => navigation.push('Forum', {
+      forumID: forumID,
+      forumPath: path,
+    })}>
+      <View style={forumSeguidosStyles.container}>
+        <Text style={forumSeguidosStyles.title}>{forumName}</Text>
+        <Text style={forumSeguidosStyles.desc}>{forumDesc}</Text>
+      </View>
+    </TouchableWithoutFeedback>
+  );
+}
+
+function VForumDono({ forumID, avatar, forumName, data, path, navigation }) {
+  if (!forumName && typeof forumName !== 'string') return;
+  if (!forumID) return;
+  if (!(data instanceof Timestamp)) return;
+  if (typeof path !== 'string') return;
+
+  return (
+    <Pressable onPress={(e) => navigation.push('Forum', {
+      forumID: forumID
+    })}>
+      <View style={forumDonoStyles.container}>
+        <View style={forumDonoStyles.rows}>
+          <Image
+            source={deconvertBase64ToImage(avatar)}
+            style={forumDonoStyles.avatar}
+          />
+          <Text style={forumDonoStyles.title}>{forumName}</Text>
+          <Pressable
+            style={forumDonoStyles.iconEdit}
+            onPress={(e) => {
+              navigation.push('ConfigurarForum', {
+                forumID: forumID,
+              });
+            }}
+          >
+            <Ionicons name="settings" size={24} color={colors.p3} />
+          </Pressable>
+        </View>
+        <View style={[forumDonoStyles.rows, { justifyContent: 'flex-end' }]}>
+          {data && (
+            <Text style={forumDonoStyles.extra}>
+              {data.toDate().toLocaleDateString('pt-br')}
+            </Text>
+          )}
+        </View>
+      </View>
+    </Pressable>
+  );
+>>>>>>> Stashed changes
 }
 
 
