@@ -9,11 +9,8 @@ import {
   TextInput,
   Image,
   TouchableWithoutFeedback,
-<<<<<<< Updated upstream
-=======
   StatusBar,
   Pressable,
->>>>>>> Stashed changes
 } from 'react-native';
 import { styles } from './styles';
 import PropTypes from 'prop-types';
@@ -83,28 +80,14 @@ export default function ForumScreen ({ navigation, route }) {
     run()
   }, [forumID])
 
-<<<<<<< Updated upstream
-const ForumScreen = ({ navigation }) => {
-  const { user } = useAuth();
-=======
   const [seguidor, setSeguidor] = useState(false);
   const [mostrarDesc, SetMostrarDesc] = useState(false);
->>>>>>> Stashed changes
 
   const [filtrosAtivos, setFiltrosAtivos] = useState({
     maisVistos: false,
     maisRecentes: false,
   });
 
-<<<<<<< Updated upstream
-  const [topicos, setTopicos] = useState([]);
-  const [topicoTitle, setTopicoTitle] = useState('');
-  const [topicoDesc, setTopicoDesc] = useState('');
-  
-  const [fotoPerfil, setFotoPerfil] = useState('');
-=======
-  
->>>>>>> Stashed changes
   // Modal Config:
   const [modal, setModal] = useState(false);
   const [modalConfig, setModalConfig] = useState({
@@ -114,15 +97,7 @@ const ForumScreen = ({ navigation }) => {
     placeholderNome: "Nome do Tópico",
     placeholderDescricao: "Descrição",
     callFunction: () => {},
-<<<<<<< Updated upstream
   })
-=======
-  });
-
-  
-
-  
->>>>>>> Stashed changes
 
   const closeModal = () => {
     setModal(false)
@@ -316,112 +291,6 @@ const ForumScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-<<<<<<< Updated upstream
-      <View style={styles.header}>
-        <Text style={styles.title}>FÓRUM</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('PerfilUsuario')}>
-          <Image source={fotoPerfil} style={styles.perfilImage} />
-        </TouchableOpacity>
-      </View>
-
-      {topicos.length === 0 ? (
-        <View style={styles.noTopicsContainer}>
-          <Text style={styles.noTopicsText}>Ainda não existem Tópicos</Text>
-        </View>
-      ) : (
-        <View style={styles.fullFlex}>
-          <View style={styles.filterButtonsContainer}>
-            <TouchableOpacity
-              style={[
-                styles.filterButton,
-                filtrosAtivos.maisVistos && styles.filterButtonActive,
-              ]}
-              onPress={() => handleFiltrar('maisVistos')}
-            >
-              <Text style={styles.filterButtonText}>Mais Vistos</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.filterButton,
-                filtrosAtivos.maisRecentes && styles.filterButtonActive,
-              ]}
-              onPress={() => handleFiltrar('maisRecentes')}
-            >
-              <Text style={styles.filterButtonText}>Mais Recentes</Text>
-            </TouchableOpacity>
-          </View>
-          <FlatList
-            showsVerticalScrollIndicator={false}
-            data={topicosFiltrados}
-            keyExtractor={(item) => item?.forumID}
-            renderItem={({ item }) => (
-              <View style={styles.forumItem}>
-                <TouchableOpacity
-                  onPress={() =>
-                    navigation.navigate('TopicoScreen', {
-                      topicoId: item?.forumID,
-                      topicoTitle: item?.forumName, // Passando o nome do tópico
-                      topicoDesc: item?.forumDesc, // Passando a descrição do tópico
-                    })
-                  }
-                >
-                  <Text style={styles.forumName}>{item?.forumName}</Text>
-                  <Text style={styles.forumDescription}>
-                    Descrição: {item?.forumDesc}
-                  </Text>
-                  <Text style={styles.forumDescription}>
-                    ID: {item?.forumID}
-                  </Text>
-                </TouchableOpacity>
-                {/* Exemplo de botões de deletar e atualizar */}
-                <TouchableOpacity
-                  onPress={() => handleDeleteTopico(item?.forumID)}
-                >
-                  <Text style={styles.deleteButton}>Excluir</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => modalForumConfig(item)}>
-                  <Text style={{ color: 'blue', marginTop: 5 }}>Atualizar</Text>
-                </TouchableOpacity> 
-              </View>
-            )}
-          />
-        </View>
-      )}
-
-      <Modal visible={modal} transparent>
-          <TouchableOpacity
-            onPressOut={() => setModal(false)}
-            style={styles.modalContainer}
-          >
-            <TouchableWithoutFeedback>
-              <View style={styles.modalTopico}>
-                <Text style={styles.modalTitle}>{modalConfig.titulo}</Text>
-                <TextInput
-                  style={styles.modalTextInput}
-                  placeholder={modalConfig.placeholderNome}
-                  onChangeText={setTopicoTitle}
-                  value={topicoTitle}
-                />
-                <TextInput
-                  style={styles.modalTextInput}
-                  placeholder={modalConfig.placeholderDescricao}
-                  onChangeText={setTopicoDesc}
-                  value={topicoDesc}
-                />
-                <BotaoPadrao onPress={modalConfig.callFunction} text={modalConfig.btn} />
-                <BotaoPadrao onPress={() => setModal(false)} text={modalConfig.cancelar} />
-              </View>
-            </TouchableWithoutFeedback>
-          </TouchableOpacity>
-        </Modal>
-
-      <TouchableOpacity
-        style={styles.createNewForumButton}
-        onPress={() => modalForumConfig()}
-      >
-        <Text style={styles.createNewForumButtonText}>Novo Tópico</Text>
-      </TouchableOpacity>
-=======
       <StatusBar barStyle="light-content" backgroundColor="#163690" />
 
       {forum && forumAutor ? (
@@ -612,7 +481,6 @@ const ForumScreen = ({ navigation }) => {
           </>
         )
       ) : null }
->>>>>>> Stashed changes
     </SafeAreaView>
   );
 };

@@ -41,15 +41,8 @@ export const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-<<<<<<< Updated upstream
-    marginBottom: 10,
-    color: colors.textDark,
-    textAlign: 'center',
-    marginTop: 10,
-=======
     color: colors.textLight,
     textAlign: 'left',
->>>>>>> Stashed changes
   },
   filterButtonsContainer: {
     flexDirection: 'row',
