@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,9 +7,9 @@ import {
   TouchableOpacity,
   Modal,
   TextInput,
-  Alert, // Importe o Alert
+  Alert,
+  FlatList
 } from 'react-native';
-import { FlatList } from 'react-native';
 import styles from './styles';
 import * as ImagePicker from 'expo-image-picker'; // 📷 Biblioteca para selecionar imagem
 import { Ionicons } from '@expo/vector-icons';
@@ -29,10 +29,15 @@ import { updateEmail } from 'firebase/auth';
 import CARREGAMENTO_SCREEN from '../CARREGAMENTO_SCREEN/index';
 import { USUARIOS_COLLECTION } from '../../../model/refsCollection';
 import { navigationRef } from '../../../../App';
+import { userRef } from '../../../utils/userRef';
+import DoacaoModel from '../../../model/Doacao/DoacaoModel';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const PerfilUsuario = ({ navigation }) => {
   const { user, loading: authLoading, logout } = useAuth();
   const [isLoading, setIsLoading] = useState(true); // Adicione este state
+  const insets = useSafeAreaInsets();
 
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
@@ -42,38 +47,7 @@ const PerfilUsuario = ({ navigation }) => {
   const [campoEdicao, setCampoEdicao] = useState('');
   const [valorEdicao, setValorEdicao] = useState('');
   const [mostrarHistorico, setMostrarHistorico] = useState(false);
-  const historicoDoacoes = [
-    { id: '1', name: 'Forum', data: '10/02/2024', valor: '20,15' },
-    { id: '2', name: 'Forum', data: '22/11/2023', valor: '32,40' },
-    { id: '3', name: 'Forum', data: '03/08/2023', valor: '32,40' },
-    { id: '4', name: 'Forum', data: '10/02/2024', valor: '32,40' },
-    { id: '5', name: 'Forum', data: '22/11/2023', valor: '32,40' },
-    { id: '6', name: 'Forum', data: '03/08/2023', valor: '32,40' },
-    { id: '7', name: 'Forum', data: '10/02/2024', valor: '32,40' },
-    { id: '8', name: 'Forum', data: '22/11/2023', valor: '32,40' },
-    { id: '9', name: 'Forum', data: '03/08/2023', valor: '32,40' },
-    { id: '10', name: 'Forum', data: '03/08/2023', valor: '50,00' },
-    { id: '11', name: 'Forum', data: '10/02/2024', valor: '50,00' },
-    { id: '12', name: 'Forum', data: '22/11/2023', valor: '50,00' },
-    { id: '13', name: 'Forum', data: '03/08/2023', valor: '50,00' },
-    { id: '14', name: 'Forum', data: '10/02/2024', valor: '50,00' },
-    { id: '15', name: 'Forum', data: '22/11/2023', valor: '50,00' },
-    { id: '16', name: 'Forum', data: '03/08/2023', valor: '50,00' },
-    { id: '17', name: 'Forum', data: '10/02/2024', valor: '50,00' },
-    { id: '18', name: 'Forum', data: '22/11/2023', valor: '50,00' },
-    { id: '19', name: 'Forum', data: '03/08/2023', valor: '50,00' },
-    { id: '20', name: 'Forum', data: '03/08/2023', valor: '50,00' },
-    { id: '21', name: 'Forum', data: '10/02/2024', valor: '50,00' },
-    { id: '22', name: 'Forum', data: '22/11/2023', valor: '50,00' },
-    { id: '23', name: 'Forum', data: '03/08/2023', valor: '50,00' },
-    { id: '24', name: 'Forum', data: '10/02/2024', valor: '50,00' },
-    { id: '25', name: 'Forum', data: '22/11/2023', valor: '50,00' },
-    { id: '26', name: 'Forum', data: '03/08/2023', valor: '50,00' },
-    { id: '27', name: 'Forum', data: '10/02/2024', valor: '50,00' },
-    { id: '28', name: 'Forum', data: '22/11/2023', valor: '50,00' },
-    { id: '29', name: 'Forum', data: '03/08/2023', valor: '50,00' },
-    { id: '30', name: 'Forum', data: '03/08/2023', valor: '50,00' },
-  ];
+  const [historicoDoacoes, setHistoricoDoacoes] = useState([]);
 
   useEffect(() => {
     const carregarDadosUsuario = async () => {
@@ -82,8 +56,8 @@ const PerfilUsuario = ({ navigation }) => {
       setIsLoading(true);
 
       try {
-        const userRef = doc(db, USUARIOS_COLLECTION, user.uid);
-        const docSnap = await getDoc(userRef);
+        const userRefe = doc(db, USUARIOS_COLLECTION, user.uid);
+        const docSnap = await getDoc(userRefe);
 
         if (!docSnap.exists()) return;
 
@@ -99,6 +73,31 @@ const PerfilUsuario = ({ navigation }) => {
         if (data.avatar) {
           setFotoPerfil(deconvertBase64ToImage(data.avatar) || '');
         }
+
+        const dados = await DoacaoModel.fetchByUserRefGive(userRef(user.uid));
+        console.log(dados);
+
+        // Buscar nome de quem recebeu a doação (userRefTake)
+        const dadosComNome = await Promise.all(
+          dados.map(async (doacao) => {
+            let nomeUsuario = 'Desconhecido';
+            try {
+              const userDoc = await getDoc(doacao.userRefTake);
+              if (userDoc.exists()) {
+                nomeUsuario = userDoc.data().nome || 'Sem nome';
+              }
+            } catch (e) {
+              console.warn('Erro ao buscar userRefTake:', e);
+            }
+
+            return {
+              ...doacao,
+              nomeUsuarioTake: nomeUsuario,
+            };
+          }),
+        );
+
+        setHistoricoDoacoes(dadosComNome);
       } catch (error) {
         console.error('Erro ao carregar dados:', error);
         alert('Erro ao carregar perfil');
@@ -261,7 +260,7 @@ const PerfilUsuario = ({ navigation }) => {
         <View style={styles.logoutButton}>
           <TouchableOpacity
             style={{ flexDirection: 'row', gap: 10 }}
-            onPress={() => alert('Saindo da Conta...')}
+            onPress={() => handleLogout()}
           >
             <Text style={{ fontSize: 15 }}>SAIR</Text>
             <Ionicons name="log-out-outline" size={24} color="black" />
@@ -293,7 +292,10 @@ const PerfilUsuario = ({ navigation }) => {
       </View>
 
       {/* Botão de texto com seta */}
-      <View style={styles.linkButtonContainer}>
+      <View style={{
+        paddingBottom: insets.bottom,    // respeita altura da barra de navegação
+        flex: 1 
+        }}>
         <TouchableOpacity
           onPress={() => setMostrarHistorico(!mostrarHistorico)}
         >
@@ -319,8 +321,10 @@ const PerfilUsuario = ({ navigation }) => {
               <View style={styles.historicoItem}>
                 <View>
                   <Text style={{ color: '#5D90D6' }}>ID: {item.id}</Text>
-                  <Text style={{ fontWeight: 'bold' }}>Forum: {item.name}</Text>
-                  <Text style={{ color: 'gray' }}>{item.data}</Text>
+                  <Text style={{ fontWeight: 'bold' }}>Usuário: {item.nomeUsuarioTake}</Text>
+                  <Text style={{ color: 'gray' }}>
+                      {new Date(item.data).toLocaleDateString('pt-BR')}
+                  </Text>
                 </View>
                 <Text
                   style={{ color: '#B88CB4', fontWeight: 'bold', fontSize: 20 }}

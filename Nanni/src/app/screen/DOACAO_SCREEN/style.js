@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-const doacao = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#f5f5f5', // Light background
@@ -66,3 +66,5 @@ const doacao = StyleSheet.create({
         textAlign: 'center',
     },
 });
+
+export { styles }

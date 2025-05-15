@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     width: '80%',
     marginTop: 30,
-    paddingBottom: 60,
+    paddingBottom: 20,
     borderBottomWidth: 1,
   },
   infoBox: {
@@ -135,8 +135,6 @@ const styles = StyleSheet.create({
   logoutButton: {
     padding: 10,
   },
-
-  linkButtonContainer: {},
 
   linkButton: {
     flexDirection: 'row',

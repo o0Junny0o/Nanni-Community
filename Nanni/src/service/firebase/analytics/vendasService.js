@@ -5,7 +5,7 @@ import {
   getDocs,
   query,
   where,
-  //Timestamp,
+  Timestamp,
 } from 'firebase/firestore';
 import { db } from '../conexao';
 import {
@@ -50,17 +50,18 @@ export async function getJogosDoUsuario(userId) {
 }
 
 export async function calcularVendasPorJogo(userId, ano) {
-  const anoInicio = new Date(ano, 0, 1).toISOString();
-  const anoFim = new Date(ano + 1, 0, 1).toISOString();
+  const anoNumerico = Number(ano);
+  const anoInicio = Timestamp.fromDate(new Date(anoNumerico, 0, 1));
+  const anoFim = Timestamp.fromDate(new Date(anoNumerico + 1, 0, 1));
   try {
     const jogosRefs = await getJogosDoUsuario(userId);
-
+    console.log('REFS:',jogosRefs)
     if (jogosRefs.length === 0) return {};
 
     const vendasRef = collection(db, VENDAS_COLLECTION);
     const chunks = [];
     const CHUNK_SIZE = 10;
-
+    console.log('VENDAS REF',vendasRef)
     for (let i = 0; i < jogosRefs.length; i += CHUNK_SIZE) {
       const chunk = jogosRefs.slice(i, i + CHUNK_SIZE);
       const q = query(
@@ -73,6 +74,7 @@ export async function calcularVendasPorJogo(userId, ano) {
     }
 
     const snapshots = await Promise.all(chunks);
+
     const vendasSnapshot = snapshots.flatMap((s) => s.docs);
 
     // 2. Processar apenas vendas filtradas
@@ -84,9 +86,8 @@ export async function calcularVendasPorJogo(userId, ano) {
       const idJogo = caminhoJogo.split('/').pop(); // Extrai o ID
 
       // Extrair mês
-      const data = new Date(venda.data);
+      const data = venda.data.toDate();
       const mes = MESES[data.getUTCMonth()];
-      //console.log(venda)
 
       // Inicializar estrutura se necessário
       if (!jogos[idJogo]) {
@@ -105,6 +106,7 @@ export async function calcularVendasPorJogo(userId, ano) {
         value: meses[name],
       }));
     }
+
     // Converter para array no final
     return Object.entries(resultado).map(([id, meses]) => ({
       id,

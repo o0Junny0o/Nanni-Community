@@ -1,21 +1,24 @@
-import React, { useState } from 'react';
-import styles from './style';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { useState } from 'react';
+import { styles } from './style';
+import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import { Picker } from '@react-native-picker/picker'; // For the dropdown
 import { useSafeAreaInsets } from 'react-native-safe-area-context'; //to handle notch and status bar
+import { userRef } from '../../../utils/userRef';
+import DoacaoModel from '../../../model/Doacao/DoacaoModel';
+import { Timestamp } from 'firebase/firestore';
+import { useAuth } from '../../components/contexts/AuthContext';
+import PropTypes from 'prop-types';
 
-const DoacaoScreen = () => {
-    const [nome, setNome] = useState('');
+function DoacaoScreen({route}) {
+    const { userRecebe } = route.params;
+    const [userT, setUserT] = useState(userRecebe);
     const [valor, setValor] = useState('');
     const [metodo, setMetodo] = useState('pix'); // Default value
     const insets = useSafeAreaInsets();
 
-    const handleDoacao = () => {
-        // Implement your donation logic here
-        console.log('Nome:', nome);
-        console.log('Valor:', valor);
-        console.log('Método:', metodo);
-        alert(`Doação de R$${valor} realizada com sucesso via ${metodo}!`); //simple feedback
+    const handleDoacao = async () => {
+        const { user } = useAuth();
+        await doacao(user, userT, valor, metodo);
     };
 
     return (
@@ -25,13 +28,6 @@ const DoacaoScreen = () => {
                 <Text style={styles.description}>
                     Preencha os campos abaixo para contribuir com o projeto.
                 </Text>
-
-                <TextInput
-                    style={styles.input}
-                    placeholder="Nome Completo"
-                    value={nome}
-                    onChangeText={setNome}
-                />
                 <TextInput
                     style={styles.input}
                     placeholder="Valor (R$)"
@@ -61,6 +57,31 @@ const DoacaoScreen = () => {
     );
 };
 
+async function doacao(userG, userT, valor, metodo) {
 
+    const userRefGive = userRef(userG.uid);
+    const userRefTake = userRef(userT.uid);
+
+    const timestamp = Timestamp.now();
+    const isoString = timestamp.toDate().toISOString();
+
+    const novaDoacao = new DoacaoModel({
+        userRefGive,
+        userRefTake,
+        data: isoString,
+        valor: valor,
+        metodoPag: metodo,
+    });
+
+    await novaDoacao.save();
+}
+
+DoacaoScreen.propTypes = {
+  route: PropTypes.shape({
+    params: PropTypes.shape({
+      userRecebe: PropTypes.object.isRequired,
+    }).isRequired,
+  }).isRequired,
+};
 
 export default DoacaoScreen;

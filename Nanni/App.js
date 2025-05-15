@@ -12,6 +12,7 @@ import { toastConfig } from './src/app/components/toasts/ToastConfig';
 import { requestNotificationPermissions } from './src/utils/Notifications';
 import { Feather } from '@expo/vector-icons';
 // import { bulkFromJSON } from './src/scripts/jogos';
+//import { converterDataISOparaTimestamp } from './src/scripts/conversão';
 
 // Importa as telas
 import Login from './src/app/screen/LOGIN_SCREEN/index';
@@ -21,9 +22,10 @@ import RecuperarSenha from './src/app/screen/RECUPERAR_SENHA_SCREEN/index';
 import PerfilUsuario from './src/app/screen/PERFIL_SCREEN/index';
 import Forum from './src/app/screen/FORUM_SCREEN/index';
 import TopicoScreen from './src/app/screen/TOPICOS_SCREEN/index';
-import TESTE from './src/app/screen/TESTE_SCREEN/index';
-import ListaJogos from './src/app/screen/LISTA_JOGOS_SCREEN';
+import ANALITYCS_SCREEN from './src/app/screen/ANALITYCS_SCREEN/index';
 import HomeScreen from './src/app/screen/HOME/index';
+import DOACAO from './src/app/screen/DOACAO_SCREEN/index';
+
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
@@ -44,6 +46,7 @@ export default function App() {
   // Solicita permissões ao iniciar o app
   useEffect(() => {
     // bulkFromJSON();
+    //converterDataISOparaTimestamp()
     requestNotificationPermissions();
   }, []);
   return (
@@ -80,7 +83,7 @@ function TabNavigator() {
       screenOptions={customTabBarStyle}
     >
       <TabStack.Screen
-        name="PerfilUsuario"
+        name="Perfil"
         component={PerfilUsuario}
         options={{
           tabBarIcon: ({ color, size }) => (
@@ -97,16 +100,15 @@ function TabNavigator() {
           ),
         }}
       />
-      <TabStack.Screen
-        name="TopicoScreen"
-        component={TopicoScreen}
+      <TabStack.Screen 
+        name="Explorar" 
+        component={ExplorarScreen} 
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Feather name="message-square" color={color} size={size} />
+            <Feather name="search" color={color} size={size} />
           ),
         }}
       />
-      <TabStack.Screen name="Explorar" component={ExplorarScreen} />
     </TabStack.Navigator>
   );
 }
@@ -116,18 +118,18 @@ function MainNavigator() {
   return (
     <MainStack.Navigator
       screenOptions={{ headerShown: false }}
-      initialRouteName="Forum"
+      initialRouteName="Analytics"
     >
       <MainStack.Screen name="Tabs" component={TabNavigator} />
       <MainStack.Screen
         name="ConfigurarForum"
         component={ConfigurarForumScreen}
       />
-      <MainStack.Screen name="Teste" component={TESTE} />
-      <MainStack.Screen name="ListaJogos" component={ListaJogos} />
+      <MainStack.Screen name="Analytics" component={ANALITYCS_SCREEN} />
       <MainStack.Screen name="Forum" component={Forum} />
       <MainStack.Screen name="TopicoScreen" component={TopicoScreen} />
       <MainStack.Screen name="PerfilUsuario" component={PerfilUsuario} />
+      <MainStack.Screen name="DOACAO" component={DOACAO} />
     </MainStack.Navigator>
   );
 }
