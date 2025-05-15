@@ -40,16 +40,43 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     // Border:
     borderWidth: 1.5,
-    borderRadius: 16,
+    borderRadius: 10,
     borderColor: colors.p5label,
     marginVertical: 5,
   },
   textInputInactive: {
     opacity: 0.8,
+    background: 'rgb(160, 160, 160)',
   },
   multilineTextInput: {
     textAlignVertical: 'top',
     minHeight: 100,
+  },
+  avatarView: {
+    position: 'relative',
+    alignItems: 'center',
+    marginVertical: 20,
+  },
+  avatarIcon: {
+    position: 'absolute',
+    bottom: -3,
+    right: -3,
+    padding: 10,
+    borderRadius: 75,
+    backgroundColor: colors.p3,
+    color: colors.p6,
+  },
+  avatar: {
+    width: 100,
+    height: 100,
+    borderRadius: 75,
+    backgroundColor: colors.p1,
+    borderWidth: 3,
+    borderColor: colors.p3,
+  },
+  pickerView: {
+    paddingVertical: 0,
+    paddingHorizontal: 5,
   },
   button: {
     width: '80%',

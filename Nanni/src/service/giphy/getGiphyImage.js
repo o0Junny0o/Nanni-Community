@@ -1,12 +1,16 @@
 import { fetch } from 'expo/fetch';
-import { GIPHY_API_KEY } from '../firebase/conexao';
+import { giphy } from '../firebase/conexao';
 
 const GIPHY_URL = 'https://api.giphy.com/v1/gifs/';
 
 async function getGiphy({ uri }) {
-  if (!uri || typeof uri !== 'string' || uri.trim() === '') return null;
+  if (!uri || typeof uri !== 'string' || uri.trim() === '') return;
+  if (!giphy || typeof giphy !== 'string') {
+    console.error(`Chave de API GIPHY inválida : ${typeof giphy}`);
+    return;
+  }
 
-  const reference = `${GIPHY_URL}${uri.replace('[*]', GIPHY_API_KEY)}`;
+  const reference = `${GIPHY_URL}${uri.replace('[*]', giphy)}`;
   try {
     const resp = await fetch(reference, {
       headers: { Accept: 'application/json' },
@@ -19,12 +23,10 @@ async function getGiphy({ uri }) {
     const data = await resp.json();
 
     if (!Array.isArray(data.data)) {
-      return [data.data.images.original.url];
+      return [data.data];
     }
 
-    return data.data
-      .map((imgData) => imgData.images.original.url)
-      .filter(Boolean);
+    return data.data;
   } catch (err) {
     console.error('ERROR in getGiphy : ' + err);
     return [];

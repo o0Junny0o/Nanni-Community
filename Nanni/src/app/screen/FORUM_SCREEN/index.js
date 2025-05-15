@@ -9,7 +9,7 @@ import {
   TextInput,
   Image,
   TouchableWithoutFeedback,
-  StatusBar
+  StatusBar,
 } from 'react-native';
 import { styles } from './styles';
 import PropTypes from 'prop-types';
@@ -26,8 +26,8 @@ import Forum from '../../../model/Forum';
 import { deconvertBase64ToImage } from '../../../utils/Base64Image';
 
 const ForumScreen = ({ navigation }) => {
-  const [seguidor, setSeguidor] = useState(false)
-  const [mostrarDesc, SetMostrarDesc] = useState(false)
+  const [seguidor, setSeguidor] = useState(false);
+  const [mostrarDesc, SetMostrarDesc] = useState(false);
   const { user } = useAuth();
 
   const [filtrosAtivos, setFiltrosAtivos] = useState({
@@ -51,19 +51,16 @@ const ForumScreen = ({ navigation }) => {
     callFunction: () => {},
   });
 
-  const categoriaForum  = [
-    {cat: "*18"},
-    {cat: "Exemplo"},
-    {cat: "Exemplo02"},
-    {cat: "Exemplo03"},
-    {cat: "Exemplo04"},
-    {cat: "Exemplo05"},
-  ]
+  const categoriaForum = [
+    { cat: '*18' },
+    { cat: 'Exemplo' },
+    { cat: 'Exemplo02' },
+    { cat: 'Exemplo03' },
+    { cat: 'Exemplo04' },
+    { cat: 'Exemplo05' },
+  ];
 
-  const categoriaDiscussao  = [
-    {cat: "Exemplo 01"},
-    {cat: "Exemplo 02"},
-  ]
+  const categoriaDiscussao = [{ cat: 'Exemplo 01' }, { cat: 'Exemplo 02' }];
 
   const closeModal = () => {
     setModal(false);
@@ -220,47 +217,71 @@ const ForumScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#163690"/>
-      
+      <StatusBar barStyle="light-content" backgroundColor="#163690" />
+
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.navigate('PerfilUsuario')}>
           <Image source={fotoPerfil} style={styles.perfilImage} />
         </TouchableOpacity>
-        <View style={{gap: 5}}>
+        <View style={{ gap: 5 }}>
           <Text style={styles.title}>NOME DO FORUM</Text>
-          <Text style={{color: "#B88CB4", fontWeight: "bold"}}>POR: AUTOR</Text>
+          <Text style={{ color: '#B88CB4', fontWeight: 'bold' }}>
+            POR: AUTOR
+          </Text>
           <TouchableOpacity onPress={() => SetMostrarDesc(!mostrarDesc)}>
             <Ionicons
               name={mostrarDesc ? 'close-outline' : 'ellipsis-horizontal'}
               size={25}
-              color = "#aaa"
+              color="#aaa"
             />
           </TouchableOpacity>
         </View>
       </View>
-        {mostrarDesc && (
-          <View style={styles.descHeader}>
-            <Text style={{fontSize: 15, color: "#fff"}}>Descrição...</Text>
-            <View style={{flexDirection: "row", gap: 15}}>
-              
-              <FlatList
-                showsHorizontalScrollIndicator={false}
-                horizontal={true}
-                data={categoriaForum}
-                keyExtractor={item => item.cat}
-                renderItem={({ item, index }) => (
-                  <Text style={[styles.tagsDesc, {backgroundColor: index % 2===0 ? "#ff5555" : "#B88CB4"}]}>{item.cat}</Text>
-                )} />
-
-            </View>
-            <View>
-              <TouchableOpacity style={{alignItems:'flex-end'}} onPress={() => setSeguidor(!seguidor)}>
-                <Text style={{width: 180,fontSize: 15, color: "#ddd", backgroundColor: "#00000044", padding: 15, textAlign: 'center', borderRadius: 15}}>{seguidor? 'PARAR DE SEGUIR' : 'SEGUIR +'}</Text>
-              </TouchableOpacity>
-            </View>
+      {mostrarDesc && (
+        <View style={styles.descHeader}>
+          <Text style={{ fontSize: 15, color: '#fff' }}>Descrição...</Text>
+          <View style={{ flexDirection: 'row', gap: 15 }}>
+            <FlatList
+              showsHorizontalScrollIndicator={false}
+              horizontal={true}
+              data={categoriaForum}
+              keyExtractor={(item) => item.cat}
+              renderItem={({ item, index }) => (
+                <Text
+                  style={[
+                    styles.tagsDesc,
+                    {
+                      backgroundColor: index % 2 === 0 ? '#ff5555' : '#B88CB4',
+                    },
+                  ]}
+                >
+                  {item.cat}
+                </Text>
+              )}
+            />
           </View>
-        )}
-
+          <View>
+            <TouchableOpacity
+              style={{ alignItems: 'flex-end' }}
+              onPress={() => setSeguidor(!seguidor)}
+            >
+              <Text
+                style={{
+                  width: 180,
+                  fontSize: 15,
+                  color: '#ddd',
+                  backgroundColor: '#00000044',
+                  padding: 15,
+                  textAlign: 'center',
+                  borderRadius: 15,
+                }}
+              >
+                {seguidor ? 'PARAR DE SEGUIR' : 'SEGUIR +'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
 
       {topicos.length === 0 ? (
         <View style={styles.noTopicsContainer}>
@@ -268,7 +289,6 @@ const ForumScreen = ({ navigation }) => {
         </View>
       ) : (
         <View style={styles.fullFlex}>
-          
           <Text style={styles.titleDisc}>DISCUSSÕES</Text>
 
           <FlatList
@@ -299,23 +319,26 @@ const ForumScreen = ({ navigation }) => {
                   showsHorizontalScrollIndicator={false}
                   horizontal={true}
                   data={categoriaDiscussao}
-                  keyExtractor={item => item.cat}
+                  keyExtractor={(item) => item.cat}
                   renderItem={({ item }) => (
-                    <Text style={[styles.tagsDesc, {backgroundColor: "#B88CB4"}]}>{item.cat}</Text>
-                  )} />
+                    <Text
+                      style={[styles.tagsDesc, { backgroundColor: '#B88CB4' }]}
+                    >
+                      {item.cat}
+                    </Text>
+                  )}
+                />
                 <TouchableOpacity
                   onPress={() => handleDeleteTopico(item?.forumID)}
                 >
-                <Text style={styles.deleteButton}>Excluir</Text>
+                  <Text style={styles.deleteButton}>Excluir</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => modalForumConfig(item)}>
                   <Text style={styles.normalButton}>Atualizar</Text>
-                </TouchableOpacity> 
-                
+                </TouchableOpacity>
+
                 <Text style={styles.forumDate}>
-                
-                  Ex: 10/10/2010 {  /** Puxar data de criação da Discussão */ }
-                
+                  Ex: 10/10/2010 {/** Puxar data de criação da Discussão */}
                 </Text>
               </View>
             )}
@@ -328,7 +351,9 @@ const ForumScreen = ({ navigation }) => {
             style={styles.createNewForumButton}
             onPress={() => modalForumConfig()}
           >
-            <Text style={styles.createNewForumButtonText}>Criar Nova Discussão</Text>
+            <Text style={styles.createNewForumButtonText}>
+              Criar Nova Discussão
+            </Text>
           </TouchableOpacity>
         </View>
       )}

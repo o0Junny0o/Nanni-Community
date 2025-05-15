@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
   },
   tabBarLabelStyle: {
     fontSize: 12,
-    textAlign: 'center',  //centraliza o texto
+    textAlign: 'center', //centraliza o texto
   },
   tabBarItemStyle: {
     justifyContent: 'center', //centraliza os ícones e texto no item
@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
   },
-})
+});
 
 const tabBarBackgroundStyle = () => <View style={styles.backGround} />;
 
@@ -46,6 +46,5 @@ const customTabBarStyle = {
   tabBarStyle: styles.tabBarStyle,
   tabBarBackground: tabBarBackgroundStyle,
 };
-
 
 export default customTabBarStyle;

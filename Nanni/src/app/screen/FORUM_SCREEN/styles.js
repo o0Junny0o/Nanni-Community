@@ -22,7 +22,7 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
-    width: '100%', 
+    width: '100%',
   },
 
   header: {
@@ -34,22 +34,22 @@ export const styles = StyleSheet.create({
     gap: 20,
     borderBottomWidth: 0.5,
     borderColor: colors.lightBlue,
-    boxShadow: "0 3 20 2 #00000066"
+    boxShadow: '0 3 20 2 #00000066',
   },
 
-  descHeader:{
+  descHeader: {
     padding: 20,
     gap: 20,
     backgroundColor: colors.primaryDark,
-    justifyContent:'center',
+    justifyContent: 'center',
     borderBottomRightRadius: 15,
     borderBottomLeftRadius: 15,
-    boxShadow: "0 10 20  #00000066"
+    boxShadow: '0 10 20  #00000066',
   },
-  tagsDesc:{
+  tagsDesc: {
     padding: 10,
     borderRadius: 20,
-    color: "#fff",
+    color: '#fff',
     marginRight: 10,
     marginTop: 10,
     marginBottom: 10,
@@ -66,7 +66,7 @@ export const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: colors.primaryDark,
-    paddingBottom: 15
+    paddingBottom: 15,
   },
   title: {
     fontSize: 24,
@@ -101,7 +101,7 @@ export const styles = StyleSheet.create({
     borderRadius: 5,
     borderWidth: 1,
     borderColor: colors.border,
-    boxShadow: "3 6 6 #00000033"
+    boxShadow: '3 6 6 #00000033',
   },
   forumName: {
     fontSize: 18,
@@ -113,29 +113,29 @@ export const styles = StyleSheet.create({
     color: colors.primaryDark,
     marginTop: 5,
   },
-  forumDate:{
+  forumDate: {
     fontSize: 15,
-    color: "#888",
+    color: '#888',
     textAlign: 'right',
   },
-  footerList:{
+  footerList: {
     paddingHorizontal: 50,
     paddingBottom: 90,
     paddingTop: 20,
     textAlign: 'center',
     fontWeight: 'bold',
-    color: "#999"
+    color: '#999',
   },
   createNewForumButton: {
     backgroundColor: colors.primaryDark,
     paddingVertical: 12,
     borderRadius: 5,
     alignItems: 'center',
-    width: "50%",
-    position: "absolute",
+    width: '50%',
+    position: 'absolute',
     bottom: 0,
     right: 0,
-    margin: 10
+    margin: 10,
   },
   createNewForumButtonText: {
     color: colors.white,

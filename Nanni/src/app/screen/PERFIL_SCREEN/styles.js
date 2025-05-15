@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     justifyContent: 'flex-end',
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   profileContainer: {
     alignItems: 'center',
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   infoContainer: {
-    flexDirection:'column',
+    flexDirection: 'column',
     width: '80%',
     marginTop: 30,
     paddingBottom: 60,
@@ -72,10 +72,10 @@ const styles = StyleSheet.create({
   },
   infoText: {
     fontSize: 16,
-    color: colors.infoText
+    color: colors.infoText,
   },
-  infoLabel:{
-    color: "gray"
+  infoLabel: {
+    color: 'gray',
   },
   buttonContainer: {
     marginTop: 20,
@@ -132,37 +132,36 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: colors.buttonText,
   },
-  logoutButton:{
+  logoutButton: {
     padding: 10,
   },
 
-  linkButtonContainer:{
-  },
+  linkButtonContainer: {},
 
-  linkButton:{
+  linkButton: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     gap: 100,
-    paddingTop: 10
+    paddingTop: 10,
   },
 
-  linkText:{
-    color: "#5D90D6",
+  linkText: {
+    color: '#5D90D6',
     fontSize: 20,
     marginBottom: 15,
-    alignItems:"center"
+    alignItems: 'center',
   },
 
-  historicoItem:{
+  historicoItem: {
     marginBottom: 10,
     lineHeight: 50,
     padding: 15,
-    flexDirection: "row",
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     borderBottomWidth: 1,
-    borderColor: colors.buttonBorder
-  }
+    borderColor: colors.buttonBorder,
+  },
 });
 
 export default styles;

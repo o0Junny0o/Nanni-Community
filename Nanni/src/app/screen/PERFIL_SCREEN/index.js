@@ -43,39 +43,37 @@ const PerfilUsuario = ({ navigation }) => {
   const [valorEdicao, setValorEdicao] = useState('');
   const [mostrarHistorico, setMostrarHistorico] = useState(false);
   const historicoDoacoes = [
-    { id: '1', name: "Forum", data: '10/02/2024' , valor: "20,15"},
-    { id: '2', name: "Forum", data: '22/11/2023' , valor: "32,40"},
-    { id: '3', name: "Forum", data: '03/08/2023' , valor: "32,40"},
-    { id: '4', name: "Forum", data: '10/02/2024' , valor: "32,40"},
-    { id: '5', name: "Forum", data: '22/11/2023' , valor: "32,40"},
-    { id: '6', name: "Forum", data: '03/08/2023' , valor: "32,40"},
-    { id: '7', name: "Forum", data: '10/02/2024' , valor: "32,40"},
-    { id: '8', name: "Forum", data: '22/11/2023' , valor: "32,40"},
-    { id: '9', name: "Forum", data: '03/08/2023' , valor: "32,40"},
-    { id: '10', name: "Forum", data: '03/08/2023' , valor: "50,00"},
-    { id: '11', name: "Forum", data: '10/02/2024' , valor: "50,00"},
-    { id: '12', name: "Forum", data: '22/11/2023' , valor: "50,00"},
-    { id: '13', name: "Forum", data: '03/08/2023' , valor: "50,00"},
-    { id: '14', name: "Forum", data: '10/02/2024' , valor: "50,00"},
-    { id: '15', name: "Forum", data: '22/11/2023' , valor: "50,00"},
-    { id: '16', name: "Forum", data: '03/08/2023' , valor: "50,00"},
-    { id: '17', name: "Forum", data: '10/02/2024' , valor: "50,00"},
-    { id: '18', name: "Forum", data: '22/11/2023' , valor: "50,00"},
-    { id: '19', name: "Forum", data: '03/08/2023' , valor: "50,00"},
-    { id: '20', name: "Forum", data: '03/08/2023' , valor: "50,00"},
-    { id: '21', name: "Forum", data: '10/02/2024' , valor: "50,00"},
-    { id: '22', name: "Forum", data: '22/11/2023' , valor: "50,00"},
-    { id: '23', name: "Forum", data: '03/08/2023' , valor: "50,00"},
-    { id: '24', name: "Forum", data: '10/02/2024' , valor: "50,00"},
-    { id: '25', name: "Forum", data: '22/11/2023' , valor: "50,00"},
-    { id: '26', name: "Forum", data: '03/08/2023' , valor: "50,00"},
-    { id: '27', name: "Forum", data: '10/02/2024' , valor: "50,00"},
-    { id: '28', name: "Forum", data: '22/11/2023' , valor: "50,00"},
-    { id: '29', name: "Forum", data: '03/08/2023' , valor: "50,00"},
-    { id: '30', name: "Forum", data: '03/08/2023' , valor: "50,00"},
-
+    { id: '1', name: 'Forum', data: '10/02/2024', valor: '20,15' },
+    { id: '2', name: 'Forum', data: '22/11/2023', valor: '32,40' },
+    { id: '3', name: 'Forum', data: '03/08/2023', valor: '32,40' },
+    { id: '4', name: 'Forum', data: '10/02/2024', valor: '32,40' },
+    { id: '5', name: 'Forum', data: '22/11/2023', valor: '32,40' },
+    { id: '6', name: 'Forum', data: '03/08/2023', valor: '32,40' },
+    { id: '7', name: 'Forum', data: '10/02/2024', valor: '32,40' },
+    { id: '8', name: 'Forum', data: '22/11/2023', valor: '32,40' },
+    { id: '9', name: 'Forum', data: '03/08/2023', valor: '32,40' },
+    { id: '10', name: 'Forum', data: '03/08/2023', valor: '50,00' },
+    { id: '11', name: 'Forum', data: '10/02/2024', valor: '50,00' },
+    { id: '12', name: 'Forum', data: '22/11/2023', valor: '50,00' },
+    { id: '13', name: 'Forum', data: '03/08/2023', valor: '50,00' },
+    { id: '14', name: 'Forum', data: '10/02/2024', valor: '50,00' },
+    { id: '15', name: 'Forum', data: '22/11/2023', valor: '50,00' },
+    { id: '16', name: 'Forum', data: '03/08/2023', valor: '50,00' },
+    { id: '17', name: 'Forum', data: '10/02/2024', valor: '50,00' },
+    { id: '18', name: 'Forum', data: '22/11/2023', valor: '50,00' },
+    { id: '19', name: 'Forum', data: '03/08/2023', valor: '50,00' },
+    { id: '20', name: 'Forum', data: '03/08/2023', valor: '50,00' },
+    { id: '21', name: 'Forum', data: '10/02/2024', valor: '50,00' },
+    { id: '22', name: 'Forum', data: '22/11/2023', valor: '50,00' },
+    { id: '23', name: 'Forum', data: '03/08/2023', valor: '50,00' },
+    { id: '24', name: 'Forum', data: '10/02/2024', valor: '50,00' },
+    { id: '25', name: 'Forum', data: '22/11/2023', valor: '50,00' },
+    { id: '26', name: 'Forum', data: '03/08/2023', valor: '50,00' },
+    { id: '27', name: 'Forum', data: '10/02/2024', valor: '50,00' },
+    { id: '28', name: 'Forum', data: '22/11/2023', valor: '50,00' },
+    { id: '29', name: 'Forum', data: '03/08/2023', valor: '50,00' },
+    { id: '30', name: 'Forum', data: '03/08/2023', valor: '50,00' },
   ];
-
 
   useEffect(() => {
     const carregarDadosUsuario = async () => {
@@ -261,8 +259,11 @@ const PerfilUsuario = ({ navigation }) => {
 
       <View style={styles.header}>
         <View style={styles.logoutButton}>
-          <TouchableOpacity style={{flexDirection:"row", gap: 10}} onPress={()=> alert("Saindo da Conta...")}>
-            <Text style={{fontSize: 15}}>SAIR</Text>
+          <TouchableOpacity
+            style={{ flexDirection: 'row', gap: 10 }}
+            onPress={() => alert('Saindo da Conta...')}
+          >
+            <Text style={{ fontSize: 15 }}>SAIR</Text>
             <Ionicons name="log-out-outline" size={24} color="black" />
           </TouchableOpacity>
         </View>
@@ -288,19 +289,20 @@ const PerfilUsuario = ({ navigation }) => {
           value={email}
           onEdit={() => editarCampo('Email', email)}
         />
-        <InfoItem
-          label="Data de nascimento"
-          value={dataNaci}
-        />
+        <InfoItem label="Data de nascimento" value={dataNaci} />
       </View>
 
       {/* Botão de texto com seta */}
       <View style={styles.linkButtonContainer}>
-        <TouchableOpacity onPress={() => setMostrarHistorico(!mostrarHistorico)}>
+        <TouchableOpacity
+          onPress={() => setMostrarHistorico(!mostrarHistorico)}
+        >
           <View style={styles.linkButton}>
             <Text style={styles.linkText}>HISTÓRICO DE DOAÇÕES</Text>
             <Ionicons
-              name={mostrarHistorico ? 'chevron-up-outline' : 'chevron-down-outline'}
+              name={
+                mostrarHistorico ? 'chevron-up-outline' : 'chevron-down-outline'
+              }
               size={18}
               color="#1D3557"
             />
@@ -311,21 +313,26 @@ const PerfilUsuario = ({ navigation }) => {
           <FlatList
             data={historicoDoacoes}
             keyExtractor={(item) => item.id}
-            renderItem={({ item }) => ( //historicoItem
+            renderItem={(
+              { item }, //historicoItem
+            ) => (
               <View style={styles.historicoItem}>
                 <View>
-                  <Text style={{color: "#5D90D6"}}>ID: {item.id}</Text>
-                  <Text style={{fontWeight: 'bold'}}>Forum: {item.name}</Text>
-                  <Text style={{color:"gray"}}>{item.data}</Text>
+                  <Text style={{ color: '#5D90D6' }}>ID: {item.id}</Text>
+                  <Text style={{ fontWeight: 'bold' }}>Forum: {item.name}</Text>
+                  <Text style={{ color: 'gray' }}>{item.data}</Text>
                 </View>
-                <Text style={{color:"#B88CB4", fontWeight: "bold", fontSize: 20}}>{item.valor} R$</Text>
+                <Text
+                  style={{ color: '#B88CB4', fontWeight: 'bold', fontSize: 20 }}
+                >
+                  {item.valor} R$
+                </Text>
               </View>
             )}
             style={{ maxHeight: 240 }} // define altura máxima rolável
           />
         )}
       </View>
-
 
       {/* MODAL PARA EDITAR INFORMAÇÕES */}
       <Modal transparent={true} visible={modalVisible}>
