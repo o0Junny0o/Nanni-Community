@@ -163,7 +163,7 @@ export default function ExplorarScreen({ navigation }) {
   );
 }
 
-// TODO: Adicionar Classificação Indicativa
+
 function VExplorarItem({forum, navigation}) {
   if (!(forum instanceof Forum)) return;
   if(!forum.forumID) return;

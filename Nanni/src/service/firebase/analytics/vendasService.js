@@ -58,29 +58,15 @@ export async function calcularVendasPorJogo(userId, ano) {
   const anoFim = Timestamp.fromDate(new Date(anoNumerico + 1, 0, 1));
   try {
     const jogosRefs = await getJogosDoUsuario(userId);
-<<<<<<< HEAD:Nanni/src/service/firebase/vendasService.js
-<<<<<<< Updated upstream:Nanni/src/service/firebase/vendasService.js
-
-=======
     // console.log('REFS:',jogosRefs)
->>>>>>> Stashed changes:Nanni/src/service/firebase/analytics/vendasService.js
-=======
-    console.log('REFS:',jogosRefs)
->>>>>>> origin/Isaac:Nanni/src/service/firebase/analytics/vendasService.js
     if (jogosRefs.length === 0) return {};
     
     const vendasRef = collection(db, VENDAS_COLLECTION);
     const chunks = [];
     const CHUNK_SIZE = 10;
-<<<<<<< HEAD:Nanni/src/service/firebase/vendasService.js
-<<<<<<< Updated upstream:Nanni/src/service/firebase/vendasService.js
 
-=======
     // console.log('VENDAS REF',vendasRef)
->>>>>>> Stashed changes:Nanni/src/service/firebase/analytics/vendasService.js
-=======
-    console.log('VENDAS REF',vendasRef)
->>>>>>> origin/Isaac:Nanni/src/service/firebase/analytics/vendasService.js
+    
     for (let i = 0; i < jogosRefs.length; i += CHUNK_SIZE) {
       const chunk = jogosRefs.slice(i, i + CHUNK_SIZE);
       const q = query(

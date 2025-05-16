@@ -1,69 +1,73 @@
-import {
-  Text,
-  View,
-  FlatList,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  Alert,
-  Pressable,
-  ScrollView,
-  Image,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useEffect, useState } from 'react';
-import { styles, forumSeguidosStyles, forumDonoStyles } from './styles';
-import PropTypes from 'prop-types';
-import { useAuth } from '../../components/contexts/AuthContext';
-import { doc, getDoc, Timestamp } from 'firebase/firestore';
-import { db } from '../../../service/firebase/conexao';
-import forumList from '../../../hooks/forum/forumList';
+import { 
+    Text, 
+    View, 
+    FlatList,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+    Alert,
+    Pressable,
+    ScrollView,
+    Image,
+} from "react-native"
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useEffect, useState } from "react";
+import { useNavigation } from '@react-navigation/native'
+import {styles, forumSeguidosStyles, forumDonoStyles } from "./styles";
+import PropTypes from "prop-types";
+import { useAuth } from "../../components/contexts/AuthContext";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../../../service/firebase/conexao";
+import forumList from "../../../hooks/forum/forumList";
 import Ionicons from '@expo/vector-icons/Ionicons';
-import colors from '../../../utils/colors';
-import { deconvertBase64ToImage } from '../../../utils/Base64Image';
-import { USUARIOS_COLLECTION } from '../../../model/refsCollection';
+import colors from "../../../utils/colors";
+import { deconvertBase64ToImage } from "../../../utils/Base64Image";
+
 
 export default function HomeScreen({ navigation }) {
-  const [forumSeguidos, setForumSeguidos] = useState([]);
-  const [forumDono, setForumDono] = useState([]);
-  const [isDev, setIsDev] = useState(false);
-  const [loading, setLoading] = useState(true);
+
+  const [forumSeguidos, setForumSeguidos] = useState([])
+  const [forumDono, setForumDono] = useState([])
+  const [isDev, setIsDev] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   // User:
   const { user, userLoading, authLoading } = useAuth();
   // > Verificação:
 
+  
   useEffect(() => {
-    if (authLoading || !user) {
-      navigation.navigate('AuthStack');
+    if(authLoading || !user) {
+      navigation.navigate('AuthStack')
     } else {
       async function run() {
-        const userRef = doc(db, USUARIOS_COLLECTION, user.uid);
+        const userRef = doc(db, 'usuarios', user.uid);
         const docSnap = await getDoc(userRef);
-
+        
         if (docSnap.exists()) {
           const data = docSnap.data();
+          
+          if(data.cargo) {
+              setIsDev(Boolean(data.cargo))
 
-          if (data.cargo) {
-            setIsDev(Boolean(data.cargo));
-
-            const snapForuns = await forumList({ qUserRef: userRef });
-
-            if (snapForuns && snapForuns.length > 0) {
-              setForumDono(snapForuns);
-            }
+              const snapForuns = await forumList({ qUserRef: userRef })
+              
+              if(snapForuns && snapForuns.length > 0) { 
+                  setForumDono(snapForuns)
+              }
           }
 
-          if (data.seguindo?.length > 0) {
-            const foruns = await forumList({ qIDs: data.seguindo });
-            setForumSeguidos(foruns);
+          if(data.seguindo?.length > 0) { 
+            const foruns = await forumList({ qIDs: data.seguindo})
+            setForumSeguidos(foruns)
           }
         }
+              
+        setLoading(false)
 
-        setLoading(false);
-      }
+        }
 
-      run();
-    }
+        run();
+    }    
   }, [user, authLoading]);
 
   const titleForumSeguidos =
