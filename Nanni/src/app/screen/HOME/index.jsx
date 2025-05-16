@@ -4,18 +4,16 @@ import {
     FlatList,
     TouchableOpacity,
     TouchableWithoutFeedback,
-    Alert,
     Pressable,
     ScrollView,
     Image,
 } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useEffect, useState } from "react";
-import { useNavigation } from '@react-navigation/native'
 import {styles, forumSeguidosStyles, forumDonoStyles } from "./styles";
 import PropTypes from "prop-types";
 import { useAuth } from "../../components/contexts/AuthContext";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, Timestamp } from "firebase/firestore";
 import { db } from "../../../service/firebase/conexao";
 import forumList from "../../../hooks/forum/forumList";
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -210,6 +208,7 @@ VForumSeguidos.propTypes = {
   forumID: PropTypes.string.isRequired,
   forumName: PropTypes.string.isRequired,
   forumDesc: PropTypes.string.isRequired,
+  path: PropTypes.string.isRequired,
 };
 
 VForumDono.propTypes = {
@@ -217,4 +216,5 @@ VForumDono.propTypes = {
   avatar: PropTypes.string,
   forumName: PropTypes.string.isRequired,
   data: PropTypes.object.isRequired,
+  path: PropTypes.string.isRequired,
 };

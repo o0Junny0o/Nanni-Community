@@ -1,20 +1,25 @@
-import { Text, TextInput, TouchableOpacity, View } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
+import { 
+  Animated,
+  LayoutAnimation,
+  Platform,
+  Text, 
+  TextInput, 
+  TouchableOpacity, 
+  UIManager, 
+  View 
+} from 'react-native';
+
 import { styles } from './styles';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import colors from '../../../utils/colors';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import Comentario from '../../../model/Comentario';
 import VGifView from './GifView/';
-import GiphyService from '../../../service/giphy/GiphyService';
+import PropTypes from 'prop-types';
+import anexoPicker from './anexoPicker';
+import VChatOptions from './VChatOptions';
+import enviarMensagem from './enviarMensagem';
 
-export default function DChat({ discussaoPath, useRef }) {    
-  if (!discussaoPath || !useRef) {
-    console.error("Parâmetros inválidos") 
-    return;
-  }
-
-
+export default function VChat({ discussaoPath, userRef }) {    
   const [text, setText] = useState('');
   const [anexos, setAnexos] = useState([]);
   const [gif, setGif] = useState('');
@@ -22,86 +27,78 @@ export default function DChat({ discussaoPath, useRef }) {
   const [showOpts, setShowOpts] = useState(false);
   const [showGiphy, setShowGiphy] = useState(false);
 
-  const servGiphy = new GiphyService();
+  
+  // [Sobre Animação]: 
+  const optTranslateY = useRef(new Animated.Value(200)).current
 
+  useEffect(() => {
+    Animated.timing(optTranslateY, {
+        toValue: showOpts ? 0 : 10,
+        duration: 300,
+        useNativeDriver: true,
+    }).start(); 
+  }, [showOpts]) // Opções
+
+
+  // [Sobre Opções]:
   const opcoes = [
-    {
-      // Anexo:
-      icone: 'attach',
-      onPress: () => anexoPicker(),
-    },
     {
       // Giphy:
       icone: 'image',
       onPress: () => setShowGiphy(!showGiphy),
+      extras: {
+        type: 'giphy'
+      }
+    },
+    {
+      // Anexo:
+      icone: 'attach',
+      onPress: () => handlePicker(),
     },
   ];
 
+
+  // [Sobre Anexos]:
+  async function handlePicker() {
+    const r = await anexoPicker()
+    if(r) setAnexos(r)
+  }
+
+
+  // [Sobre Gifs]:
   useEffect(() => {
     if (gif !== '') {
       setText((prev) => prev + `[giphy:${gif}]`);
     }
   }, [gif]);
 
-  async function anexoPicker() {
-    try {
-      let anexo = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: 'Images',
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 1,
-      });
 
-      if (!anexo.canceled) {
-        const k = anexo.assets[0].fileName;
-        const v = anexo.assets[0].uri;
 
-        setAnexos([
-          {
-            name: k,
-            uri: v,
-          },
-        ]);
-      }
-    } catch (err) {
-      alert('Erro ao tentar anexar imagem');
-      console.error(err);
-    }
+  // [Sobre mensagens]:
+  async function handleEnvioMensagem() {
+    const r = await enviarMensagem({ text, userRef, anexos, discussaoPath })
+    if(r) setText('')
+    else alert("Erro ao enviar mensagem")
   }
 
-  async function enviarMensagem() {
-    if (text.length < 2) return;
 
-    try {
-      const comentario = new Comentario({
-        mensagem: text,
-        userRef: useRef,
-        anexo: anexos,
-        discussaoPath: discussaoPath,
-      });
 
-      const resp = await comentario.create();
-      if (resp) {
-        setText('');
-      } else {
-        console.error('Erro ao enviar mensagem');
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  }
 
   return (
-    <View>
+    <Animated.View style={{
+      transform: [{ translateY: optTranslateY }],
+      bottom: 0,
+      width: "100%",
+    }}>
       {/* Grid de Gifs */}
-      {showGiphy && <VGifView selection={setGif} show={setShowGiphy} />}
+      {showGiphy && <VGifView selection={setGif} toggle={setShowGiphy} type={"giphy"} />}
 
       {/* Componentes de Chat */}
       <View style={styles.container}>
         {/* Botão de expansão p/ opções */}
         <TouchableOpacity
           onPress={() => setShowOpts(!showOpts)}
-          style={{ backgroundColor: 'white', height: 5, marginHorizontal: 20 }}
+          style={styles.gestureGrabber}
         />
 
         {/* View de Chat */}
@@ -121,7 +118,7 @@ export default function DChat({ discussaoPath, useRef }) {
             name="send"
             size={26}
             style={styles.chatIcon}
-            onPress={enviarMensagem}
+            onPress={handleEnvioMensagem}
             color={colors.p3}
           />
         </View>
@@ -139,27 +136,14 @@ export default function DChat({ discussaoPath, useRef }) {
         ) : null}
 
         {/* Menu de Opções */}
-        {showOpts ? (
-          <View style={styles.optContainer}>
-            {opcoes &&
-              opcoes.map((item, index) => {
-                if (item.icone && item.onPress) {
-                  return (
-                    <TouchableOpacity
-                      key={index}
-                      onPress={item.onPress}
-                      style={styles.optView}
-                    >
-                      <Ionicons name={item.icone} size={24} color={colors.p3} />
-                    </TouchableOpacity>
-                  );
-                }
-
-                return;
-              })}
-          </View>
-        ) : null}
+        {showOpts && <VChatOptions opcoes={opcoes} />}
       </View>
-    </View>
+    </Animated.View>
   );
+}
+
+
+VChat.propTypes = {
+  discussaoPath: PropTypes.string.isRequired,
+  userRef: PropTypes.string.isRequired,
 }

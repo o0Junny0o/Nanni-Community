@@ -10,6 +10,15 @@ const styles = StyleSheet.create({
     gap: 10,
     backgroundColor: colors.p3,
   },
+  gestureGrabber: {
+    height: 4, 
+    width: "50%",
+    borderRadius: 16,
+    alignSelf: 'center',
+    marginHorizontal: 15,
+    backgroundColor: colors.p6, 
+    opacity: 0.5,
+  },  
   chatView: {
     flexDirection: 'row',
     alignSelf: 'flex-start',
@@ -41,17 +50,6 @@ const styles = StyleSheet.create({
   },
   anexoImgText: {
     textDecorationLine: 'underline',
-  },
-  optContainer: {
-    flexDirection: 'row',
-    alignSelf: 'flex-end',
-    gap: 10,
-  },
-  optView: {
-    padding: 12,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-    backgroundColor: colors.p6,
   },
 });
 
@@ -100,4 +98,20 @@ const VGifGridStyles = StyleSheet.create({
   },
 });
 
-export { styles, VGifGridStyles };
+
+const VChatOptionsStyles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    alignSelf: 'flex-end',
+    gap: 10,
+  },
+  option: {
+    padding: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    backgroundColor: colors.p6,
+  },
+})
+
+
+export { styles, VGifGridStyles, VChatOptionsStyles };

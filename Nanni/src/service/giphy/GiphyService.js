@@ -26,6 +26,10 @@ export default class GiphyService {
     return getGiphy({ uri: giphyReference });
   }
 
+  getLogo() {
+    return '../../../../assets/giphy/PoweredBy_200px-Black_HorizText.png'
+  }
+
   setRating({ rating = 'g' }) {
     if (['g', 'pg', 'pg-13', 'r'].indexOf(rating) !== -1) {
       this.rating = rating;

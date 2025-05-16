@@ -10,13 +10,27 @@ import { VGifGridStyles } from '../styles';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Image } from 'expo-image';
 import GiphyService from '../../../../service/giphy/GiphyService';
+import PropTypes from 'prop-types';
 
-const service = new GiphyService();
 
-export default function VGifView({ selection, show }) {
+const typeServices = { 
+  "giphy": () => new GiphyService(),
+  "tenor": () => new GiphyService(),
+}
+
+
+export default function VGifView({ type, selection, toggle }) {
+  const service = typeServices[type]?.()
+  if(!service) {
+    console.error(`${type} está incorreto`)
+    return;
+  }  
+  
   const [text, setText] = useState('');
   const [gifs, setGifs] = useState([]);
-  const maxLenght = Math.floor(Dimensions.get('window').width / 12);
+  const maxLenght = Math.floor(Dimensions.get('window').width / 12); 
+
+  
 
   function clearText() {
     setText('');
@@ -29,7 +43,7 @@ export default function VGifView({ selection, show }) {
 
   function getGif(id) {
     selection(id);
-    show(false);
+    toggle(false);
   }
 
   return (
@@ -77,11 +91,18 @@ export default function VGifView({ selection, show }) {
       {/* Logo */}
       <View style={VGifGridStyles.logoView}>
         <Image
-          source={require('../../../../assets/giphy/PoweredBy_200px-Black_HorizText.png')}
+          source={service.getLogo() ?? ''}
           style={VGifGridStyles.logoMark}
           contentFit="contain"
         />
       </View>
     </View>
   );
+}
+
+
+VGifView.propTypes = {
+  type: PropTypes.string.isRequired,
+  selection: PropTypes.func.isRequired,
+  toggle: PropTypes.func.isRequired,
 }
