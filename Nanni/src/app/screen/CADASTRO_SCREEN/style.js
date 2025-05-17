@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: colors.softLilac,
         paddingVertical: 12,
-        paddingHorizontal: 15,
+        paddingHorizontal: 10,
         marginBottom: 15,
         borderRadius: 8,
     },
@@ -120,7 +120,8 @@ const styles = StyleSheet.create({
         color: colors.softLilac,
     },
     calendarIcon: {
-        marginLeft: 10,
+        marginLeft: 5,
+        marginRight: 5,
     },
     touchable_opacity: {
         width: '100%',
@@ -134,7 +135,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderWidth: 1,
         borderColor: colors.softLilac,
-        paddingHorizontal: 10,
+        paddingHorizontal: 15,
         borderRadius: 8,
         width: '100%',
     },
