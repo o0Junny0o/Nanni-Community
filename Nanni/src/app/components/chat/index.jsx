@@ -1,11 +1,8 @@
 import { 
   Animated,
-  LayoutAnimation,
-  Platform,
   Text, 
   TextInput, 
   TouchableOpacity, 
-  UIManager, 
   View 
 } from 'react-native';
 
@@ -18,6 +15,8 @@ import PropTypes from 'prop-types';
 import anexoPicker from './anexoPicker';
 import VChatOptions from './VChatOptions';
 import enviarMensagem from './enviarMensagem';
+import { Image } from 'expo-image';
+import TenorService from '../../../service/giphy/TenorService';
 
 export default function VChat({ discussaoPath, userRef }) {    
   const [text, setText] = useState('');
@@ -25,7 +24,8 @@ export default function VChat({ discussaoPath, userRef }) {
   const [gif, setGif] = useState('');
 
   const [showOpts, setShowOpts] = useState(false);
-  const [showGiphy, setShowGiphy] = useState(false);
+  const [showGifView, setShowGifView] = useState(false);
+  const [typeGifView, setTypeGifView] = useState('')
 
   
   // [Sobre Animação]: 
@@ -45,9 +45,12 @@ export default function VChat({ discussaoPath, userRef }) {
     {
       // Giphy:
       icone: 'image',
-      onPress: () => setShowGiphy(!showGiphy),
+      onPress: () => {
+        setTypeGifView('tenor')
+        setShowGifView(!showGifView)        
+      },
       extras: {
-        type: 'giphy'
+        type: 'tenor'
       }
     },
     {
@@ -82,8 +85,6 @@ export default function VChat({ discussaoPath, userRef }) {
   }
 
 
-
-
   return (
     <Animated.View style={{
       transform: [{ translateY: optTranslateY }],
@@ -91,7 +92,7 @@ export default function VChat({ discussaoPath, userRef }) {
       width: "100%",
     }}>
       {/* Grid de Gifs */}
-      {showGiphy && <VGifView selection={setGif} toggle={setShowGiphy} type={"giphy"} />}
+      {showGifView && typeGifView !== '' && <VGifView selection={setGif} toggle={setShowGifView} type={typeGifView} />}
 
       {/* Componentes de Chat */}
       <View style={styles.container}>

@@ -9,20 +9,17 @@ import {
 import { VGifGridStyles } from '../styles';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Image } from 'expo-image';
-import GiphyService from '../../../../service/giphy/GiphyService';
 import PropTypes from 'prop-types';
+import typeServices from './typeServices';
+import IAPIServices from '../../../../service/IAPIServices';
 
-
-const typeServices = { 
-  "giphy": () => new GiphyService(),
-  "tenor": () => new GiphyService(),
-}
 
 
 export default function VGifView({ type, selection, toggle }) {
   const service = typeServices[type]?.()
-  if(!service) {
-    console.error(`${type} está incorreto`)
+
+  if(!(service instanceof IAPIServices)) {
+    console.error(`${type} está incorreto :: ${typeof type}`)
     return;
   }  
   
@@ -72,15 +69,15 @@ export default function VGifView({ type, selection, toggle }) {
 
       {/* Resultados */}
       <FlatList
-        keyExtractor={(item, index) => index}
+        keyExtractor={(item, index) => index.toString()}
         data={gifs}
         numColumns={2}
-        style={gifs.length > 0 && { height: 200 }}
+        style={gifs.length > 0 && VGifGridStyles.resultView}
         showsHorizontalScrollIndicator={false}
         renderItem={({ item, index }) => (
           <TouchableOpacity onPress={() => getGif(item.id)}>
             <Image
-              source={item.images.original.webp}
+              source={service.toSource(item)}
               style={VGifGridStyles.gifs}
               contentFit="contain"
             />
@@ -91,7 +88,7 @@ export default function VGifView({ type, selection, toggle }) {
       {/* Logo */}
       <View style={VGifGridStyles.logoView}>
         <Image
-          source={service.getLogo() ?? ''}
+          source={service.getLogo()}
           style={VGifGridStyles.logoMark}
           contentFit="contain"
         />

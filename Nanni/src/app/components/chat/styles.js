@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
 import colors from '../../../utils/colors';
+import fonts from '../../../styles/fonts';
 
 const styles = StyleSheet.create({
   container: {
@@ -81,7 +82,10 @@ const VGifGridStyles = StyleSheet.create({
   },
   resultView: {
     paddingHorizontal: 10,
-    backgroundColor: colors.p2,
+    maxHeight: 200,
+  },
+  resultEmpty: {
+    height: 0,
   },
   gifs: {
     height: 150,
