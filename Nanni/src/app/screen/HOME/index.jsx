@@ -17,8 +17,9 @@ import { doc, getDoc, Timestamp } from "firebase/firestore";
 import { db } from "../../../service/firebase/conexao";
 import forumList from "../../../hooks/forum/forumList";
 import Ionicons from '@expo/vector-icons/Ionicons';
-import colors from "../../../utils/colors";
+import colors from "../../../styles/colors";
 import { deconvertBase64ToImage } from "../../../utils/Base64Image";
+
 
 
 export default function HomeScreen({ navigation }) {
@@ -88,7 +89,7 @@ export default function HomeScreen({ navigation }) {
           <Text style={styles.loadingText}>Carregando...</Text>
         </View>
       ) : forumDono.length > 0 || forumSeguidos.length > 0 ? (
-        <View style={{ flex: 1 }}>
+        <View style={styles.view}>
           <View style={styles.container}>
             <ScrollView>
               {isDev && forumDono && forumDono.length > 0 ? (
@@ -185,7 +186,7 @@ function VForumDono({ forumID, avatar, forumName, data, path, navigation }) {
             <Ionicons name="settings" size={24} color={colors.p3} />
           </Pressable>
         </View>
-        <View style={[forumDonoStyles.rows, { justifyContent: 'flex-end' }]}>
+        <View style={[forumDonoStyles.rows, forumDonoStyles.rowsOptions]}>
           {data && (
             <Text style={forumDonoStyles.extra}>
               {data.toDate().toLocaleDateString('pt-BR')}
@@ -209,6 +210,9 @@ VForumSeguidos.propTypes = {
   forumName: PropTypes.string.isRequired,
   forumDesc: PropTypes.string.isRequired,
   path: PropTypes.string.isRequired,
+  navigation: PropTypes.shape({
+    push: PropTypes.func.isRequired
+  }).isRequired,
 };
 
 VForumDono.propTypes = {
@@ -217,4 +221,7 @@ VForumDono.propTypes = {
   forumName: PropTypes.string.isRequired,
   data: PropTypes.object.isRequired,
   path: PropTypes.string.isRequired,
+  navigation: PropTypes.shape({
+    push: PropTypes.func.isRequired
+  }).isRequired,
 };

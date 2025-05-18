@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native"
-import colors from "../../../utils/colors"
+import colors from "../../../styles/colors"
+import fonts from "../../../styles/fonts"
 
 const styles = StyleSheet.create({
     safeArea: {
@@ -11,8 +12,8 @@ const styles = StyleSheet.create({
         width: "100%",
         marginBottom: 40,
         // Texto:
-        fontFamily: "Roboto Mono",
-        fontSize: 24,
+        fontFamily: fonts.monospaceExtrabold,
+        fontSize: 20,
         fontWeight: "bold",
         letterSpacing: 1.25,
         textTransform: "uppercase",
@@ -30,7 +31,7 @@ const styles = StyleSheet.create({
     },
     searchBarText: {
         flex: 1,
-        fontFamily: "Roboto",
+        fontFamily: fonts.roboto,
         fontSize: 16,
         letterSpacing: 1.25,
         color: colors.text,
@@ -52,7 +53,7 @@ const styles = StyleSheet.create({
     filterCIndicativa: {
         backgroundColor: colors.overlayBackground,
         color: colors.text,
-        fontFamily: "Roboto"
+        fontFamily: fonts.roboto,
     },
     searchTagView: { 
         flexDirection: 'row', 
@@ -68,7 +69,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.aviso,
     },
     searchTagText: {
-        fontFamily: "Roboto",
+        fontFamily: fonts.roboto,
         fontSize: 15,
         color: colors.p6
     }

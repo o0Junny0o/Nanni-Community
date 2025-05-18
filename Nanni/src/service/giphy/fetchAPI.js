@@ -17,11 +17,7 @@ async function fetchAPI(req) {
     }
 
     const data = await resp.json();
-
-    if (!Array.isArray(data)) {
-      return [data];
-    }
-
+    
     return data;
   } catch (err) {
     console.error('ERROR in getGiphy : ' + err);

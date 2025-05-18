@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
-import colors from '../../../utils/colors';
+import colors from '../../../styles/colors';
+import fonts from '../../../styles/fonts';
 
 const styles = StyleSheet.create({
     safeArea: {
@@ -10,9 +11,8 @@ const styles = StyleSheet.create({
         width: "100%",
         marginVertical: 20,
         // Texto:
-        fontFamily: "Roboto",
+        fontFamily: fonts.robotoMonoBold,
         fontSize: 24,
-        fontWeight: 'bold',
         textAlign: 'center',
         textTransform: 'uppercase',
         letterSpacing: 1.25,
@@ -22,9 +22,8 @@ const styles = StyleSheet.create({
         marginVertical: 20,
         marginTop: 30,
         // Texto:
-        fontFamily: "Roboto",
+        fontFamily: fonts.robotoMonoBold,
         fontSize: 18,
-        fontWeight: 'bold',
         textTransform: 'uppercase',
         letterSpacing: 1.25,
         color: colors.p2,  

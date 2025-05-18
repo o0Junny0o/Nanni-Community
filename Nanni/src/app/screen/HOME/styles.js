@@ -1,10 +1,14 @@
 import { StyleSheet } from 'react-native';
-import colors from '../../../utils/colors';
+import colors from '../../../styles/colors'
+import fonts from '../../../styles/fonts'
 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: colors.background,
+  },
+  view: {
+    flex: 1,
   },
   container: {
     flex: 1,
@@ -16,7 +20,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   loadingText: {
-    fontFamily: 'Roboto Mono',
+    fontFamily: fonts.robotoMonoBold,
     fontWeight: 'bold',
     fontSize: 20,
     color: colors.p3,
@@ -25,7 +29,7 @@ const styles = StyleSheet.create({
     width: '100%',
     marginBottom: 40,
     // Texto:
-    fontFamily: 'Roboto Mono',
+    fontFamily: fonts.monospaceExtrabold,
     fontSize: 20,
     fontWeight: 'bold',
     letterSpacing: 1.25,
@@ -67,7 +71,7 @@ const forumSeguidosStyles = StyleSheet.create({
   },
   title: {
     color: colors.text,
-    fontFamily: 'Roboto Mono',
+    fontFamily: fonts.robotoMonoBold,
     fontWeight: 'bold',
     fontSize: 16,
     letterSpacing: 1.25,
@@ -75,7 +79,7 @@ const forumSeguidosStyles = StyleSheet.create({
   desc: {
     color: colors.p3,
     opacity: 0.8,
-    fontFamily: 'Roboto',
+    fontFamily: fonts.roboto,
     fontSize: 14,
     letterSpacing: 1.25,
   },
@@ -94,8 +98,8 @@ const forumDonoStyles = StyleSheet.create({
     },
     title: {
         color: colors.text,
-        fontFamily: "Roboto Mono",
-        fontWeight: "bold",
+        fontFamily: fonts.monospaceExtrabold,
+        fontWeight: 'bold',
         fontSize: 20,
         letterSpacing: 1.25,
         textAlignVertical: "center"
@@ -116,9 +120,12 @@ const forumDonoStyles = StyleSheet.create({
         flexDirection: "row", 
         justifyContent: "space-between"
     },
+    rowsOptions: {
+      justifyContent: 'flex-end',
+    },
     extra: {
         color: colors.p3,
-        fontFamily: "Roboto",
+        fontFamily: fonts.roboto,
         fontSize: 16,
         letterSpacing: 1.25,
         opacity: .7,

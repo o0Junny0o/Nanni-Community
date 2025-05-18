@@ -5,7 +5,6 @@ import {
   TouchableOpacity, 
   View 
 } from 'react-native';
-
 import { styles } from './styles';
 import { useEffect, useRef, useState } from 'react';
 import colors from '../../../utils/colors';
@@ -13,15 +12,13 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import VGifView from './GifView/';
 import PropTypes from 'prop-types';
 import anexoPicker from './anexoPicker';
-import VChatOptions from './VChatOptions';
+import VChatOptions from './ChatOptions';
 import enviarMensagem from './enviarMensagem';
-import { Image } from 'expo-image';
-import TenorService from '../../../service/giphy/TenorService';
+
 
 export default function VChat({ discussaoPath, userRef }) {    
   const [text, setText] = useState('');
   const [anexos, setAnexos] = useState([]);
-  const [gif, setGif] = useState('');
 
   const [showOpts, setShowOpts] = useState(false);
   const [showGifView, setShowGifView] = useState(false);
@@ -40,18 +37,33 @@ export default function VChat({ discussaoPath, userRef }) {
   }, [showOpts]) // Opções
 
 
+
+  function handleOnPressOpcoes(type) {
+    if(showGifView) {
+      if(typeGifView !== type) {
+        setTypeGifView(type) 
+      } else {
+        setShowGifView(false)
+      }
+    } else {
+      setTypeGifView(type)
+      setShowGifView(true)
+    }
+
+    console.log(typeGifView)
+  }
+
   // [Sobre Opções]:
   const opcoes = [
     {
+      // Tenor:
+      image: require('../../../assets/tenor/icon.png'),
+      onPress: () => handleOnPressOpcoes('tenor'),
+    },
+    {
       // Giphy:
-      icone: 'image',
-      onPress: () => {
-        setTypeGifView('tenor')
-        setShowGifView(!showGifView)        
-      },
-      extras: {
-        type: 'tenor'
-      }
+      image: require('../../../assets/giphy/icon.png'),
+      onPress: () => handleOnPressOpcoes('giphy'),
     },
     {
       // Anexo:
@@ -69,22 +81,19 @@ export default function VChat({ discussaoPath, userRef }) {
 
 
   // [Sobre Gifs]:
-  useEffect(() => {
-    if (gif !== '') {
-      setText((prev) => prev + `[giphy:${gif}]`);
+  function salvarGif(id) {
+    if (id !== '') {
+      setText((prev) => prev + `[${typeGifView}:${id}]`);
     }
-  }, [gif]);
-
-
+  }
 
   // [Sobre mensagens]:
   async function handleEnvioMensagem() {
     const r = await enviarMensagem({ text, userRef, anexos, discussaoPath })
     if(r) setText('')
     else alert("Erro ao enviar mensagem")
-  }
-
-
+  }  
+  
   return (
     <Animated.View style={{
       transform: [{ translateY: optTranslateY }],
@@ -92,7 +101,7 @@ export default function VChat({ discussaoPath, userRef }) {
       width: "100%",
     }}>
       {/* Grid de Gifs */}
-      {showGifView && typeGifView !== '' && <VGifView selection={setGif} toggle={setShowGifView} type={typeGifView} />}
+      {showGifView && typeGifView !== '' && <VGifView selection={salvarGif} toggle={setShowGifView} type={typeGifView} />}
 
       {/* Componentes de Chat */}
       <View style={styles.container}>
@@ -125,7 +134,7 @@ export default function VChat({ discussaoPath, userRef }) {
         </View>
 
         {/* Texto de Anexos */}
-        {anexos && anexos.length > 0 ? (
+        {anexos && anexos.length > 0 && (
           <View style={styles.anexoView}>
             <Text style={styles.anexoText}>Anexados: </Text>
             {anexos.map((v, i) => (
@@ -134,7 +143,7 @@ export default function VChat({ discussaoPath, userRef }) {
               </Text>
             ))}
           </View>
-        ) : null}
+        )}
 
         {/* Menu de Opções */}
         {showOpts && <VChatOptions opcoes={opcoes} />}

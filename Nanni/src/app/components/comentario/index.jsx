@@ -1,95 +1,90 @@
 import { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 import { Image } from 'expo-image';
-import GiphyService from '../../../service/giphy/GiphyService';
 import styles from './styles';
 import { Timestamp } from 'firebase/firestore';
+import PropTypes from 'prop-types';
+import typeServices from '../../../utils/typeServices';
+import IAPIServices from '../../../service/IAPIServices';
 
-const service = new GiphyService();
-const rgx = /\[(.*?)\]/g;
-const servs = {
-  giphy: undefined,
-};
-const ks = Object.keys(servs);
+const rgx = /(\[.*?\])/g;
+const MIN_SERVICE_ID = 4
 
 export default function VComentario({
+  services,
   mensagem,
   data,
   username,
   isFromUser = false,
 }) {
-  if (!mensagem || typeof mensagem !== 'string') {
-    console.error(
-      `mensagem inválida em comentário : ${mensagem} é do tipo ${typeof mensagem}`,
-    );
-    return;
-  }
-
-  if (!data || !(data instanceof Timestamp)) {
-    console.error(
-      `data inválida em comentário : ${data} é do tipo ${typeof data}`,
-    );
-    return;
-  }
-
-  if (!isFromUser) {
-    if (!username || typeof username !== 'string') {
-      console.error(
-        `username inválido em comentário : ${username} é do tipo ${typeof username}`,
-      );
-      return;
-    }
-  }
-
+  const ks = Object.keys(typeServices);
   const [parsed, setParsed] = useState([]);
-  const [hasGifs, setHasGifs] = useState(false);
-  // const [expandido, setExpandido] = useState(false)
-  // const [hoverExpandido, setHoverExpandido] = useState(false)
+  const [loaded, setLoaded] = useState(false)
+  
 
-  // Convert:
+  // [Interpret]:
   useEffect(() => {
-    let hGis = false;
-    const str = mensagem.split(rgx).reduce((obj, e) => {
+    setLoaded(false)
+
+    const strSplit = mensagem.split(rgx).filter(Boolean)
+    
+    const str = strSplit.reduce((obj, e) => {
       const item = { content: e };
+
       if (ks.some((i) => e.includes(i))) {
-        item.type = 'gif';
-        hGis = true;
+        const parts = e.split(':')
+
+        if(parts.length === 2 && parts[1].length > MIN_SERVICE_ID) {
+          item.type = 'gif'
+          item.service = parts[0].slice(1)
+          item.gifID = parts[1].slice(0, -1)
+        } else {
+          item.type = 'text'
+        }
       } else {
         item.type = 'text';
       }
+
 
       return [...obj, item];
     }, []);
 
     setParsed(str);
-    setHasGifs(hGis);
-  }, [mensagem]);
+  }, []);
 
+
+  // [Gif]
   useEffect(() => {
-    if (hasGifs) {
-      parsed.forEach(async (item, index) => {
-        if (item.type === 'gif' && !item.gif) {
-          try {
-            const id = item.content.split(':')[1];
-            const r = await service.getByID({ idGif: id });
+    async function fetchGifs() {
+      const itParse = [...parsed]
 
-            if (r) {
-              setParsed((prev) => {
-                const arr = [...prev];
-                arr[index] = { ...item, gif: r[0] };
-                return arr;
-              });
+      await Promise.all(
+        parsed.map(async (item, index) => {
+          if (item.service && item.gifID) {
+            try {
+              const service = services[item.service]
+              const res = await service.getByID(item.gifID);
+              const g = service.toSourceSingular(res)
 
-              console.log(parsed[index]);
+              if (g) {
+                itParse[index] = { ...item, gif: g }
+              }
+            } catch (err) {
+              console.error(err);
             }
-          } catch (err) {
-            alert('Erro ao tentar registrar Gif');
-            console.error(err);
           }
-        }
-      });
+        })
+      ).then(() => {
+        setLoaded(true)
+        setParsed(itParse)        
+      })
     }
-  }, [hasGifs, parsed]);
+
+    
+    if(!loaded && parsed.some(i => i.type === 'gif')) {
+      fetchGifs()      
+    }
+  }, [parsed, loaded]);
 
   return (
     <View
@@ -106,12 +101,12 @@ export default function VComentario({
         {!isFromUser ? <Text style={styles.author}>{username}</Text> : null}
         {parsed.map((item, index) => {
           if (item.type === 'gif') {
-            const uri = item.gif?.images?.original?.webp;
+            const uri = item.gif;
 
             return uri ? (
               <Image
                 key={index}
-                source={{ uri }}
+                source={ uri }
                 style={styles.gifImage}
                 contentFit="contain"
               />
@@ -129,17 +124,16 @@ export default function VComentario({
         <Text style={styles.date}>
           {data.toDate().toLocaleDateString('pt-BR')}
         </Text>
-        {/* {!expandido && (
-                    <Pressable 
-                        onPressIn={() => setHoverExpandido(true)}
-                        onPressOut={() => setHoverExpandido(false)}
-                        onPress={() => setExpandido(true)} >
-                            <Text style={[styles.expandir, expandido && styles.expandirHover]}>
-                                Ler Mais
-                            </Text>
-                    </Pressable>
-                )} */}
       </View>
     </View>
   );
+}
+
+
+VComentario.propTypes = {
+  services: PropTypes.object.isRequired,
+  mensagem: PropTypes.string.isRequired,
+  data: PropTypes.instanceOf(Timestamp).isRequired,
+  username: PropTypes.string.isRequired,
+  isFromUser: PropTypes.bool,
 }

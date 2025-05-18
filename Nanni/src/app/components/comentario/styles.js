@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
 import colors from '../../../utils/colors';
+import fonts from '../../../styles/fonts'
 
 const styles = StyleSheet.create({
   view: {
@@ -39,7 +40,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   text: {
-    fontFamily: 'Roboto',
+    fontFamily: fonts.roboto,
     fontSize: 16,
     letterSpacing: 1.25,
   },
@@ -51,7 +52,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   author: {
-    fontFamily: 'Roboto',
+    fontFamily: fonts.roboto,
     fontSize: 16,
     fontWeight: 'bold',
     letterSpacing: 1.25,

@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
   },
   anexoText: {
-    fontFamily: 'Roboto',
+    fontFamily: fonts.roboto,
     fontSize: 14,
     letterSpacing: 1.25,
     color: colors.p6,
