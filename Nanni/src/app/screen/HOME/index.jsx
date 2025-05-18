@@ -9,7 +9,8 @@ import {
     Image,
 } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useEffect, useState } from "react";
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback, useEffect, useState } from "react";
 import {styles, forumSeguidosStyles, forumDonoStyles } from "./styles";
 import PropTypes from "prop-types";
 import { useAuth } from "../../components/contexts/AuthContext";
@@ -29,45 +30,42 @@ export default function HomeScreen({ navigation }) {
   const [isDev, setIsDev] = useState(false)
   const [loading, setLoading] = useState(true)
 
-  // User:
-  const { user, userLoading, authLoading } = useAuth();
-  // > Verificação:
+  const { user } = useAuth();
 
-  
-  useEffect(() => {
-    if(authLoading || !user) {
-      navigation.navigate('AuthStack')
-    } else {
-      async function run() {
-        const userRef = doc(db, 'usuarios', user.uid);
-        const docSnap = await getDoc(userRef);
+  async function run() {
+    setLoading(true)
+
+    const userRef = doc(db, 'usuarios', user.uid);
+    const docSnap = await getDoc(userRef);
+    
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      
+      if(data.cargo) {
+        setIsDev(Boolean(data.cargo))
+
+        const snapForuns = await forumList({ qUserRef: userRef })
         
-        if (docSnap.exists()) {
-          const data = docSnap.data();
+        if(snapForuns && snapForuns.length > 0) { 
+          setForumDono(snapForuns)
+        }
+      }
+
+      if(data.seguindo?.length > 0) { 
+        const foruns = await forumList({ qIDs: data.seguindo})
+        setForumSeguidos(foruns)
+      }
+    }
           
-          if(data.cargo) {
-              setIsDev(Boolean(data.cargo))
+    setLoading(false)
+  }
 
-              const snapForuns = await forumList({ qUserRef: userRef })
-              
-              if(snapForuns && snapForuns.length > 0) { 
-                  setForumDono(snapForuns)
-              }
-          }
-
-          if(data.seguindo?.length > 0) { 
-            const foruns = await forumList({ qIDs: data.seguindo})
-            setForumSeguidos(foruns)
-          }
-        }
-              
-        setLoading(false)
-
-        }
-
-        run();
-    }    
-  }, [user, authLoading]);
+  useFocusEffect(
+    useCallback(() => {
+      if(!user) return;
+      run();
+    }, [user])
+  )
 
   const titleForumSeguidos =
     forumSeguidos && forumSeguidos.length > 0
