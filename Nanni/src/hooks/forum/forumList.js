@@ -39,7 +39,7 @@ async function forumList({ qLimit, qIDs, qUserRef, qTags, qIndicativa, qOrderBy 
       queryArgs.push(where('classificacaoIndicativa', 'in', qIndicativa))
     }
     if(typeof qOrderBy !== 'undefined') {
-      queryArgs.push(orderBy("data"))
+      queryArgs.push(orderBy("data", qOrderBy ? 'desc' : 'asc'))
     }
     
     // 

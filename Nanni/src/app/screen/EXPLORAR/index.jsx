@@ -1,6 +1,5 @@
 import {
   FlatList,
-  Image,
   Pressable,
   Text,
   TextInput,
@@ -14,11 +13,11 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { useEffect, useRef, useState } from 'react';
 import TagNormalize from '../../../utils/TagNormalize';
 import forumList from '../../../hooks/forum/forumList';
-import { deconvertBase64ToImage } from '../../../utils/Base64Image';
-import { explorarItemStyles, styles } from './styles';
+import styles from './styles';
 import { Picker } from '@react-native-picker/picker';
 import Forum from '../../../model/Forum';
 import PropTypes from 'prop-types';
+import VExplorarItem from '../../components/explorar/item';
 
 export default function ExplorarScreen({ navigation }) {
   const [foruns, setForuns] = useState([]);
@@ -39,7 +38,7 @@ export default function ExplorarScreen({ navigation }) {
   useEffect(() => {
     async function run() {
       if (tagsSearch.length < 1) {
-        setForuns(await forumList({ qLimit: 10 }));
+        setForuns(await forumList({ qLimit: 10, qOrderBy: true }));
       } else {
         const [indicativa, comum] = tagsSearch.reduce(
           ([p, f], e) =>
@@ -47,13 +46,13 @@ export default function ExplorarScreen({ navigation }) {
           [[], []],
         );
 
-            if(foruns.length > 0) {
-                const arr = [...new Set(foruns.flatMap(fr => fr.tagsDisponiveis))]
-                setPreTags(arr)   
-            }
+        if(foruns.length > 0) {
+            const arr = [...new Set(foruns.flatMap(fr => fr.tagsDisponiveis))]
+            setPreTags(arr)   
         }
       }
-      run()
+    }
+    run()
   }, [tagsSearch])
 
   function addSearchTag(tag) {
@@ -163,56 +162,6 @@ export default function ExplorarScreen({ navigation }) {
   );
 }
 
-
-function VExplorarItem({forum, navigation}) {
-  if (!(forum instanceof Forum)) return;
-  if(!forum.forumID) return;
-  if(!navigation) return;
-
-  
-  return (
-    <TouchableWithoutFeedback onPress={() => navigation.push('Forum', { 
-      forumID: forum.forumID,
-      forumPath: forum.getForumPath()
-     })}>
-      <View style={explorarItemStyles.container}>
-        <View style={explorarItemStyles.rows}>
-          <Image
-            source={deconvertBase64ToImage(forum.avatar) ?? ''}
-            style={explorarItemStyles.avatar}
-          />
-          <Text style={explorarItemStyles.title}>{forum.forumName}</Text>
-        </View>
-        <Text style={explorarItemStyles.desc}>{forum.forumDesc}</Text>
-
-        {explorarItem_tags(
-          forum.tagsDisponiveis,
-          forum.classificacaoIndicativa,
-        )}
-      </View>
-    </TouchableWithoutFeedback>
-  );
-}
-
-function explorarItem_tags(tags, indicativa) {
-  if (!tags || !indicativa) return;
-  if (!Array.isArray(tags)) tags = Array(tags);
-
-  return (
-    <View style={[explorarItemStyles.tagView]}>
-      <Text
-        style={[explorarItemStyles.tagBody, { backgroundColor: colors.aviso }]}
-      >
-        {indicativa}
-      </Text>
-      {tags.map((tag, index) => (
-        <Text key={index} style={explorarItemStyles.tagBody}>
-          {tag}
-        </Text>
-      ))}
-    </View>
-  );
-}
 
 
 ExplorarScreen.propTypes = {

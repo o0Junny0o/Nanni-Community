@@ -5,28 +5,23 @@ import {
   TouchableOpacity,
   FlatList,
   SafeAreaView,
-  Modal,
-  TextInput,
   Image,
-  TouchableWithoutFeedback,
   StatusBar,
-  Pressable,
 } from 'react-native';
 import { styles } from './styles';
 import PropTypes from 'prop-types';
-import BotaoPadrao from '../../components/buttons/BotaoPadrao/index';
 import { useAuth } from '../../components/contexts/AuthContext';
-import { arrayRemove, arrayUnion, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { and, arrayRemove, arrayUnion, collection, deleteDoc, doc, getDoc, getDocs, query, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore';
 import { db } from '../../../service/firebase/conexao';
 import forumList from '../../../hooks/forum/forumList';
 import forumDelete from '../../../hooks/forum/forumDelete';
-import forumUpdate from '../../../hooks/forum/forumUpdate';
 import { Ionicons } from '@expo/vector-icons';
 import Forum from '../../../model/Forum';
 
 import { deconvertBase64ToImage } from '../../../utils/Base64Image';
 import forumQuery from '../../../hooks/forum/forumQuery';
 import useForumDiscussao from '../../../hooks/useForumDiscussao';
+import { FORUNS_COLLECTION } from '../../../model/refsCollection';
 
 export default function ForumScreen ({ navigation, route }) {
 
@@ -57,19 +52,40 @@ export default function ForumScreen ({ navigation, route }) {
   const [isDev, setIsDev] = useState(false)
   
 
+  // [Obtem informações de Fórum]
   useEffect(() => {
     async function run() {
       try {
         const fr = await forumQuery({ forumID: forumID})
-        
+
         if(fr) {
           setForum(fr)
-
-          const frAutor = await getDoc(doc(db, "usuarios", fr.userRef))
           
-          if(frAutor) {
-            setForumAutor(frAutor.data().nome)            
+          const docAutor = doc(db, "usuarios", fr.userRef)
+          const colForumSeguidor = collection(db, "seguidores")
+          const queryForumSeguidor = query(colForumSeguidor, 
+            and(
+              where('userRef', '==', user.uid), 
+              where('forumRef', '==', fr.forumID) 
+            )
+          )
+          
+          const [frAutor, userIsSeguidor] = await Promise.all([
+            getDoc(docAutor),
+            getDocs(queryForumSeguidor),
+          ])
+
+          
+          if(frAutor.exists()) {
+            setForumAutor(frAutor.data().nome)
           }
+
+          const segDocs = userIsSeguidor.docs
+
+          setSeguidor(segDocs && segDocs.length > 0 ? 
+            segDocs[0].id 
+            : ''
+          )         
         }
       } catch(err) {
         alert("Problema ao carregar Fórum")
@@ -81,7 +97,7 @@ export default function ForumScreen ({ navigation, route }) {
     run()
   }, [forumID])
 
-  const [seguidor, setSeguidor] = useState(false);
+  const [seguidor, setSeguidor] = useState('');
   const [mostrarDesc, SetMostrarDesc] = useState(false);
 
   const [filtrosAtivos, setFiltrosAtivos] = useState({
@@ -162,8 +178,6 @@ export default function ForumScreen ({ navigation, route }) {
   }, [user]);
 
   const CriarNovoTopico = async () => {
-    console.log(`${topicoTitle.trim() === ''} | ${topicoDesc.trim() === ''}`);
-
     if (topicoTitle.trim() === '' || topicoDesc.trim() === '') {
       alert('Preencha todos os campos!');
       return;
@@ -218,33 +232,43 @@ export default function ForumScreen ({ navigation, route }) {
     }));
   };
 
-  async function handleSeguir() {
-    const pDoc = doc(db, "usuarios", user.uid)
-    
+  async function handleSeguir() {    
     try {
       setLoadingSeguir(true)
-      const pSnap = await getDoc(pDoc)
 
-      if (!pSnap.exists()) {
-        console.error("Erro ao carregar seguir");
-        return;
-      }
+      const isSeguidor = (seguidor !== '')
+      const userDoc = doc(db, "usuarios", user.uid)     
+      const segDoc = seguidor !== '' ? 
+        doc(db, "seguidores", seguidor) 
+        : doc(collection(db, "seguidores"));
 
-      const seguindo = pSnap.data().seguindo || [];
+      const promises = isSeguidor ?
+        [
+          setDoc(userDoc, { 
+            seguindo: arrayRemove(forum.forumID),
+          }, { merge: true }),
 
-      if(seguindo.includes(forum.forumID)) {
-        await updateDoc(pDoc, {
-          seguindo: arrayRemove(forum.forumID)
-        })
-        
-        setSeguidor(false)
-      } else {
-        await updateDoc(pDoc, {
-          seguindo: arrayUnion(forum.forumID)
-        })
-        
-        setSeguidor(true)
-      }
+          deleteDoc(segDoc)
+        ] 
+        : [
+          setDoc(userDoc, { 
+            seguindo: arrayUnion(forum.forumID),
+          }, { merge: true}),
+
+          setDoc(segDoc, { 
+              userRef: user.uid, 
+              forumRef: forum.forumID,
+              data: serverTimestamp(),
+            }
+          )
+        ];
+
+      await Promise.all(promises)
+      
+      setSeguidor(isSeguidor ? 
+        '' 
+        : segDoc.id
+      )
     } catch(err) {
       console.error(err)
     } finally {
@@ -294,6 +318,7 @@ export default function ForumScreen ({ navigation, route }) {
       {forum && forumAutor ? (
         (
           <>
+            {/* Header */}
             <View style={styles.header}>
               <TouchableOpacity onPress={() => navigation.navigate('PerfilUsuario')}>
                 <Image source={fotoPerfil} style={styles.perfilImage} />
@@ -311,8 +336,10 @@ export default function ForumScreen ({ navigation, route }) {
                   />
                 </TouchableOpacity>
               </View>
+
             </View>
             {mostrarDesc && (
+              // Descrição de Header :: Expandido
               <View style={styles.descHeader}>
                 <Text style={{ fontSize: 15, color: '#fff' }}>
                   {forum.forumDesc}
@@ -337,7 +364,29 @@ export default function ForumScreen ({ navigation, route }) {
                     )}
                   />
                 </View>
-                <View >
+                <View style={{ flexDirection: 'row'}}>
+                  <TouchableOpacity
+                    disabled={loadingSeguir}
+                    onPress={() => navigation.push("DOACAO", {
+                      userRecebe: { uid: forum.userRef }
+                    })}
+                    style={{ alignItems: 'flex-end' }}
+                    
+                  >
+                    <Text
+                      style={{
+                        width: 180,
+                        fontSize: 15,
+                        color: '#ddd',
+                        backgroundColor: '#00000044',
+                        padding: 15,
+                        textAlign: 'center',
+                        borderRadius: 15,
+                      }}
+                    >
+                      DOAR
+                    </Text>
+                  </TouchableOpacity>
                   <TouchableOpacity
                     disabled={loadingSeguir}
                     style={{ alignItems: 'flex-end' }}
@@ -354,7 +403,7 @@ export default function ForumScreen ({ navigation, route }) {
                         borderRadius: 15,
                       }}
                     >
-                      {seguidor ? 'PARAR DE SEGUIR' : 'SEGUIR +'}
+                      {seguidor !== '' ? 'PARAR DE SEGUIR' : 'SEGUIR +'}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -484,9 +533,11 @@ export default function ForumScreen ({ navigation, route }) {
 };
 
 
+
 ForumScreen.propTypes = {
   navigation: PropTypes.shape({
     goBack: PropTypes.func.isRequired,
+    push: PropTypes.func.isRequired,
   }).isRequired,
   route: PropTypes.shape({
     params: PropTypes.shape({
