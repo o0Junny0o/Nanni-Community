@@ -135,21 +135,19 @@ const styles = StyleSheet.create({
   logoutButton: {
     padding: 10,
   },
-
   linkButton: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: 100,
     paddingTop: 10,
+    width: '100%', // Adicione esta linha
   },
-
   linkText: {
     color: '#5D90D6',
     fontSize: 20,
     marginBottom: 15,
     alignItems: 'center',
+    flex: 1,
   },
-
   historicoItem: {
     marginBottom: 10,
     lineHeight: 50,
@@ -159,6 +157,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     borderBottomWidth: 1,
     borderColor: colors.buttonBorder,
+    width: '100%'
+  },
+  iconContainer: {
+    width: 24,
+    padding: 4, // Para melhor visualização
+    borderRadius: 4, // Opcional
   },
 });
 

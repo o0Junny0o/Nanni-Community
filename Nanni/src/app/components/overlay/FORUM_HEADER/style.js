@@ -9,11 +9,16 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; // Using Ionicons from Expo
 
-const CollapsibleHeader = ({ title, children, expandedHeight = 150, animationDuration = 300 }) => {
+const CollapsibleHeader = ({
+  title,
+  children,
+  expandedHeight = 150,
+  animationDuration = 300,
+}) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const animationValue = useRef(new Animated.Value(1)).current;
-  const headerHeight = useRef(new Animated.Value(50)).current; 
-  const contentOpacity = useRef(new Animated.Value(1)).current; 
+  const headerHeight = useRef(new Animated.Value(50)).current;
+  const contentOpacity = useRef(new Animated.Value(1)).current;
 
   const toggleCollapse = () => {
     setIsCollapsed(!isCollapsed);
@@ -23,7 +28,7 @@ const CollapsibleHeader = ({ title, children, expandedHeight = 150, animationDur
         toValue: isCollapsed ? 1 : 0,
         duration: animationDuration,
         easing: Easing.easeInOut,
-        useNativeDriver: false, 
+        useNativeDriver: false,
       }),
       Animated.timing(headerHeight, {
         toValue: isCollapsed ? 50 : expandedHeight,
@@ -33,7 +38,7 @@ const CollapsibleHeader = ({ title, children, expandedHeight = 150, animationDur
       }),
       Animated.timing(contentOpacity, {
         toValue: isCollapsed ? 1 : 0,
-        duration: animationDuration * 0.6, 
+        duration: animationDuration * 0.6,
         easing: Easing.linear,
         useNativeDriver: true,
       }),
@@ -54,7 +59,13 @@ const CollapsibleHeader = ({ title, children, expandedHeight = 150, animationDur
         </Animated.View>
       </TouchableOpacity>
 
-      <Animated.View style={{ height: headerHeight, opacity: contentOpacity, overflow: 'hidden' }}>
+      <Animated.View
+        style={{
+          height: headerHeight,
+          opacity: contentOpacity,
+          overflow: 'hidden',
+        }}
+      >
         <View style={styles.content}>{children}</View>
       </Animated.View>
     </View>
@@ -67,7 +78,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0',
     borderRadius: 8,
     marginBottom: 10,
-    overflow: 'hidden', 
+    overflow: 'hidden',
   },
   header: {
     flexDirection: 'row',

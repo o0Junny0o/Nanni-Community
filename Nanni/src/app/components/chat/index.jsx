@@ -8,12 +8,11 @@ import Comentario from '../../../model/Comentario';
 import VGifView from './GifView/';
 import GiphyService from '../../../service/giphy/GiphyService';
 
-export default function DChat({ discussaoPath, useRef }) {    
+export default function DChat({ discussaoPath, useRef }) {
   if (!discussaoPath || !useRef) {
-    console.error("Parâmetros inválidos") 
+    console.error('Parâmetros inválidos');
     return;
   }
-
 
   const [text, setText] = useState('');
   const [anexos, setAnexos] = useState([]);

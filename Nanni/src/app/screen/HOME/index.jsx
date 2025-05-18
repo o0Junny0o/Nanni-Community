@@ -97,7 +97,13 @@ export default function HomeScreen({ navigation }) {
                     scrollEnabled={false}
                     data={forumDono}
                     keyExtractor={(item) => item.forumID}
-                    renderItem={({ item }) => <VForumDono navigation={navigation} path={item.getForumPath()} {...item} />}
+                    renderItem={({ item }) => (
+                      <VForumDono
+                        navigation={navigation}
+                        path={item.getForumPath()}
+                        {...item}
+                      />
+                    )}
                   />
                 </>
               ) : null}
@@ -110,7 +116,13 @@ export default function HomeScreen({ navigation }) {
                     scrollEnabled={false}
                     data={forumSeguidos}
                     keyExtractor={(item) => item.forumID}
-                    renderItem={({ item }) => <VForumSeguidos navigation={navigation} path={item.getForumPath()} {...item} />}
+                    renderItem={({ item }) => (
+                      <VForumSeguidos
+                        navigation={navigation}
+                        path={item.getForumPath()}
+                        {...item}
+                      />
+                    )}
                   />
                 </>
               ) : null}
@@ -143,10 +155,14 @@ function VForumSeguidos({ forumID, forumName, forumDesc, path, navigation }) {
   if (!forumID) return;
 
   return (
-    <TouchableWithoutFeedback onPress={() => navigation.push('Forum', {
-      forumID: forumID,
-      forumPath: path,
-    })}>
+    <TouchableWithoutFeedback
+      onPress={() =>
+        navigation.push('Forum', {
+          forumID: forumID,
+          forumPath: path,
+        })
+      }
+    >
       <View style={forumSeguidosStyles.container}>
         <Text style={forumSeguidosStyles.title}>{forumName}</Text>
         <Text style={forumSeguidosStyles.desc}>{forumDesc}</Text>
@@ -162,9 +178,13 @@ function VForumDono({ forumID, avatar, forumName, data, path, navigation }) {
   if (typeof path !== 'string') return;
 
   return (
-    <Pressable onPress={(e) => navigation.push('Forum', {
-      forumID: forumID
-    })}>
+    <Pressable
+      onPress={(e) =>
+        navigation.push('Forum', {
+          forumID: forumID,
+        })
+      }
+    >
       <View style={forumDonoStyles.container}>
         <View style={forumDonoStyles.rows}>
           <Image

@@ -35,12 +35,25 @@ export async function getJogosDoUsuario(userId) {
     const userDoc = await getDoc(userDocRef);
     if (!userDoc.exists()) return [];
 
-    // Extrair caminhos completos das referências
+    // Extrair referências dos jogos
     const jogosRefs = userDoc.data().jogos || [];
-    
-    return jogosRefs.length > 1 ?
-      jogosRefs.map((ref) => `/${ref.path}`)
-      : Array(jogosRefs[0])
+
+    // Obter os nomes dos jogos e seus respectivos caminhos
+    const jogosComNomes = await Promise.all(
+      jogosRefs.map(async (ref) => {
+        const jogoDoc = await getDoc(ref);
+        if (jogoDoc.exists()) {
+          const nomeJogo = jogoDoc.data().nome || 'Nome não disponível'; // Se o nome do jogo estiver no documento
+          const caminho = `/${ref.path}`;
+          return { nome: nomeJogo, caminho: caminho };
+        } else {
+          return null; // Caso o jogo não exista
+        }
+      })
+    );
+
+    // Filtra os jogos que existem e retorna a lista
+    return jogosComNomes.filter(jogo => jogo !== null);
   } catch (error) {
     Toast.show({
       type: 'error',
@@ -52,37 +65,120 @@ export async function getJogosDoUsuario(userId) {
   }
 }
 
-export async function calcularVendasPorJogo(userId, ano) {
-  const anoNumerico = Number(ano);
-  const anoInicio = Timestamp.fromDate(new Date(anoNumerico, 0, 1));
-  const anoFim = Timestamp.fromDate(new Date(anoNumerico + 1, 0, 1));
+export async function getDataJogosVenda(jogosRefs) {
   try {
-    const jogosRefs = await getJogosDoUsuario(userId);
-<<<<<<< HEAD:Nanni/src/service/firebase/vendasService.js
-<<<<<<< Updated upstream:Nanni/src/service/firebase/vendasService.js
+    if (jogosRefs.length === 0) return [];
 
-=======
-    // console.log('REFS:',jogosRefs)
->>>>>>> Stashed changes:Nanni/src/service/firebase/analytics/vendasService.js
-=======
-    console.log('REFS:',jogosRefs)
->>>>>>> origin/Isaac:Nanni/src/service/firebase/analytics/vendasService.js
+    const vendasRef = collection(db, VENDAS_COLLECTION);
+    const caminhos = jogosRefs.map(jogo => jogo.caminho);
+
+    // Criar mapa para armazenar anos por jogo
+    const jogosMap = new Map(
+      jogosRefs.map(jogo => [
+        jogo.caminho, 
+        { nome: jogo.nome, anos: new Set() }
+      ])
+    );
+
+    // Corrigindo o chunking de caminhos
+    const CHUNK_SIZE = 10;
+    const promises = [];
+    
+    for (let i = 0; i < caminhos.length; i += CHUNK_SIZE) {
+      const chunk = caminhos.slice(i, i + CHUNK_SIZE);
+      const q = query(
+        vendasRef,
+        // Se o campo itensComprados for um array (múltiplos itens por compra), altere o operador para:
+        // where('itensComprados', 'array-contains-any', chunk)
+        where('itensComprados', 'in', chunk)
+      );
+      promises.push(getDocs(q));
+    }
+
+    // Executando todas as queries em paralelo
+    const snapshots = await Promise.all(promises);
+
+    // Processando todos os resultados
+    snapshots.forEach(querySnapshot => {
+      querySnapshot.forEach(doc => {
+        const data = doc.data();
+        const itens = Array.isArray(data.itensComprados) 
+                     ? data.itensComprados 
+                     : [data.itensComprados];
+        
+        const date = data.data?.toDate?.() || new Date(data.data);
+        if (isNaN(date.getTime())) return;
+
+        const year = date.getFullYear();
+        
+        // Adicionar ano aos jogos correspondentes
+        itens.forEach(item => {
+          if (jogosMap.has(item)) {
+            jogosMap.get(item).anos.add(year);
+          }
+        });
+      });
+    });
+
+    // Converter para objeto de resposta
+    const result = {};
+    jogosMap.forEach((value, key) => {
+      result[key] = {
+        nome: value.nome,
+        anos: Array.from(value.anos).sort((a, b) => b - a)
+      };
+    });
+
+    return result;
+
+  } catch (error) {
+    Toast.show({
+      type: 'error',
+      text1: 'Erro',
+      text2: error.message || 'Erro ao buscar vendas',
+    });
+    console.error('Erro ao calcular vendas:', error);
+    return [];
+  }
+}
+
+export async function calcularVendasPorJogo(jogosRefs, ano) {
+  // Validar ano
+  const anoNumerico = parseInt(ano, 10);
+  if (isNaN(anoNumerico)) {
+    Toast.show({
+      type: 'error',
+      text1: 'Ano inválido',
+      text2: `Informe um ano valido. Você passou: "${ano}".`,
+    });
+    return [];
+  }
+
+  // Criar timestamps com segurança
+  let anoInicio, anoFim;
+  try {
+    anoInicio = Timestamp.fromDate(new Date(anoNumerico, 0, 1));
+    anoFim    = Timestamp.fromDate(new Date(anoNumerico + 1, 0, 1));
+  } catch (e) {
+    console.error('Erro ao criar datas:', e);
+    Toast.show({
+      type: 'error',
+      text1: 'Erro de data',
+      text2: 'Falha ao calcular intervalo para o ano informado.',
+    });
+    return [];
+  }
+  try {
     if (jogosRefs.length === 0) return {};
     
     const vendasRef = collection(db, VENDAS_COLLECTION);
+    const caminhos = jogosRefs.map(jogo => jogo.caminho);
+
     const chunks = [];
     const CHUNK_SIZE = 10;
-<<<<<<< HEAD:Nanni/src/service/firebase/vendasService.js
-<<<<<<< Updated upstream:Nanni/src/service/firebase/vendasService.js
 
-=======
-    // console.log('VENDAS REF',vendasRef)
->>>>>>> Stashed changes:Nanni/src/service/firebase/analytics/vendasService.js
-=======
-    console.log('VENDAS REF',vendasRef)
->>>>>>> origin/Isaac:Nanni/src/service/firebase/analytics/vendasService.js
-    for (let i = 0; i < jogosRefs.length; i += CHUNK_SIZE) {
-      const chunk = jogosRefs.slice(i, i + CHUNK_SIZE);
+    for (let i = 0; i < caminhos.length; i += CHUNK_SIZE) {
+      const chunk = caminhos.slice(i, i + CHUNK_SIZE);
       const q = query(
         vendasRef,
         where('itensComprados', 'in', chunk),
@@ -102,19 +198,18 @@ export async function calcularVendasPorJogo(userId, ano) {
     vendasSnapshot.forEach((doc) => {
       const venda = doc.data();
       const caminhoJogo = venda.itensComprados; // Ex: "/jogos/x8w7v6u5t4s3r2q1p0o9n8m7"
-      const idJogo = caminhoJogo.split('/').pop(); // Extrai o ID
 
       // Extrair mês
       const data = venda.data.toDate();
       const mes = MESES[data.getUTCMonth()];
 
       // Inicializar estrutura se necessário
-      if (!jogos[idJogo]) {
-        jogos[idJogo] = Object.fromEntries(MESES.map((m) => [m, 0])); // Inicializa todos os meses com 0
+      if (!jogos[caminhoJogo]) {
+        jogos[caminhoJogo] = Object.fromEntries(MESES.map((m) => [m, 0])); // Inicializa todos os meses com 0
       }
 
       // Somar valor
-      jogos[idJogo][mes] += venda.valorTotal;
+      jogos[caminhoJogo][mes] += venda.valorTotal;
     });
 
     // 3. Converter para formato de array
@@ -142,19 +237,19 @@ export async function calcularVendasPorJogo(userId, ano) {
   }
 }
 
-export async function getNumVendas(userId) {
+export async function getNumVendas(jogosRefs) {
   try {
-    const jogosRefs = await getJogosDoUsuario(userId);
-
     if (jogosRefs.length === 0) return {};
 
     const vendasRef = collection(db, VENDAS_COLLECTION);
+    const caminhos = jogosRefs.map(jogo => jogo.caminho);
+
     const chunks = [];
     const CHUNK_SIZE = 10;
 
     // Dividir jogosRefs em chunks de 10 para a consulta 'in'
-    for (let i = 0; i < jogosRefs.length; i += CHUNK_SIZE) {
-      const chunk = jogosRefs.slice(i, i + CHUNK_SIZE);
+    for (let i = 0; i < caminhos.length; i += CHUNK_SIZE) {
+      const chunk = caminhos.slice(i, i + CHUNK_SIZE);
       const q = query(vendasRef, where('itensComprados', 'in', chunk));
       chunks.push(getDocs(q));
     }
@@ -169,12 +264,11 @@ export async function getNumVendas(userId) {
     vendasSnapshot.forEach((doc) => {
       const venda = doc.data();
       const caminhoJogo = venda.itensComprados;
-      const idJogo = caminhoJogo.split('/').pop(); // Extrai o ID do jogo
 
-      if (!contagemJogos[idJogo]) {
-        contagemJogos[idJogo] = 0;
+      if (!contagemJogos[caminhoJogo]) {
+        contagemJogos[caminhoJogo] = 0;
       }
-      contagemJogos[idJogo] += 1;
+      contagemJogos[caminhoJogo] += 1;
     });
 
     return contagemJogos;

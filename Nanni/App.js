@@ -26,7 +26,6 @@ import ANALITYCS_SCREEN from './src/app/screen/ANALITYCS_SCREEN/index';
 import HomeScreen from './src/app/screen/HOME/index';
 import DOACAO from './src/app/screen/DOACAO_SCREEN/index';
 
-
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 // Importar a Tabbar
@@ -100,9 +99,9 @@ function TabNavigator() {
           ),
         }}
       />
-      <TabStack.Screen 
-        name="Explorar" 
-        component={ExplorarScreen} 
+      <TabStack.Screen
+        name="Explorar"
+        component={ExplorarScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Feather name="search" color={color} size={size} />
@@ -121,7 +120,10 @@ function MainNavigator() {
       initialRouteName="Tabs"
     >
       <MainStack.Screen name="Tabs" component={TabNavigator} />
-      <MainStack.Screen name="ConfigurarForum" component={ConfigurarForumScreen} />
+      <MainStack.Screen
+        name="ConfigurarForum"
+        component={ConfigurarForumScreen}
+      />
       <MainStack.Screen name="Analytics" component={ANALITYCS_SCREEN} />
       <MainStack.Screen name="Forum" component={Forum} />
       <MainStack.Screen name="TopicoScreen" component={TopicoScreen} />

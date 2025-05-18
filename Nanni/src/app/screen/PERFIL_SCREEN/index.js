@@ -8,7 +8,7 @@ import {
   Modal,
   TextInput,
   Alert,
-  FlatList
+  ActivityIndicator
 } from 'react-native';
 import styles from './styles';
 import * as ImagePicker from 'expo-image-picker'; // 📷 Biblioteca para selecionar imagem
@@ -25,7 +25,7 @@ import {
   isPngImage,
 } from '../../../utils/Base64Image';
 import Toast from 'react-native-toast-message';
-import { updateEmail } from 'firebase/auth';
+import { updateEmail, reauthenticateWithCredential, EmailAuthProvider, sendEmailVerification, verifyBeforeUpdateEmail } from 'firebase/auth';
 import CARREGAMENTO_SCREEN from '../CARREGAMENTO_SCREEN/index';
 import { USUARIOS_COLLECTION } from '../../../model/refsCollection';
 import { navigationRef } from '../../../../App';
@@ -46,8 +46,10 @@ const PerfilUsuario = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [campoEdicao, setCampoEdicao] = useState('');
   const [valorEdicao, setValorEdicao] = useState('');
+  const [senhaAtual, setSenhaAtual] = useState('');
   const [mostrarHistorico, setMostrarHistorico] = useState(false);
   const [historicoDoacoes, setHistoricoDoacoes] = useState([]);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     const carregarDadosUsuario = async () => {
@@ -75,7 +77,6 @@ const PerfilUsuario = ({ navigation }) => {
         }
 
         const dados = await DoacaoModel.fetchByUserRefGive(userRef(user.uid));
-        console.log(dados);
 
         // Buscar nome de quem recebeu a doação (userRefTake)
         const dadosComNome = await Promise.all(
@@ -123,6 +124,7 @@ const PerfilUsuario = ({ navigation }) => {
   // Função para salvar a edição
   const salvarEdicao = async () => {
     try {
+      setIsSaving(true);
       if (!user) {
         alert('Usuário não autenticado');
         return;
@@ -132,25 +134,72 @@ const PerfilUsuario = ({ navigation }) => {
 
       if (campoEdicao === 'Nome') {
         updates.nome = valorEdicao;
+        await updateDoc(doc(db, USUARIOS_COLLECTION, auth.currentUser.uid), updates);
         setNome(valorEdicao);
+        Toast.show({
+          type: 'success',
+          text1: 'Nome atualizado!',
+          text2: 'A alteração no nome foi salva com sucesso!',
+        });
       } else if (campoEdicao === 'Email') {
+        if (valorEdicao === user.email) {
+          Toast.show({
+            type: 'warning',
+            text1: 'Email igual',
+            text2: 'Insira um e-mail diferente do atual!',
+          });
+          return;
+        }
+
+        if (!senhaAtual) {
+          Toast.show({
+            type: 'warning',
+            text1: 'Preencha o campo senha',
+            text2: 'Senha obrigatória para alteração!',
+          });
+          return;
+        }
+
+        const isEmailPassword = user.providerData.some(
+          (provider) => provider.providerId === 'password'
+        );
+
+        if (!isEmailPassword) {
+          alert('Altere seu e-mail diretamente no provedor de autenticação utilizado (Google, etc.)');
+          return;
+        }
+
+        const credential = EmailAuthProvider.credential(
+          auth.currentUser.email,
+          senhaAtual
+        );
+  
+        await reauthenticateWithCredential(auth.currentUser, credential);
         // Atualiza o email na autenticação
-        await updateEmail(auth.currentUser, valorEdicao);
+        await verifyBeforeUpdateEmail(auth.currentUser, valorEdicao);
+
+        await auth.currentUser.reload();
+
+        await sendEmailVerification(auth.currentUser);
 
         // Atualiza o email no Firestore
         updates.email = valorEdicao;
         setEmail(valorEdicao);
-      } else if (campoEdicao === 'Data de nascimento') {
-        updates.idade = Number(valorEdicao);
-        setDataNaci(valorEdicao);
+        setSenhaAtual('');
+
+        Toast.show({
+          type: 'success',
+          text1: 'E-mail atualizado!',
+          text2: 'Verifique sua caixa de entrada para confirmar o novo e-mail.',
+        });
+        await updateDoc(doc(db, USUARIOS_COLLECTION, auth.currentUser.uid), updates);
+        await logout();
       }
-
       // Atualiza o Firestore
-      await updateDoc(doc(db, USUARIOS_COLLECTION, user.uid), updates);
-
+      setIsSaving(false);
       setModalVisible(false);
-      alert('Alterações salvas com sucesso!');
     } catch (error) {
+      setIsSaving(false);
       console.error('Erro ao salvar edição:', error);
 
       // Tratamento específico de erros
@@ -254,89 +303,95 @@ const PerfilUsuario = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Botão de Deslogar */}
+      <ScrollView contentContainerStyle={{ flexGrow: 1, alignItems: 'center', }}>
+        {/* Cabeçalho */}
+        <View style={styles.header}>
+          <View style={styles.logoutButton}>
+            <TouchableOpacity
+              style={{ flexDirection: 'row', gap: 10 }}
+              onPress={() => handleLogout()}
+            >
+              <Text style={{ fontSize: 15 }}>SAIR</Text>
+              <Ionicons name="log-out-outline" size={24} color="black" />
+            </TouchableOpacity>
+          </View>
+        </View>
 
-      <View style={styles.header}>
-        <View style={styles.logoutButton}>
-          <TouchableOpacity
-            style={{ flexDirection: 'row', gap: 10 }}
-            onPress={() => handleLogout()}
-          >
-            <Text style={{ fontSize: 15 }}>SAIR</Text>
-            <Ionicons name="log-out-outline" size={24} color="black" />
+        {/* Foto de Perfil */}
+        <View style={styles.profileContainer}>
+          <Image source={fotoPerfil} style={styles.profileImage} />
+          <TouchableOpacity style={styles.editIcon} onPress={mudarFotoPerfil}>
+            <Ionicons name="camera" size={24} color="white" />
           </TouchableOpacity>
         </View>
-      </View>
 
-      {/* Área de Foto de Perfil */}
-      <View style={styles.profileContainer}>
-        <Image source={fotoPerfil} style={styles.profileImage} />
-        <TouchableOpacity style={styles.editIcon} onPress={mudarFotoPerfil}>
-          <Ionicons name="camera" size={24} color="white" />
-        </TouchableOpacity>
-      </View>
+        {/* Informações do Usuário */}
+        <View style={styles.infoContainer}>
+          <InfoItem
+            label="Nome"
+            value={nome}
+            onEdit={() => editarCampo('Nome', nome)}
+          />
+          <InfoItem
+            label="Email"
+            value={email}
+            onEdit={() => editarCampo('Email', email)}
+          />
+          <InfoItem label="Data de nascimento" value={dataNaci} />
+        </View>
 
-      {/* Informações do Usuário */}
-      <View style={styles.infoContainer}>
-        <InfoItem
-          label="Nome"
-          value={nome}
-          onEdit={() => editarCampo('Nome', nome)}
-        />
-        <InfoItem
-          label="Email"
-          value={email}
-          onEdit={() => editarCampo('Email', email)}
-        />
-        <InfoItem label="Data de nascimento" value={dataNaci} />
-      </View>
-
-      {/* Botão de texto com seta */}
-      <View style={{
-        paddingBottom: insets.bottom,    // respeita altura da barra de navegação
-        flex: 1 
-        }}>
-        <TouchableOpacity
-          onPress={() => setMostrarHistorico(!mostrarHistorico)}
-        >
-          <View style={styles.linkButton}>
-            <Text style={styles.linkText}>HISTÓRICO DE DOAÇÕES</Text>
-            <Ionicons
-              name={
-                mostrarHistorico ? 'chevron-up-outline' : 'chevron-down-outline'
-              }
-              size={18}
-              color="#1D3557"
-            />
-          </View>
-        </TouchableOpacity>
-
-        {mostrarHistorico && (
-          <FlatList
-            data={historicoDoacoes}
-            keyExtractor={(item) => item.id}
-            renderItem={(
-              { item }, //historicoItem
-            ) => (
-              <View style={styles.historicoItem}>
-                <View>
-                  <Text style={{ color: '#5D90D6' }}>ID: {item.id}</Text>
-                  <Text style={{ fontWeight: 'bold' }}>Usuário: {item.nomeUsuarioTake}</Text>
-                  <Text style={{ color: 'gray' }}>
-                      {new Date(item.data).toLocaleDateString('pt-BR')}
-                  </Text>
-                </View>
-                <Text
-                  style={{ color: '#B88CB4', fontWeight: 'bold', fontSize: 20 }}
+        {/* Histórico de Doações */}
+        <View style={{ paddingBottom: insets.bottom, width: '80%'}}>
+          <TouchableOpacity
+            onPress={() => setMostrarHistorico(!mostrarHistorico)}
+          >
+            <View style={styles.linkButton}>
+              <View>
+                <Text 
+                  style={styles.linkText}
+                  numberOfLines={1}
                 >
-                  {item.valor} R$
+                  HISTÓRICO DE DOAÇÕES
                 </Text>
               </View>
-            )}
-            style={{ maxHeight: 240 }} // define altura máxima rolável
-          />
-        )}
-      </View>
+              <View style={styles.iconContainer}>
+                <Ionicons
+                  name={mostrarHistorico ? 'chevron-up-outline' : 'chevron-down-outline'}
+                  size={18}
+                  color="#1D3557"
+                />
+              </View>
+            </View>
+          </TouchableOpacity>
+
+          {mostrarHistorico && (
+            <ScrollView style={{ maxHeight: 240, width: '100%'}}>
+              {historicoDoacoes.map((item) => (
+                <View key={item.id} style={[styles.historicoItem, historicoDoacoes[historicoDoacoes.length - 1].id === item.id && { borderBottomWidth: 0 }]}>
+                  <View>
+                    <Text style={{ color: '#5D90D6' }}>ID: {item.id}</Text>
+                    <Text style={{ fontWeight: 'bold' }}>
+                      Usuário: {item.nomeUsuarioTake}
+                    </Text>
+                    <Text style={{ color: 'gray' }}>
+                      {new Date(item.data).toLocaleDateString('pt-BR')}
+                    </Text>
+                  </View>
+                  <Text
+                    style={{
+                      color: '#B88CB4',
+                      fontWeight: 'bold',
+                      fontSize: 20,
+                    }}
+                  >
+                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.valor)}
+                  </Text>
+                </View>
+              ))}
+            </ScrollView>
+          )}
+        </View>
+      </ScrollView>
 
       {/* MODAL PARA EDITAR INFORMAÇÕES */}
       <Modal transparent={true} visible={modalVisible}>
@@ -349,6 +404,17 @@ const PerfilUsuario = ({ navigation }) => {
               onChangeText={setValorEdicao}
               keyboardType={campoEdicao === 'Idade' ? 'numeric' : 'default'}
             />
+            {/* Campo de senha (aparece apenas para email) */}
+            {campoEdicao === 'Email' && (
+              <TextInput
+                style={styles.input}
+                value={senhaAtual}
+                onChangeText={setSenhaAtual}
+                secureTextEntry={true}
+                placeholder="Senha atual"
+                autoCapitalize="none"
+              />
+            )}
             <View style={styles.modalButtons}>
               <TouchableOpacity
                 style={styles.modalButton}
@@ -360,7 +426,11 @@ const PerfilUsuario = ({ navigation }) => {
                 style={[styles.modalButton, styles.saveButton]}
                 onPress={salvarEdicao}
               >
+              {isSaving ? (
+                <ActivityIndicator color="#fff" /> // Ícone de carregamento
+              ) : (
                 <Text style={styles.modalButtonText}>Salvar</Text>
+              )}
               </TouchableOpacity>
             </View>
           </View>
