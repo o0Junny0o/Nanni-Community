@@ -48,17 +48,21 @@ export default function HomeScreen({ navigation }) {
         
         if(snapForuns && snapForuns.length > 0) { 
           setForumDono(snapForuns)
+        } else {
+          setForumDono([])
         }
       }
 
       if(data.seguindo?.length > 0) { 
         const foruns = await forumList({ qIDs: data.seguindo})
         setForumSeguidos(foruns)
+      } else {
+        setForumSeguidos([])
       }
     }
           
     setLoading(false)
-  }
+  } 
 
   useFocusEffect(
     useCallback(() => {
@@ -141,7 +145,12 @@ export default function HomeScreen({ navigation }) {
       ) : (
         <View style={styles.loadingScreen}>
           <Text style={styles.loadingText}>
-            Clique em explorar para começar
+            <TouchableOpacity
+              onPress={() => navigation.navigate('Explorar')} >
+                <Text>
+                  Clique em explorar para começar
+                </Text>    
+            </TouchableOpacity>
           </Text>
         </View>
       )}

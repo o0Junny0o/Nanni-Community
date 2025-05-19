@@ -2,7 +2,7 @@ import { Image, TouchableOpacity, View} from "react-native";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import PropTypes from "prop-types";
 import { VChatOptionsStyles } from "../styles";
-import colors from "../../../../utils/colors";
+import colors from "../../../../styles/colors";
 
 export default function VChatOptions({opcoes}) {
     return (

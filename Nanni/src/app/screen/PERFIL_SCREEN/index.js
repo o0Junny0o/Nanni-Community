@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -33,6 +33,7 @@ import { userRef } from '../../../utils/userRef';
 import DoacaoModel from '../../../model/Doacao/DoacaoModel';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ScrollView } from 'react-native-gesture-handler';
+import { useFocusEffect } from '@react-navigation/native';
 
 const PerfilUsuario = ({ navigation }) => {
   const { user, loading: authLoading, logout } = useAuth();
@@ -51,13 +52,15 @@ const PerfilUsuario = ({ navigation }) => {
   const [historicoDoacoes, setHistoricoDoacoes] = useState([]);
   const [isSaving, setIsSaving] = useState(false);
 
+
+
   useEffect(() => {
-    const carregarDadosUsuario = async () => {
+    async function run() {
       if (authLoading || !user) return;
 
-      setIsLoading(true);
-
       try {
+        setIsLoading(true);
+
         const userRefe = doc(db, USUARIOS_COLLECTION, user.uid);
         const docSnap = await getDoc(userRefe);
 
@@ -75,40 +78,58 @@ const PerfilUsuario = ({ navigation }) => {
         if (data.avatar) {
           setFotoPerfil(deconvertBase64ToImage(data.avatar) || '');
         }
-
-        const dados = await DoacaoModel.fetchByUserRefGive(userRef(user.uid));
-
-        // Buscar nome de quem recebeu a doação (userRefTake)
-        const dadosComNome = await Promise.all(
-          dados.map(async (doacao) => {
-            let nomeUsuario = 'Desconhecido';
-            try {
-              const userDoc = await getDoc(doacao.userRefTake);
-              if (userDoc.exists()) {
-                nomeUsuario = userDoc.data().nome || 'Sem nome';
-              }
-            } catch (e) {
-              console.warn('Erro ao buscar userRefTake:', e);
-            }
-
-            return {
-              ...doacao,
-              nomeUsuarioTake: nomeUsuario,
-            };
-          }),
-        );
-
-        setHistoricoDoacoes(dadosComNome);
-      } catch (error) {
-        console.error('Erro ao carregar dados:', error);
+      } catch(err) {
+        console.error('Erro ao carregar dados:', err);
         alert('Erro ao carregar perfil');
       } finally {
         setIsLoading(false);
       }
-    };
+    }
 
-    carregarDadosUsuario();
-  }, [user, authLoading]);
+    run()
+  }, [user, authLoading])
+
+
+  useFocusEffect(
+    useCallback(() => {
+      const carregarDadosUsuario = async () => {
+        try {  
+          setIsLoading(true);
+
+          const dados = await DoacaoModel.fetchByUserRefGive(userRef(user.uid));
+  
+          // Buscar nome de quem recebeu a doação (userRefTake)
+          const dadosComNome = await Promise.all(
+            dados.map(async (doacao) => {
+              let nomeUsuario = 'Desconhecido';
+              try {
+                const userDoc = await getDoc(doacao.userRefTake);
+                if (userDoc.exists()) {
+                  nomeUsuario = userDoc.data().nome || 'Sem nome';
+                }
+              } catch (e) {
+                console.warn('Erro ao buscar userRefTake:', e);
+              }
+  
+              return {
+                ...doacao,
+                nomeUsuarioTake: nomeUsuario,
+              };
+            }),
+          );
+  
+          setHistoricoDoacoes(dadosComNome);
+        } catch (error) {
+          console.error('Erro ao carregar dados:', error);
+          alert('Erro ao carregar doação');
+        } finally {
+          setIsLoading(false);
+        }
+      };
+  
+      if(user) carregarDadosUsuario();
+    }, [user])
+  );
 
   if (authLoading || isLoading) {
     return <CARREGAMENTO_SCREEN />;

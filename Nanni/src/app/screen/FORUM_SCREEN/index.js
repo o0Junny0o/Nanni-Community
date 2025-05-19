@@ -58,7 +58,7 @@ export default function ForumScreen({ navigation, route }) {
     error,
     addLimitDiscussao,
   } = useForumDiscussao({
-    forumPath: 'foruns/YRysh2NmguCosrq8HVzN',
+    forumPath: forumPath,
     initialLimit: 10,
   }) || [];
   const [fotoPerfil, setFotoPerfil] = useState('');
@@ -332,7 +332,7 @@ export default function ForumScreen({ navigation, route }) {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#163690" />
 
-      {forum && forumAutor ? (
+      {forum && forumAutor ? 
         (
           <>
             {/* Header */}
@@ -370,7 +370,7 @@ export default function ForumScreen({ navigation, route }) {
                     renderItem={({ item, index }) => (
                       <Text
                         style={[
-                          styles.tagsDesc,
+                          styles.tagsDesc, index &&
                           {
                             backgroundColor: index % 2 === 0 ? '#ff5555' : '#B88CB4',
                           },
@@ -412,40 +412,15 @@ export default function ForumScreen({ navigation, route }) {
                     <Text
                       style={[
                         styles.tagsDesc,
-                        {
-                          backgroundColor:
-                            index % 2 === 0 ? '#ff5555' : '#B88CB4',
-                        },
                       ]}
                     >
                       {seguidor !== '' ? 'PARAR DE SEGUIR' : 'SEGUIR +'}
                     </Text>
-                  )}
-                />
+                  </TouchableOpacity>
+
+                </View>
               </View>
-              <View>
-                <TouchableOpacity
-                  disabled={loadingSeguir}
-                  style={{ alignItems: 'flex-end' }}
-                  onPress={() => handleSeguir()}
-                >
-                  <Text
-                    style={{
-                      width: 180,
-                      fontSize: 15,
-                      color: '#ddd',
-                      backgroundColor: '#00000044',
-                      padding: 15,
-                      textAlign: 'center',
-                      borderRadius: 15,
-                    }}
-                  >
-                    {seguidor ? 'PARAR DE SEGUIR' : 'SEGUIR +'}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          )}
+            )}
 
           {!discussoes ? (
             <View style={styles.noTopicsContainer}>

@@ -44,7 +44,7 @@ class DoacaoModel {
       await Notifications.scheduleNotificationAsync({
         content: {
           title: 'Doação Enviada!',
-          body: `Sua doação foi enviada para ${this.userRefTake}`, // TODO: Colocar o nome do usuario
+          body: `Sua doação foi enviada para ${this.userRefTake}`, 
         },
         trigger: { seconds: 2 },
       });
