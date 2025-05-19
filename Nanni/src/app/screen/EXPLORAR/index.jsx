@@ -34,7 +34,6 @@ export default function ExplorarScreen({ navigation }) {
     refPickerFiltro?.current.focus();
   }
 
-  
   useEffect(() => {
     async function run() {
       if (tagsSearch.length < 1) {
@@ -46,14 +45,14 @@ export default function ExplorarScreen({ navigation }) {
           [[], []],
         );
 
-        if(foruns.length > 0) {
-            const arr = [...new Set(foruns.flatMap(fr => fr.tagsDisponiveis))]
-            setPreTags(arr)   
+        if (foruns.length > 0) {
+          const arr = [...new Set(foruns.flatMap((fr) => fr.tagsDisponiveis))];
+          setPreTags(arr);
         }
       }
     }
-    run()
-  }, [tagsSearch])
+    run();
+  }, [tagsSearch]);
 
   function addSearchTag(tag) {
     if (!tag || typeof tag !== 'string') return;
@@ -155,17 +154,19 @@ export default function ExplorarScreen({ navigation }) {
       <FlatList
         keyExtractor={(item) => item.forumID}
         data={foruns}
-        renderItem={({ item }) => <VExplorarItem forum={item} navigation={navigation} /> }
-        ListEmptyComponent={() => (<Text style={styles.listVazia}>...Lista Vázia...</Text>)}
+        renderItem={({ item }) => (
+          <VExplorarItem forum={item} navigation={navigation} />
+        )}
+        ListEmptyComponent={() => (
+          <Text style={styles.listVazia}>...Lista Vázia...</Text>
+        )}
       />
     </SafeAreaView>
   );
 }
 
-
-
 ExplorarScreen.propTypes = {
   navigation: PropTypes.shape({
     push: PropTypes.func.isRequired,
   }).isRequired,
-}
+};

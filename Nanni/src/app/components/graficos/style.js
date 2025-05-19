@@ -16,6 +16,9 @@ const styles = StyleSheet.create({
     color: colors.marrom,
     fontSize: 12,
   },
+  container: {
+    paddingTop: 10
+  }
 });
 
 export { styles, colors };

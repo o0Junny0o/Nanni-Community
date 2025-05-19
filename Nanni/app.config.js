@@ -15,7 +15,6 @@ module.exports = {
       resizeMode: 'contain',
       backgroundColor: '#ffffff',
     },
-
     ios: {
       supportsTablet: true,
     },

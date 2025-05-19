@@ -17,9 +17,8 @@ function useForumDiscussao({ forumPath, initialLimit }) {
     setQLimit(qLimit + addLimit);
   };
 
-
   // Query:
-  const PATH = `${forumPath}/${DISCUSSAO_COLLECTION}`
+  const PATH = `${forumPath}/${DISCUSSAO_COLLECTION}`;
   const refForumDiscussao = collection(db, PATH);
   const queryForumDiscussao = query(refForumDiscussao, limit(qLimit));
 
@@ -27,8 +26,8 @@ function useForumDiscussao({ forumPath, initialLimit }) {
 
   useEffect(() => {
     if (snapshot) {
-      if(snapshot.empty) {
-        setListDiscussao([])
+      if (snapshot.empty) {
+        setListDiscussao([]);
       } else {
         setListDiscussao(
           snapshot.docs.map(

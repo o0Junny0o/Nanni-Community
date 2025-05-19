@@ -1,12 +1,13 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import { Text } from 'react-native';
+import { Text, View } from 'react-native';
 import { LineChart } from 'react-native-gifted-charts';
 import { styles } from './style';
 
 export function LineChartScreen({ data }) {
   const [focusedIndex, setFocusedIndex] = useState(null);
   return (
+    <View style={styles.container}>
     <LineChart
       data={data}
       height={300}
@@ -85,6 +86,7 @@ export function LineChartScreen({ data }) {
       }
       //yAxisOffset={Math.min(...data.map(item => item.value))}
     />
+    </View>
   );
 }
 

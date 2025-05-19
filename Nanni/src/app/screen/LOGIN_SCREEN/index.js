@@ -22,81 +22,16 @@ import CarregandoOverlay from '../../components/overlay/CARREGANDO_OVERLAY/loadi
 
 const logo = require('../../../assets/logo_nanni.png');
 
-// Definição dos critérios de senha para reutilização
-const passwordRules = [
-  {
-    id: 'length',
-    text: '8 a 25 caracteres',
-    regexFull: /^.{8,25}$/,
-    regexPart: (val) => val.length >= 8 && val.length <= 25,
-  },
-  {
-    id: 'uppercase',
-    text: '1 letra maiúscula',
-    regexFull: /(?=.*[A-Z])/,
-    regexPart: /[A-Z]/,
-  },
-  {
-    id: 'lowercase',
-    text: '1 letra minúscula',
-    regexFull: /(?=.*[a-z])/,
-    regexPart: /[a-z]/,
-  },
-  { id: 'number', text: '1 número', regexFull: /(?=.*\d)/, regexPart: /\d/ },
-  {
-    id: 'special',
-    text: '1 caractere especial (@$!%*?&)',
-    regexFull: /(?=.*[\W_])/,
-    regexPart: /[\W_]/,
-  },
-];
-
 export default function Login({ navigation }) {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [senhaInvalidaTexto, setSenhaInvalidaTexto] = useState('');
-
-  const [passwordCriteria, setPasswordCriteria] = useState({
-    length: false,
-    uppercase: false,
-    lowercase: false,
-    number: false,
-    special: false,
-  });
-
-  const validarSenhaCompleta = (senhaInput) => {
-    const regexSenha = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,25}$/;
-    return regexSenha.test(senhaInput);
-  };
-
-  const checkPasswordCriteria = (senhaValue) => {
-    const criteriaMet = {};
-    passwordRules.forEach((rule) => {
-      if (rule.id === 'length') {
-        criteriaMet[rule.id] = rule.regexPart(senhaValue);
-      } else {
-        criteriaMet[rule.id] = rule.regexPart.test(senhaValue);
-      }
-    });
-    return criteriaMet;
-  };
 
   const handleLogin = async () => {
     if (!email || !senha) {
       Alert.alert('Erro', 'Por favor, preencha todos os campos!');
       return;
-    }
-
-    if (!validarSenhaCompleta(senha)) {
-      setSenhaInvalidaTexto(
-        'A senha não atende aos critérios:\n' +
-          passwordRules.map((rule) => `- ${rule.text}`).join('\n'),
-      );
-      return;
-    } else {
-      setSenhaInvalidaTexto('');
     }
 
     setLoading(true);
@@ -153,16 +88,6 @@ export default function Login({ navigation }) {
     }
   };
 
-  const handleSenhaChange = (text) => {
-    setSenha(text);
-    const criteriaMet = checkPasswordCriteria(text);
-    setPasswordCriteria(criteriaMet);
-
-    if (senhaInvalidaTexto) {
-      setSenhaInvalidaTexto('');
-    }
-  };
-
   return (
     <SafeAreaView style={styles.safeArea}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -190,7 +115,7 @@ export default function Login({ navigation }) {
                 placeholderTextColor={styles.input.borderColor}
                 secureTextEntry={!mostrarSenha}
                 value={senha}
-                onChangeText={handleSenhaChange}
+                onChangeText={setSenha}
                 autoCapitalize="none"
               />
               <TouchableOpacity onPress={() => setMostrarSenha(!mostrarSenha)}>
@@ -201,29 +126,6 @@ export default function Login({ navigation }) {
                 />
               </TouchableOpacity>
             </View>
-
-            {/* Helper dinâmico da senha */}
-            {senha.length > 0 && (
-              <View style={styles.passwordHelperContainer}>
-                {passwordRules.map((rule) => (
-                  <Text
-                    key={rule.id}
-                    style={[
-                      styles.passwordHelperTextItem,
-                      passwordCriteria[rule.id]
-                        ? styles.passwordHelperTextValid
-                        : styles.passwordHelperTextInvalid,
-                    ]}
-                  >
-                    {rule.text}
-                  </Text>
-                ))}
-              </View>
-            )}
-
-            {senhaInvalidaTexto ? (
-              <Text style={styles.errorText}>{senhaInvalidaTexto}</Text>
-            ) : null}
           </View>
 
           {loading && (
