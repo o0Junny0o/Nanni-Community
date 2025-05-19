@@ -47,6 +47,7 @@ module.exports = {
       FIREBASE_MESSAGING_SENDER_ID: process.env.FIREBASE_MESSAGING_SENDER_ID,
       FIREBASE_APP_ID: process.env.FIREBASE_APP_ID,
       GIPHY_API_KEY: process.env.GIPHY_API_KEY,
+      TENOR_API_KEY: process.env.TENOR_API_KEY,
       eas: {
         projectId: 'c6739a76-5728-42c5-a305-ee1ca98c1604',
       },

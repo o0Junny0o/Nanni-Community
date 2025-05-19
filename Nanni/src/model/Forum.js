@@ -63,17 +63,17 @@ class Forum {
     return false;
   }
 
-  setAvatar(avatar) {
-    this.avatar = avatar;
+  setAvatar(avatar) { 
+    this.avatar = avatar
   }
 
   setID(forumID) {
     this.forumID = forumID;
   }
 
-  static get classificacaoIndicativa() {
-    return ['+18', '+16', '+14'];
-  }
+  static get classificacaoIndicativa() { 
+    return ['+18', '+16', '+14']
+  };
 
   toFirestoreData() {
     return {

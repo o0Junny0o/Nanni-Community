@@ -1,70 +1,71 @@
-import {
-  Text,
-  View,
-  FlatList,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  Alert,
-  Pressable,
-  ScrollView,
-  Image,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useEffect, useState } from 'react';
-import { styles, forumSeguidosStyles, forumDonoStyles } from './styles';
-import PropTypes from 'prop-types';
-import { useAuth } from '../../components/contexts/AuthContext';
-import { doc, getDoc, Timestamp } from 'firebase/firestore';
-import { db } from '../../../service/firebase/conexao';
-import forumList from '../../../hooks/forum/forumList';
+import { 
+    Text, 
+    View, 
+    FlatList,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+    Pressable,
+    ScrollView,
+    Image,
+} from "react-native"
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback, useEffect, useState } from "react";
+import {styles, forumSeguidosStyles, forumDonoStyles } from "./styles";
+import PropTypes from "prop-types";
+import { useAuth } from "../../components/contexts/AuthContext";
+import { doc, getDoc, Timestamp } from "firebase/firestore";
+import { db } from "../../../service/firebase/conexao";
+import forumList from "../../../hooks/forum/forumList";
 import Ionicons from '@expo/vector-icons/Ionicons';
-import colors from '../../../utils/colors';
-import { deconvertBase64ToImage } from '../../../utils/Base64Image';
-import { USUARIOS_COLLECTION } from '../../../model/refsCollection';
+import colors from "../../../styles/colors";
+import { deconvertBase64ToImage } from "../../../utils/Base64Image";
+
+
 
 export default function HomeScreen({ navigation }) {
-  const [forumSeguidos, setForumSeguidos] = useState([]);
-  const [forumDono, setForumDono] = useState([]);
-  const [isDev, setIsDev] = useState(false);
-  const [loading, setLoading] = useState(true);
 
-  // User:
-  const { user, userLoading, authLoading } = useAuth();
-  // > Verificação:
+  const [forumSeguidos, setForumSeguidos] = useState([])
+  const [forumDono, setForumDono] = useState([])
+  const [isDev, setIsDev] = useState(false)
+  const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    if (authLoading || !user) {
-      navigation.navigate('AuthStack');
-    } else {
-      async function run() {
-        const userRef = doc(db, USUARIOS_COLLECTION, user.uid);
-        const docSnap = await getDoc(userRef);
+  const { user } = useAuth();
 
-        if (docSnap.exists()) {
-          const data = docSnap.data();
+  async function run() {
+    setLoading(true)
 
-          if (data.cargo) {
-            setIsDev(Boolean(data.cargo));
+    const userRef = doc(db, 'usuarios', user.uid);
+    const docSnap = await getDoc(userRef);
+    
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      
+      if(data.cargo) {
+        setIsDev(Boolean(data.cargo))
 
-            const snapForuns = await forumList({ qUserRef: userRef });
-
-            if (snapForuns && snapForuns.length > 0) {
-              setForumDono(snapForuns);
-            }
-          }
-
-          if (data.seguindo?.length > 0) {
-            const foruns = await forumList({ qIDs: data.seguindo });
-            setForumSeguidos(foruns);
-          }
+        const snapForuns = await forumList({ qUserRef: userRef })
+        
+        if(snapForuns && snapForuns.length > 0) { 
+          setForumDono(snapForuns)
         }
-
-        setLoading(false);
       }
 
-      run();
+      if(data.seguindo?.length > 0) { 
+        const foruns = await forumList({ qIDs: data.seguindo})
+        setForumSeguidos(foruns)
+      }
     }
-  }, [user, authLoading]);
+          
+    setLoading(false)
+  }
+
+  useFocusEffect(
+    useCallback(() => {
+      if(!user) return;
+      run();
+    }, [user])
+  )
 
   const titleForumSeguidos =
     forumSeguidos && forumSeguidos.length > 0
@@ -86,7 +87,7 @@ export default function HomeScreen({ navigation }) {
           <Text style={styles.loadingText}>Carregando...</Text>
         </View>
       ) : forumDono.length > 0 || forumSeguidos.length > 0 ? (
-        <View style={{ flex: 1 }}>
+        <View style={styles.view}>
           <View style={styles.container}>
             <ScrollView>
               {isDev && forumDono && forumDono.length > 0 ? (
@@ -203,7 +204,7 @@ function VForumDono({ forumID, avatar, forumName, data, path, navigation }) {
             <Ionicons name="settings" size={24} color={colors.p3} />
           </Pressable>
         </View>
-        <View style={[forumDonoStyles.rows, { justifyContent: 'flex-end' }]}>
+        <View style={[forumDonoStyles.rows, forumDonoStyles.rowsOptions]}>
           {data && (
             <Text style={forumDonoStyles.extra}>
               {data.toDate().toLocaleDateString('pt-BR')}
@@ -226,6 +227,10 @@ VForumSeguidos.propTypes = {
   forumID: PropTypes.string.isRequired,
   forumName: PropTypes.string.isRequired,
   forumDesc: PropTypes.string.isRequired,
+  path: PropTypes.string.isRequired,
+  navigation: PropTypes.shape({
+    push: PropTypes.func.isRequired
+  }).isRequired,
 };
 
 VForumDono.propTypes = {
@@ -233,4 +238,8 @@ VForumDono.propTypes = {
   avatar: PropTypes.string,
   forumName: PropTypes.string.isRequired,
   data: PropTypes.object.isRequired,
+  path: PropTypes.string.isRequired,
+  navigation: PropTypes.shape({
+    push: PropTypes.func.isRequired
+  }).isRequired,
 };

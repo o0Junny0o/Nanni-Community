@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
 import colors from '../../../utils/colors';
+import fonts from '../../../styles/fonts';
 
 const styles = StyleSheet.create({
   container: {
@@ -10,6 +11,15 @@ const styles = StyleSheet.create({
     gap: 10,
     backgroundColor: colors.p3,
   },
+  gestureGrabber: {
+    height: 4, 
+    width: "50%",
+    borderRadius: 16,
+    alignSelf: 'center',
+    marginHorizontal: 15,
+    backgroundColor: colors.p6, 
+    opacity: 0.5,
+  },  
   chatView: {
     flexDirection: 'row',
     alignSelf: 'flex-start',
@@ -34,24 +44,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
   },
   anexoText: {
-    fontFamily: 'Roboto',
+    fontFamily: fonts.roboto,
     fontSize: 14,
     letterSpacing: 1.25,
     color: colors.p6,
   },
   anexoImgText: {
     textDecorationLine: 'underline',
-  },
-  optContainer: {
-    flexDirection: 'row',
-    alignSelf: 'flex-end',
-    gap: 10,
-  },
-  optView: {
-    padding: 12,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-    backgroundColor: colors.p6,
   },
 });
 
@@ -83,7 +82,10 @@ const VGifGridStyles = StyleSheet.create({
   },
   resultView: {
     paddingHorizontal: 10,
-    backgroundColor: colors.p2,
+    maxHeight: 200,
+  },
+  resultEmpty: {
+    height: 0,
   },
   gifs: {
     height: 150,
@@ -100,4 +102,20 @@ const VGifGridStyles = StyleSheet.create({
   },
 });
 
-export { styles, VGifGridStyles };
+
+const VChatOptionsStyles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    alignSelf: 'flex-end',
+    gap: 10,
+  },
+  option: {
+    padding: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    backgroundColor: colors.p6,
+  },
+})
+
+
+export { styles, VGifGridStyles, VChatOptionsStyles };

@@ -16,6 +16,7 @@ const firebaseConfig = {
 
 // Configuração de APIs
 const giphy = Constants.expoConfig.extra.GIPHY_API_KEY;
+const tenor = Constants.expoConfig.extra.TENOR_API_KEY;
 
 // Inicializa o Firebase
 const app = initializeApp(firebaseConfig);
@@ -28,4 +29,4 @@ const auth = initializeAuth(app, {
   persistence: getReactNativePersistence(AsyncStorage),
 });
 
-export { app, auth, db, giphy };
+export { app, auth, db, giphy, tenor };
