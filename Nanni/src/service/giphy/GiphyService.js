@@ -30,8 +30,8 @@ export default class GiphyService extends IAPIServices {
     return this.fetch(uri)
   }
 
-  search({ q, limit }) {
-    const uri = `search?q=${encodeURIComponent(q)}&limit=${limit}&bundle=messaging_non_clips&${this.extra_uri}`;
+  search({ q, limit = 6, pos = 0 }) {
+    const uri = `search?q=${encodeURIComponent(q)}&limit=${limit}&bundle=messaging_non_clips&offset=${pos}&${this.extra_uri}`;
     return this.fetch(uri)
   }
 

@@ -22,7 +22,7 @@ export default class IAPIServices {
         throw new Error("Método [getByID] não foi implementado.")
     }
 
-    search({ q, limit }) {
+    search({ q, limit = 6, pos = 0 }) {
         throw new Error("Método [search] não foi implementado.")
     }
 

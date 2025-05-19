@@ -43,7 +43,7 @@ export default function VGifView({ type, selection, toggle }) {
   }, [type])
 
   async function searchGif() {
-    const res = await service.search({ q: text, limit: 5 });
+    const res = await service.search({ q: text, limit: 12 });
     setGifs(service.openResp(res));
   }
 

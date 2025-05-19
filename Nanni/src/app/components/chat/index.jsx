@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import { styles } from './styles';
 import { useEffect, useRef, useState } from 'react';
-import colors from '../../../utils/colors';
+import colors from '../../../styles/colors';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import VGifView from './GifView/';
 import PropTypes from 'prop-types';
@@ -49,8 +49,6 @@ export default function VChat({ discussaoPath, userRef }) {
       setTypeGifView(type)
       setShowGifView(true)
     }
-
-    console.log(typeGifView)
   }
 
   // [Sobre Opções]:

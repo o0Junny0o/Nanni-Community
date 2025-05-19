@@ -13,8 +13,8 @@ export default class TenorService extends IAPIServices {
         return this.fetch(uri)
     }
 
-    search({ q, limit }) {
-        const uri = `search?q=${encodeURIComponent(q)}&limit=${limit}`
+    search({ q, limit = 6, pos = 0 }) {
+        const uri = `search?q=${encodeURIComponent(q)}&limit=${limit}&pos=${pos}`
         return this.fetch(uri)
     }
 
