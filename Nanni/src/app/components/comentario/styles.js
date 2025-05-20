@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import colors from '../../../utils/colors';
+import colors from '../../../styles/colors';
 import fonts from '../../../styles/fonts'
 
 const styles = StyleSheet.create({
@@ -7,8 +7,17 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 'auto',
   },
+  header: {
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+  },
+  iconReport: {
+    color: colors.p5label,
+    opacity: 0.75,
+  },
   viewOtherUser: {
     alignItems: 'flex-start',
+    flexDirection: 'row',
   },
   viewUser: {
     alignItems: 'flex-end',

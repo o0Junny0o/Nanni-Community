@@ -1,13 +1,14 @@
 import { arrayUnion, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../service/firebase/conexao';
+import PropTypes from 'prop-types';
 
-async function comentarioReport({ discussaoPath, comentarioID }) {
-  if (typeof comentarioID !== 'string' || comentarioID.trim() == '') {
+export default async function comentarioReport({ discussaoPath, comentarioID }) {
+  if (comentarioID.trim() == '') {
     console.error('ID de comentário deve ser válido');
     return false;
   }
 
-  if (typeof discussaoPath !== 'string' || discussaoPath.trim() == '') {
+  if (discussaoPath.trim() == '') {
     console.error('Caminho de discussão deve ser válido');
     return false;
   }
@@ -25,4 +26,8 @@ async function comentarioReport({ discussaoPath, comentarioID }) {
   }
 }
 
-export default comentarioReport;
+
+comentarioReport.propTypes = {
+  discussaoPath: PropTypes.string.isRequired,
+  comentarioID: PropTypes.string.isRequired,
+}

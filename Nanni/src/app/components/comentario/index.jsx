@@ -1,17 +1,20 @@
 import { useEffect, useState } from 'react';
-import { Text, View } from 'react-native';
+import { Alert, Pressable, Text, View } from 'react-native';
 import { Image } from 'expo-image';
 import styles from './styles';
 import { Timestamp } from 'firebase/firestore';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import PropTypes from 'prop-types';
 import typeServices from '../../../utils/typeServices';
-import IAPIServices from '../../../service/IAPIServices';
+import comentarioReport from '../../../hooks/comentario/comentarioReport';
 
 const rgx = /(\[.*?\])/g;
 const MIN_SERVICE_ID = 4
 
 export default function VComentario({
   services,
+  discussaoPath,
+  comentarioID,
   mensagem,
   data,
   username,
@@ -51,6 +54,26 @@ export default function VComentario({
 
     setParsed(str);
   }, []);
+
+  async function handleReport() {
+    try {
+      const r = await comentarioReport({
+        discussaoPath,
+        comentarioID
+      })
+
+
+      if(r) {
+        Alert.alert("Comentário reportado")
+      }
+    } catch(err) {
+      Alert.alert(
+        "Erro ao reportar mensagem",
+      )
+
+      console.error(err)
+    }
+  }
 
 
   // [Gif]
@@ -98,7 +121,21 @@ export default function VComentario({
             : styles.comentarioViewOtherUser,
         ]}
       >
-        {!isFromUser ? <Text style={styles.author}>{username}</Text> : null}
+        {!isFromUser && (
+          <View style={styles.header}>
+            <Text style={styles.author}>
+              {username}
+            </Text>
+            <Pressable
+              onPress={() => handleReport()}>
+                <Ionicons 
+                  name="flag"
+                  style={styles.iconReport}
+                  size={16}                  
+                />
+            </Pressable>
+          </View>
+        )}
         {parsed.map((item, index) => {
           if (item.type === 'gif') {
             const uri = item.gif;
@@ -131,6 +168,8 @@ export default function VComentario({
 
 
 VComentario.propTypes = {
+  discussaoPath: PropTypes.string.isRequired,
+  comentarioID: PropTypes.string.isRequired,
   services: PropTypes.object.isRequired,
   mensagem: PropTypes.string.isRequired,
   data: PropTypes.instanceOf(Timestamp).isRequired,
