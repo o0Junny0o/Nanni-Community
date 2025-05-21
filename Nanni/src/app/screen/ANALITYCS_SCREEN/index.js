@@ -1,12 +1,12 @@
 import { useState, useEffect, useMemo } from 'react';
-import {
-  View,
-  Text,
-  ActivityIndicator,
-  SafeAreaView
-} from 'react-native';
+import { View, Text, ActivityIndicator, SafeAreaView } from 'react-native';
 import { useAuth } from '../../components/contexts/AuthContext';
-import { calcularVendasPorJogo, getJogosDoUsuario, getDataJogosVenda, getNumVendas } from '../../../service/firebase/analytics/vendasService';
+import {
+  calcularVendasPorJogo,
+  getJogosDoUsuario,
+  getDataJogosVenda,
+  getNumVendas,
+} from '../../../service/firebase/analytics/vendasService';
 import { getViews } from '../../../service/firebase/analytics/viewsService';
 import { getAvaAvg } from '../../../service/firebase/analytics/avaliacaoService';
 import { LineChartScreen } from '../../components/graficos/ChartScreen';
@@ -17,7 +17,9 @@ import { styles } from './style';
 
 export default function AnalyticsScreen() {
   const { user } = useAuth();
-  const [selectedAno, setSelectedAno] = useState(new Date().getFullYear().toString());
+  const [selectedAno, setSelectedAno] = useState(
+    new Date().getFullYear().toString(),
+  );
   const [selectedJogo, setSelectedJogo] = useState(null);
   const [jogos, setJogos] = useState([]);
   const [vendasPorMes, setVendasPorMes] = useState([]);
@@ -28,19 +30,20 @@ export default function AnalyticsScreen() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        
+
         const jogosList = await getJogosDoUsuario(user?.uid);
-        
+
         // Buscar dados em paralelo
-        const [anosData, numVendas, viewsData, mediaAvaliacao] = await Promise.all([
-          getDataJogosVenda(jogosList),
-          getNumVendas(jogosList),
-          getViews(jogosList),
-          getAvaAvg(jogosList)
-        ]);
+        const [anosData, numVendas, viewsData, mediaAvaliacao] =
+          await Promise.all([
+            getDataJogosVenda(jogosList),
+            getNumVendas(jogosList),
+            getViews(jogosList),
+            getAvaAvg(jogosList),
+          ]);
 
         // Combinar resultados
-        const resultadoFinal = jogosList.map(jogo => ({
+        const resultadoFinal = jogosList.map((jogo) => ({
           ...jogo,
           anos: anosData[jogo.caminho]?.anos || [],
           vendas: numVendas[jogo.caminho] || 0,
@@ -56,7 +59,7 @@ export default function AnalyticsScreen() {
         Toast.show({
           type: 'error',
           text1: 'Erro ao carregar dados',
-          text2: error.message
+          text2: error.message,
         });
       } finally {
         setLoading(false);
@@ -73,14 +76,14 @@ export default function AnalyticsScreen() {
 
       try {
         setLoading(true);
-        const jogo = jogos.find(j => j.caminho === selectedJogo);
+        const jogo = jogos.find((j) => j.caminho === selectedJogo);
         const data = await calcularVendasPorJogo([jogo], Number(selectedAno));
         setVendasPorMes(data);
       } catch (error) {
         Toast.show({
           type: 'error',
           text1: 'Erro ao carregar vendas',
-          text2: error.message
+          text2: error.message,
         });
       } finally {
         setLoading(false);
@@ -92,28 +95,30 @@ export default function AnalyticsScreen() {
 
   // Dados para métricas
   const metricas = useMemo(() => {
-    const jogo = jogos.find(j => j.caminho === selectedJogo);
-    return jogo ? {
-      'Vendas': jogo.vendas,
-      'Visualizações': jogo.views,
-      'Avaliação': jogo.avaliacao.toFixed(1)
-    } : {};
+    const jogo = jogos.find((j) => j.caminho === selectedJogo);
+    return jogo
+      ? {
+          Vendas: jogo.vendas,
+          Visualizações: jogo.views,
+          Avaliação: jogo.avaliacao.toFixed(1),
+        }
+      : {};
   }, [selectedJogo, jogos]);
 
   // Anos disponíveis
   const anos = useMemo(() => {
-    const jogo = jogos.find(j => j.caminho === selectedJogo);
-    return jogo?.anos?.length > 0 
+    const jogo = jogos.find((j) => j.caminho === selectedJogo);
+    return jogo?.anos?.length > 0
       ? jogo.anos.sort((a, b) => b - a)
       : [new Date().getFullYear()];
   }, [selectedJogo, jogos]);
 
   // Dados para gráfico
   const chartData = useMemo(() => {
-    return vendasPorMes.length > 0 
-      ? vendasPorMes[0].data.map(mes => ({
+    return vendasPorMes.length > 0
+      ? vendasPorMes[0].data.map((mes) => ({
           name: mes.name,
-          value: mes.value
+          value: mes.value,
         }))
       : [];
   }, [vendasPorMes]);
@@ -130,7 +135,7 @@ export default function AnalyticsScreen() {
     <SafeAreaView style={styles.safe}>
       <View style={styles.container}>
         <Text style={styles.title}>Análise de Dados</Text>
-        
+
         {/* Seletor de Jogo */}
         <View style={styles.pickerContainer}>
           <Icon name="sports-esports" size={20} color="#666" />
@@ -138,7 +143,8 @@ export default function AnalyticsScreen() {
             style={styles.picker}
             selectedValue={selectedJogo}
             onValueChange={setSelectedJogo}
-            dropdownIconColor="#666">
+            dropdownIconColor="#666"
+          >
             {jogos.map((jogo) => (
               <Picker.Item
                 key={jogo.caminho}
@@ -153,9 +159,7 @@ export default function AnalyticsScreen() {
         <View style={styles.metricContainer}>
           {Object.entries(metricas).map(([key, value]) => (
             <View key={key} style={styles.metricItem}>
-              <Text style={styles.metricLabel}>
-                {key}
-              </Text>
+              <Text style={styles.metricLabel}>{key}</Text>
               <Text style={styles.metricValue}>{value}</Text>
             </View>
           ))}
@@ -168,12 +172,13 @@ export default function AnalyticsScreen() {
             style={styles.picker}
             selectedValue={selectedAno}
             onValueChange={setSelectedAno}
-            dropdownIconColor="#666">
+            dropdownIconColor="#666"
+          >
             {anos.map((ano) => (
-              <Picker.Item 
+              <Picker.Item
                 key={`ano-${ano}`}
-                label={String(ano)} 
-                value={String(ano)} 
+                label={String(ano)}
+                value={String(ano)}
               />
             ))}
           </Picker>
@@ -181,9 +186,11 @@ export default function AnalyticsScreen() {
 
         {/* Gráfico */}
         {chartData.length > 0 ? (
-          <LineChartScreen data={chartData}/>
+          <LineChartScreen data={chartData} />
         ) : (
-          <Text style={styles.infoText}>Nenhum dado disponível para o período</Text>
+          <Text style={styles.infoText}>
+            Nenhum dado disponível para o período
+          </Text>
         )}
       </View>
     </SafeAreaView>

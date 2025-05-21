@@ -11,34 +11,36 @@ export async function getAvaAvg(jogosRefs) {
     const promises = jogosRefs.map(async (jogo) => {
       try {
         const caminho = jogo.caminho;
-        const avaliacoesCol = collection(doc(db, caminho), AVALIACOES_COLLECTION);
+        const avaliacoesCol = collection(
+          doc(db, caminho),
+          AVALIACOES_COLLECTION,
+        );
         const snap = await getDocs(avaliacoesCol);
-        
+
         const avaliacoes = snap.docs
-          .map(d => d.data().avaliacao)
+          .map((d) => d.data().avaliacao)
           .filter(Number.isFinite);
 
         return {
           caminho,
-          media: calcularMedia(avaliacoes)
+          media: calcularMedia(avaliacoes),
         };
       } catch (error) {
         console.error(`Erro no jogo ${jogo.caminho}:`, error);
         return {
           caminho: jogo.caminho,
-          media: 0
+          media: 0,
         };
       }
     });
 
     const resultados = await Promise.all(promises);
-    
+
     // Converter para objeto
     return resultados.reduce((acc, { caminho, media }) => {
       acc[caminho] = media;
       return acc;
     }, {});
-
   } catch (error) {
     Toast.show({
       type: 'error',

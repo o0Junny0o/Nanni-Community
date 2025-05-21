@@ -1,7 +1,12 @@
-import PropTypes from "prop-types";
-import Comentario from "../../../model/Comentario";
+import PropTypes from 'prop-types';
+import Comentario from '../../../model/Comentario';
 
-export default async function enviarMensagem({text, userRef, anexos, discussaoPath}) {
+export default async function enviarMensagem({
+  text,
+  userRef,
+  anexos,
+  discussaoPath,
+}) {
   if (text.length < 2) return;
 
   try {
@@ -28,9 +33,11 @@ export default async function enviarMensagem({text, userRef, anexos, discussaoPa
 enviarMensagem.propTypes = {
   text: PropTypes.string.isRequired,
   userRef: PropTypes.string.isRequired,
-  anexos: PropTypes.arrayOf(PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    uri: PropTypes.string.isRequired,
-  })).isRequired,
+  anexos: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      uri: PropTypes.string.isRequired,
+    }),
+  ).isRequired,
   discussaoPath: PropTypes.string.isRequired,
-}
+};

@@ -13,7 +13,7 @@ async function forumUpdate(forum) {
   try {
     const forumDoc = doc(db, FORUNS_COLLECTION, forum.forumID);
     await updateDoc(forumDoc, forum.toFirestoreData());
-    
+
     return true;
   } catch (error) {
     console.error(error);

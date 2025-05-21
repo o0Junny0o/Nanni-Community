@@ -1,6 +1,13 @@
 // models/User.ts
 import { db } from '../../service/firebase/conexao';
-import { collection, addDoc, getDocs, query, where, getDoc } from 'firebase/firestore';
+import {
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  where,
+  getDoc,
+} from 'firebase/firestore';
 import Toast from 'react-native-toast-message';
 import * as Notifications from 'expo-notifications';
 import { DOACOES_COLLECTION } from '../refsCollection';
@@ -39,7 +46,7 @@ class DoacaoModel {
         Toast.show({
           type: 'error',
           text1: 'Erro',
-          text2: `Documento do receptor não existe: ${this.userRefTake}`
+          text2: `Documento do receptor não existe: ${this.userRefTake}`,
         });
         return;
       }

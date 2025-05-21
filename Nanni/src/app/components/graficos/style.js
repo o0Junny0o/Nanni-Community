@@ -17,8 +17,8 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   container: {
-    paddingTop: 10
-  }
+    paddingTop: 10,
+  },
 });
 
 export { styles, colors };

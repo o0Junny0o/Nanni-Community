@@ -1,9 +1,8 @@
 import { fetch } from 'expo/fetch';
 
-
 async function fetchAPI(req) {
-  if(!req) {
-    console.error("Requisição indefinida")
+  if (!req) {
+    console.error('Requisição indefinida');
     return;
   }
 
@@ -17,7 +16,7 @@ async function fetchAPI(req) {
     }
 
     const data = await resp.json();
-    
+
     return data;
   } catch (err) {
     console.error('ERROR in getGiphy : ' + err);

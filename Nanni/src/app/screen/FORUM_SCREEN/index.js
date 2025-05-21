@@ -11,20 +11,20 @@ import {
 import { styles } from './styles';
 import PropTypes from 'prop-types';
 import { useAuth } from '../../components/contexts/AuthContext';
-import { 
-  and, 
-  arrayRemove, 
-  arrayUnion, 
-  collection, 
-  deleteDoc, 
-  doc, 
-  getDoc, 
-  getDocs, 
-  query, 
-  serverTimestamp, 
-  setDoc, 
-  updateDoc, 
-  where 
+import {
+  and,
+  arrayRemove,
+  arrayUnion,
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  serverTimestamp,
+  setDoc,
+  updateDoc,
+  where,
 } from 'firebase/firestore';
 import { db } from '../../../service/firebase/conexao';
 import forumList from '../../../hooks/forum/forumList';
@@ -35,7 +35,10 @@ import Forum from '../../../model/Forum';
 import { deconvertBase64ToImage } from '../../../utils/Base64Image';
 import forumQuery from '../../../hooks/forum/forumQuery';
 import useForumDiscussao from '../../../hooks/useForumDiscussao';
-import { FORUNS_COLLECTION, USUARIOS_COLLECTION } from '../../../model/refsCollection';
+import {
+  FORUNS_COLLECTION,
+  USUARIOS_COLLECTION,
+} from '../../../model/refsCollection';
 
 export default function ForumScreen({ navigation, route }) {
   const { forumID, forumPath } = route.params;
@@ -73,36 +76,33 @@ export default function ForumScreen({ navigation, route }) {
   useEffect(() => {
     async function run() {
       try {
-        const fr = await forumQuery({ forumID: forumID})
+        const fr = await forumQuery({ forumID: forumID });
 
-        if(fr) {
-          setForum(fr)
-          
-          const docAutor = doc(db, USUARIOS_COLLECTION, fr.userRef)
-          const colForumSeguidor = collection(db, "seguidores")
-          const queryForumSeguidor = query(colForumSeguidor, 
+        if (fr) {
+          setForum(fr);
+
+          const docAutor = doc(db, USUARIOS_COLLECTION, fr.userRef);
+          const colForumSeguidor = collection(db, 'seguidores');
+          const queryForumSeguidor = query(
+            colForumSeguidor,
             and(
-              where('userRef', '==', user.uid), 
-              where('forumRef', '==', fr.forumID) 
-            )
-          )
-          
+              where('userRef', '==', user.uid),
+              where('forumRef', '==', fr.forumID),
+            ),
+          );
+
           const [frAutor, userIsSeguidor] = await Promise.all([
             getDoc(docAutor),
             getDocs(queryForumSeguidor),
-          ])
+          ]);
 
-          
-          if(frAutor.exists()) {
-            setForumAutor(frAutor.data().nome)
+          if (frAutor.exists()) {
+            setForumAutor(frAutor.data().nome);
           }
 
-          const segDocs = userIsSeguidor.docs
+          const segDocs = userIsSeguidor.docs;
 
-          setSeguidor(segDocs && segDocs.length > 0 ? 
-            segDocs[0].id 
-            : ''
-          )         
+          setSeguidor(segDocs && segDocs.length > 0 ? segDocs[0].id : '');
         }
       } catch (err) {
         alert('Problema ao carregar Fórum');
@@ -249,45 +249,50 @@ export default function ForumScreen({ navigation, route }) {
     }));
   };
 
-  async function handleSeguir() {    
+  async function handleSeguir() {
     try {
-      setLoadingSeguir(true)
+      setLoadingSeguir(true);
 
-      const isSeguidor = (seguidor !== '')
-      const userDoc = doc(db, "usuarios", user.uid)     
-      const segDoc = seguidor !== '' ? 
-        doc(db, "seguidores", seguidor) 
-        : doc(collection(db, "seguidores"));
+      const isSeguidor = seguidor !== '';
+      const userDoc = doc(db, 'usuarios', user.uid);
+      const segDoc =
+        seguidor !== ''
+          ? doc(db, 'seguidores', seguidor)
+          : doc(collection(db, 'seguidores'));
 
-      const promises = isSeguidor ?
-        [
-          setDoc(userDoc, { 
-            seguindo: arrayRemove(forum.forumID),
-          }, { merge: true }),
+      const promises = isSeguidor
+        ? [
+            setDoc(
+              userDoc,
+              {
+                seguindo: arrayRemove(forum.forumID),
+              },
+              { merge: true },
+            ),
 
-          deleteDoc(segDoc)
-        ] 
+            deleteDoc(segDoc),
+          ]
         : [
-          setDoc(userDoc, { 
-            seguindo: arrayUnion(forum.forumID),
-          }, { merge: true}),
+            setDoc(
+              userDoc,
+              {
+                seguindo: arrayUnion(forum.forumID),
+              },
+              { merge: true },
+            ),
 
-          setDoc(segDoc, { 
-              userRef: user.uid, 
+            setDoc(segDoc, {
+              userRef: user.uid,
               forumRef: forum.forumID,
               data: serverTimestamp(),
-            }
-          )
-        ];
+            }),
+          ];
 
-      await Promise.all(promises)
-      
-      setSeguidor(isSeguidor ? 
-        '' 
-        : segDoc.id
-      )
-    } catch(err) {
-      console.error(err)
+      await Promise.all(promises);
+
+      setSeguidor(isSeguidor ? '' : segDoc.id);
+    } catch (err) {
+      console.error(err);
     } finally {
       setLoadingSeguir(false);
     }
@@ -332,108 +337,108 @@ export default function ForumScreen({ navigation, route }) {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#163690" />
 
-      {forum && forumAutor ? 
-        (
-          <>
-            {/* Header */}
-            <View style={styles.header}>
-              <TouchableOpacity onPress={() => navigation.navigate('PerfilUsuario')}>
-                <Image source={fotoPerfil} style={styles.perfilImage} />
+      {forum && forumAutor ? (
+        <>
+          {/* Header */}
+          <View style={styles.header}>
+            <View style={{ gap: 5 }}>
+              <Text style={styles.title}>{forum.forumName}</Text>
+              <Text style={{ color: '#B88CB4', fontWeight: 'bold' }}>
+                POR: {forumAutor}
+              </Text>
+              <TouchableOpacity onPress={() => SetMostrarDesc(!mostrarDesc)}>
+                <Ionicons
+                  name={mostrarDesc ? 'close-outline' : 'ellipsis-horizontal'}
+                  size={25}
+                  color="#aaa"
+                />
               </TouchableOpacity>
-              <View style={{ gap: 5 }}>
-                <Text style={styles.title}>{forum.forumName}</Text>
-                <Text style={{ color: '#B88CB4', fontWeight: 'bold' }}>
-                  POR: {forumAutor}
-                </Text>
-                <TouchableOpacity onPress={() => SetMostrarDesc(!mostrarDesc)}>
-                  <Ionicons
-                    name={mostrarDesc ? 'close-outline' : 'ellipsis-horizontal'}
-                    size={25}
-                    color="#aaa"
-                  />
+            </View>
+          </View>
+          {mostrarDesc && (
+            // Descrição de Header :: Expandido
+            <View style={styles.descHeader}>
+              <Text style={{ fontSize: 15, color: '#fff' }}>
+                {forum.forumDesc}
+              </Text>
+              <View style={{ flexDirection: 'row', gap: 15 }}>
+                <FlatList
+                  showsHorizontalScrollIndicator={false}
+                  horizontal={true}
+                  data={forum.tagsDisponiveis}
+                  keyExtractor={(item, index) => index.toString()}
+                  renderItem={({ item, index }) => (
+                    <Text
+                      style={[
+                        styles.tagsDesc,
+                        index && {
+                          backgroundColor:
+                            index % 2 === 0 ? '#ff5555' : '#B88CB4',
+                        },
+                      ]}
+                    >
+                      {item}
+                    </Text>
+                  )}
+                />
+              </View>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                }}
+              >
+                <TouchableOpacity
+                  disabled={loadingSeguir}
+                  onPress={() =>
+                    navigation.push('DOACAO', {
+                      userRecebe: { uid: forum.userRef },
+                    })
+                  }
+                  style={{
+                    alignItems: 'flex-end',
+                    marginRight: 5,
+                  }}
+                >
+                  <Text
+                    style={{
+                      width: 180,
+                      fontSize: 15,
+                      color: '#ddd',
+                      backgroundColor: '#00000044',
+                      padding: 15,
+                      textAlign: 'center',
+                      borderRadius: 15,
+                    }}
+                  >
+                    DOAR
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  disabled={loadingSeguir}
+                  style={{ alignItems: 'flex-end' }}
+                  onPress={() => handleSeguir()}
+                >
+                  <Text
+                    style={
+                      (styles.tagsDesc,
+                      {
+                        width: 180,
+                        fontSize: 15,
+                        color: '#ddd',
+                        backgroundColor: '#00000044',
+                        padding: 15,
+                        textAlign: 'center',
+                        borderRadius: 15,
+                      })
+                    }
+                  >
+                    {seguidor !== '' ? 'PARAR DE SEGUIR' : 'SEGUIR +'}
+                  </Text>
                 </TouchableOpacity>
               </View>
-
             </View>
-            {mostrarDesc && (
-              // Descrição de Header :: Expandido
-              <View style={styles.descHeader}>
-                <Text style={{ fontSize: 15, color: '#fff' }}>
-                  {forum.forumDesc}
-                </Text>
-                <View style={{ flexDirection: 'row', gap: 15 }}>
-                  <FlatList
-                    showsHorizontalScrollIndicator={false}
-                    horizontal={true}
-                    data={forum.tagsDisponiveis}
-                    keyExtractor={(item, index) => index.toString()}
-                    renderItem={({ item, index }) => (
-                      <Text
-                        style={[
-                          styles.tagsDesc, index &&
-                          {
-                            backgroundColor: index % 2 === 0 ? '#ff5555' : '#B88CB4',
-                          },
-                        ]}
-                      >
-                        {item}
-                      </Text>
-                    )}
-                  />
-                </View>
-                <View style={{ 
-                  flexDirection: 'row',
-                  justifyContent: 'center'
-                }}>
-                  <TouchableOpacity
-                    disabled={loadingSeguir}
-                    onPress={() => navigation.push("DOACAO", {
-                      userRecebe: { uid: forum.userRef }
-                    })}
-                    style={{
-                      alignItems: 'flex-end',
-                      marginRight: 5
-                      }}
-                    
-                  >
-                    <Text
-                      style={{
-                        width: 180,
-                        fontSize: 15,
-                        color: '#ddd',
-                        backgroundColor: '#00000044',
-                        padding: 15,
-                        textAlign: 'center',
-                        borderRadius: 15,
-                      }}
-                    >
-                      DOAR
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    disabled={loadingSeguir}
-                    style={{ alignItems: 'flex-end' }}
-                    onPress={() => handleSeguir()}
-                  >
-                    <Text
-                      style={
-                        styles.tagsDesc, {
-                        width: 180,
-                        fontSize: 15,
-                        color: '#ddd',
-                        backgroundColor: '#00000044',
-                        padding: 15,
-                        textAlign: 'center',
-                        borderRadius: 15,
-                      }}
-                    >
-                      {seguidor !== '' ? 'PARAR DE SEGUIR' : 'SEGUIR +'}
-                    </Text>
-                  </TouchableOpacity>
-
-                </View>
-              </View>
-            )}
+          )}
 
           {!discussoes ? (
             <View style={styles.noTopicsContainer}>
@@ -555,7 +560,6 @@ export default function ForumScreen({ navigation, route }) {
     </SafeAreaView>
   );
 }
-
 
 ForumScreen.propTypes = {
   navigation: PropTypes.shape({
