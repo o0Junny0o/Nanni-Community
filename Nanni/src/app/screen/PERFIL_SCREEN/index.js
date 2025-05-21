@@ -52,8 +52,6 @@ const PerfilUsuario = ({ navigation }) => {
   const [historicoDoacoes, setHistoricoDoacoes] = useState([]);
   const [isSaving, setIsSaving] = useState(false);
 
-
-
   useEffect(() => {
     async function run() {
       if (authLoading || !user) return;

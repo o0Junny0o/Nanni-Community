@@ -147,7 +147,7 @@ export default function HomeScreen({ navigation }) {
           <Text style={styles.loadingText}>
             <TouchableOpacity
               onPress={() => navigation.navigate('Explorar')} >
-                <Text>
+                <Text style={{fontSize: 18, fontWeight: 'bold'}}>
                   Clique em explorar para começar
                 </Text>    
             </TouchableOpacity>

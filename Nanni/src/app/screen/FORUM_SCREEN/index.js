@@ -35,7 +35,7 @@ import Forum from '../../../model/Forum';
 import { deconvertBase64ToImage } from '../../../utils/Base64Image';
 import forumQuery from '../../../hooks/forum/forumQuery';
 import useForumDiscussao from '../../../hooks/useForumDiscussao';
-import { FORUNS_COLLECTION } from '../../../model/refsCollection';
+import { FORUNS_COLLECTION, USUARIOS_COLLECTION } from '../../../model/refsCollection';
 
 export default function ForumScreen({ navigation, route }) {
   const { forumID, forumPath } = route.params;
@@ -78,7 +78,7 @@ export default function ForumScreen({ navigation, route }) {
         if(fr) {
           setForum(fr)
           
-          const docAutor = doc(db, "usuarios", fr.userRef)
+          const docAutor = doc(db, USUARIOS_COLLECTION, fr.userRef)
           const colForumSeguidor = collection(db, "seguidores")
           const queryForumSeguidor = query(colForumSeguidor, 
             and(
@@ -174,7 +174,7 @@ export default function ForumScreen({ navigation, route }) {
   useEffect(() => {
     const carregarDadosUsuario = async () => {
       try {
-        const userRef = doc(db, 'usuarios', user.uid);
+        const userRef = doc(db, USUARIOS_COLLECTION, user.uid);
         const docSnap = await getDoc(userRef);
 
         if (!docSnap.exists()) return;
@@ -381,13 +381,19 @@ export default function ForumScreen({ navigation, route }) {
                     )}
                   />
                 </View>
-                <View style={{ flexDirection: 'row'}}>
+                <View style={{ 
+                  flexDirection: 'row',
+                  justifyContent: 'center'
+                }}>
                   <TouchableOpacity
                     disabled={loadingSeguir}
                     onPress={() => navigation.push("DOACAO", {
                       userRecebe: { uid: forum.userRef }
                     })}
-                    style={{ alignItems: 'flex-end' }}
+                    style={{
+                      alignItems: 'flex-end',
+                      marginRight: 5
+                      }}
                     
                   >
                     <Text
@@ -410,9 +416,16 @@ export default function ForumScreen({ navigation, route }) {
                     onPress={() => handleSeguir()}
                   >
                     <Text
-                      style={[
-                        styles.tagsDesc,
-                      ]}
+                      style={
+                        styles.tagsDesc, {
+                        width: 180,
+                        fontSize: 15,
+                        color: '#ddd',
+                        backgroundColor: '#00000044',
+                        padding: 15,
+                        textAlign: 'center',
+                        borderRadius: 15,
+                      }}
                     >
                       {seguidor !== '' ? 'PARAR DE SEGUIR' : 'SEGUIR +'}
                     </Text>
