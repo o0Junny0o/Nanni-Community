@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useCollection } from 'react-firebase-hooks/firestore';
-import { collection, limit, query } from 'firebase/firestore';
+import { collection, doc, getDoc, limit, orderBy, query } from 'firebase/firestore';
 import { db } from '../service/firebase/conexao';
-import { COMENTARIOS_COLLECTION } from '../model/refsCollection';
+import { COMENTARIOS_COLLECTION, USUARIOS_COLLECTION } from '../model/refsCollection';
 import Comentario from '../model/Comentario';
 
 // Retorna [map] de mensagens com atualização em tempo real
@@ -22,7 +22,9 @@ function useChat({ discussaoPATH, initialLimit }) {
   // Query:
   const MESSAGE_PATH = `${discussaoPATH}/${COMENTARIOS_COLLECTION}`;
   const MESSAGE_REFERENCE = collection(db, MESSAGE_PATH);
-  const MESSAGE_QUERY = query(MESSAGE_REFERENCE, limit(qLimit));
+  const MESSAGE_QUERY = query(MESSAGE_REFERENCE, limit(qLimit), orderBy('data'));
+  // Users:
+  const [users, setUsers] = useState([])
 
   // Hook var.:
   const [snapshotMessages, loadingMessages, errorMessages] =
@@ -31,18 +33,51 @@ function useChat({ discussaoPATH, initialLimit }) {
 
   // Atualização do [map]:
   useEffect(() => {
-    if (snapshotMessages) {
-      setMessages(
-        snapshotMessages.docs.map(
-          (doc) =>
-            new Comentario({
-              comentarioID: doc.id,
-              discussaoPath: discussaoPATH,
-              ...doc.data(),
-            }),
-        ),
-      );
+    if(!snapshotMessages) return;
+
+    async function atualizar() {
+      const msgs = []
+      const msgUsers = [...users]
+      const ksUsers = Object.keys(users)
+      
+      
+      for(const msgDoc of snapshotMessages.docs) {
+        const com = new Comentario({
+          comentarioID: msgDoc.id,
+          discussaoPath: discussaoPATH,
+          ...msgDoc.data(),
+        })
+        
+        const userRef = com.userRef;
+        
+        if(!ksUsers.includes(userRef)) {
+          const ref = doc(db, USUARIOS_COLLECTION, userRef);
+          const snap = await getDoc(ref)
+          
+          if(snap.exists()) {
+            msgUsers.push({
+              userRef,
+              nome: snap.data().nome
+            })
+          } else {
+            msgUsers.push({ userRef })
+          }
+        } 
+
+        
+
+        msgs.push({
+          username: msgUsers.find(u => u.userRef === userRef)?.nome || '',
+          comentario: com,
+        })
+      }
+
+      setMessages(msgs);
+      setUsers(msgUsers)
     }
+
+    
+    atualizar();
   }, [snapshotMessages]);
 
   const addMessages = ({ addLimit }) => {

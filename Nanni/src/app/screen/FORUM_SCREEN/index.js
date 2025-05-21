@@ -36,6 +36,7 @@ import { deconvertBase64ToImage } from '../../../utils/Base64Image';
 import forumQuery from '../../../hooks/forum/forumQuery';
 import useForumDiscussao from '../../../hooks/useForumDiscussao';
 import { FORUNS_COLLECTION } from '../../../model/refsCollection';
+import VForumHeader from '../../components/forum/header';
 
 export default function ForumScreen({ navigation, route }) {
   const { forumID, forumPath } = route.params;
@@ -335,93 +336,9 @@ export default function ForumScreen({ navigation, route }) {
       {forum && forumAutor ? 
         (
           <>
-            {/* Header */}
-            <View style={styles.header}>
-              <TouchableOpacity onPress={() => navigation.navigate('PerfilUsuario')}>
-                <Image source={fotoPerfil} style={styles.perfilImage} />
-              </TouchableOpacity>
-              <View style={{ gap: 5 }}>
-                <Text style={styles.title}>{forum.forumName}</Text>
-                <Text style={{ color: '#B88CB4', fontWeight: 'bold' }}>
-                  POR: {forumAutor}
-                </Text>
-                <TouchableOpacity onPress={() => SetMostrarDesc(!mostrarDesc)}>
-                  <Ionicons
-                    name={mostrarDesc ? 'close-outline' : 'ellipsis-horizontal'}
-                    size={25}
-                    color="#aaa"
-                  />
-                </TouchableOpacity>
-              </View>
-
-            </View>
-            {mostrarDesc && (
-              // Descrição de Header :: Expandido
-              <View style={styles.descHeader}>
-                <Text style={{ fontSize: 15, color: '#fff' }}>
-                  {forum.forumDesc}
-                </Text>
-                <View style={{ flexDirection: 'row', gap: 15 }}>
-                  <FlatList
-                    showsHorizontalScrollIndicator={false}
-                    horizontal={true}
-                    data={forum.tagsDisponiveis}
-                    keyExtractor={(item, index) => index.toString()}
-                    renderItem={({ item, index }) => (
-                      <Text
-                        style={[
-                          styles.tagsDesc, index &&
-                          {
-                            backgroundColor: index % 2 === 0 ? '#ff5555' : '#B88CB4',
-                          },
-                        ]}
-                      >
-                        {item}
-                      </Text>
-                    )}
-                  />
-                </View>
-                <View style={{ flexDirection: 'row'}}>
-                  <TouchableOpacity
-                    disabled={loadingSeguir}
-                    onPress={() => navigation.push("DOACAO", {
-                      userRecebe: { uid: forum.userRef }
-                    })}
-                    style={{ alignItems: 'flex-end' }}
-                    
-                  >
-                    <Text
-                      style={{
-                        width: 180,
-                        fontSize: 15,
-                        color: '#ddd',
-                        backgroundColor: '#00000044',
-                        padding: 15,
-                        textAlign: 'center',
-                        borderRadius: 15,
-                      }}
-                    >
-                      DOAR
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    disabled={loadingSeguir}
-                    style={{ alignItems: 'flex-end' }}
-                    onPress={() => handleSeguir()}
-                  >
-                    <Text
-                      style={[
-                        styles.tagsDesc,
-                      ]}
-                    >
-                      {seguidor !== '' ? 'PARAR DE SEGUIR' : 'SEGUIR +'}
-                    </Text>
-                  </TouchableOpacity>
-
-                </View>
-              </View>
-            )}
-
+          {/* Header */}
+          <VForumHeader forum={forum} uid={user.uid} forumAutor={forumAutor} segID={seguidor} />
+            
           {!discussoes ? (
             <View style={styles.noTopicsContainer}>
               <Text style={styles.noTopicsText}>Ainda não existem Tópicos</Text>

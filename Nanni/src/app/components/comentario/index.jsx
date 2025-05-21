@@ -24,6 +24,7 @@ export default function VComentario({
   const [parsed, setParsed] = useState([]);
   const [loaded, setLoaded] = useState(false)
   
+  
 
   // [Interpret]:
   useEffect(() => {
@@ -138,13 +139,17 @@ export default function VComentario({
         )}
         {parsed.map((item, index) => {
           if (item.type === 'gif') {
-            const uri = item.gif;
+            const gif = item.gif;
 
-            return uri ? (
+            
+            return gif ? (
               <Image
                 key={index}
-                source={ uri }
-                style={styles.gifImage}
+                source={ gif }
+                style={[
+                  styles.gifImage,
+                  {aspectRatio: gif.aspectRatio}
+                ]}
                 contentFit="contain"
               />
             ) : (
@@ -159,7 +164,7 @@ export default function VComentario({
           );
         })}
         <Text style={styles.date}>
-          {data.toDate().toLocaleDateString('pt-BR')}
+          {data ? data.toDate().toLocaleDateString("pt-BR") : ''}
         </Text>
       </View>
     </View>
