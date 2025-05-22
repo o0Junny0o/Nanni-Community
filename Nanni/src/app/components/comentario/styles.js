@@ -55,7 +55,6 @@ const styles = StyleSheet.create({
   },
   gifImage: {
     width: '100%',
-    height: 100,
   },
   date: {
     textAlign: 'right',

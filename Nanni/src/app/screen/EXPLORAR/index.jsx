@@ -37,9 +37,7 @@ export default function ExplorarScreen({ navigation }) {
   useEffect(() => {
     async function run() {
       if (tagsSearch.length < 1) {
-        const res = await forumList({ qLimit: 10 });
-
-        setForuns(res);
+        setForuns(await forumList({ qLimit: 10, qOrderBy: true }));
       } else {
         const [indicativa, comum] = tagsSearch.reduce(
           ([p, f], e) =>
