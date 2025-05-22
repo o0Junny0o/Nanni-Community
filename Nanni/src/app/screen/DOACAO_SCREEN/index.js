@@ -70,7 +70,7 @@ function DoacaoScreen({ route }) {
 
 async function doacao(userG, userT, valor, metodo) {
   const userRefGive = userRef(userG.uid);
-  const userRefTake = userRef(userT.uid);
+  const userRefTake = userRef(userT);
 
   const timestamp = Timestamp.now();
   const isoString = timestamp.toDate().toISOString();
@@ -89,7 +89,7 @@ async function doacao(userG, userT, valor, metodo) {
 DoacaoScreen.propTypes = {
   route: PropTypes.shape({
     params: PropTypes.shape({
-      userRecebe: PropTypes.object.isRequired,
+      userRecebe: PropTypes.string.isRequired,
     }).isRequired,
   }).isRequired,
 };

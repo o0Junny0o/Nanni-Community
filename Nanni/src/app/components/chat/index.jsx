@@ -82,8 +82,12 @@ export default function VChat({ discussaoPath, userRef }) {
   // [Sobre mensagens]:
   async function handleEnvioMensagem() {
     const r = await enviarMensagem({ text, userRef, anexos, discussaoPath });
-    if (r) setText('');
-    else alert('Erro ao enviar mensagem');
+    if (r) {
+      setText('');
+      setAnexos([])
+    } else {
+      alert('Erro ao enviar mensagem');
+    }
   }
 
   return (

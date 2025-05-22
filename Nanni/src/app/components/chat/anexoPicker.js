@@ -10,13 +10,16 @@ export default async function anexoPicker() {
     });
 
     if (!anexo.canceled) {
-      const k = anexo.assets[0].fileName;
-      const v = anexo.assets[0].uri;
+      const img = anexo.assets[0];
+      const name = img.fileName;
+      const uri = img.uri;
+      const aspectRatio = (img.width/img.height)
 
       return [
         {
-          name: k,
-          uri: v,
+          name,
+          uri,
+          aspectRatio,
         },
       ];
     }

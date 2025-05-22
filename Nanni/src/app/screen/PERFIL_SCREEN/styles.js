@@ -171,6 +171,18 @@ const styles = StyleSheet.create({
     padding: 4, // Para melhor visualização
     borderRadius: 4, // Opcional
   },
+  analyticsView: {
+    alignSelf: 'center',
+  },
+  analyticsBtnView: {
+    padding: 10,
+    paddingHorizontal: 30,
+    backgroundColor: colors.buttonBackground,
+    elevation: 4,
+  },
+  analyticsItem: {
+    color: colors.buttonText,
+  }
 });
 
 export default styles;

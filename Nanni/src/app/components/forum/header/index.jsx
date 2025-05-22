@@ -1,4 +1,3 @@
-import { Image } from "expo-image";
 import { 
     useEffect, 
     useRef, 
@@ -11,19 +10,29 @@ import {
     TouchableOpacity, 
     View 
 } from "react-native";
+import { 
+    arrayRemove, 
+    arrayUnion, 
+    collection, 
+    deleteDoc, 
+    doc, 
+    serverTimestamp, 
+    setDoc 
+} from "firebase/firestore";
 import { Ionicons } from '@expo/vector-icons';
 import styles from "./styles";
 import PropTypes from "prop-types";
 import Forum from "../../../../model/Forum";
-import { arrayRemove, arrayUnion, collection, deleteDoc, doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { db } from "../../../../service/firebase/conexao";
 
 
 export default function VForumHeader({
     uid,
+    isDev,
     forum,
     forumAutor,
     segID,
+    navigation,
 }) {
     const [open, setOpen] = useState(false)
     const [seguidor, setSeguidor] = useState(segID ?? '')
@@ -34,7 +43,7 @@ export default function VForumHeader({
     useEffect(() => {
         if(heightRef > 0) {
             Animated.timing(animHeight, {
-                toValue: open ? heightRef : 0,
+                toValue: open ? (heightRef+20) : 0,
                 duration: 300,
                 useNativeDriver: false,
             }).start(); 
@@ -86,26 +95,62 @@ export default function VForumHeader({
     }
 
 
+    function toConfigForum() {
+        navigation.push('ConfigurarForum', {
+            forumID: forum.forumID,
+        });
+    }
+
+    function toDoarScreen() {
+        navigation.push("DOACAO", {
+            userRecebe: forum.userRef,
+        })
+    }
+
+
     return (
         <View style={styles.header}>
             <View style={styles.forumPrincipal}>
-                <Image 
-                    source={''}
-                    style={styles.forumAvatar}
-                />
-                <View>
-                    <Text style={styles.forumTitle}>
-                        {forum.forumName}
-                    </Text>
-                    <Text style={styles.forumAutor}>
-                        Por: {forumAutor}
-                    </Text>
-                    {!open && (
-                        <Pressable 
-                            onPress={() => setOpen(!open)}>
-                                <Text style={styles.forumExpansor}>
-                                    ...
+                <View style={styles.forumPrincipalSubView}>
+                    <View style={styles.forumPrincipalTitulos}>
+                        <Text style={styles.forumTitle}>
+                            {forum.forumName}
+                        </Text>
+                        <Text style={styles.forumAutor}>
+                            Por: {forumAutor}
+                        </Text>
+                        <TouchableOpacity
+                            onPress={() => toDoarScreen()}
+                            style={styles.doarView}>
+                                <Ionicons
+                                    name="heart"
+                                    size={16}
+                                    style={styles.doarBtn} 
+                                />
+                                <Text style={[
+                                    styles.doarBtn,
+                                    styles.doarBtnText
+                                ]}>
+                                    Doar
                                 </Text>
+                        </TouchableOpacity>
+                        {!open && (
+                            <Pressable 
+                                onPress={() => setOpen(!open)}>
+                                    <Text style={styles.forumExpansor}>
+                                        ...
+                                    </Text>
+                            </Pressable>
+                        )}
+                    </View>
+                    {isDev && (
+                        <Pressable
+                            onPress={() => toConfigForum()}>
+                                <Ionicons
+                                    name="settings"
+                                    size={20}
+                                    style={styles.configIcon}
+                                />
                         </Pressable>
                     )}
                 </View>
@@ -114,7 +159,7 @@ export default function VForumHeader({
             <Animated.View 
                 style={{height: animHeight, overflow: 'hidden'}}>
                     <View 
-                     style={styles.forumDescView}
+                        style={styles.forumDescView}
                     onLayout={(e) => {
                         setHeightRef(e.nativeEvent.layout.height)
                     }}>
@@ -162,7 +207,11 @@ export default function VForumHeader({
 
 VForumHeader.propTypes = {
     uid: PropTypes.string.isRequired,
+    isDev: PropTypes.bool.isRequired,
     forum: PropTypes.instanceOf(Forum).isRequired,
     forumAutor: PropTypes.string.isRequired,
     segID: PropTypes.string,
+    navigation: PropTypes.shape({
+        push: PropTypes.func.isRequired,
+    }).isRequired,
 }

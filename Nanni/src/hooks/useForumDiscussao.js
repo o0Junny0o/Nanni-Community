@@ -17,6 +17,7 @@ function useForumDiscussao({ forumPath, initialLimit }) {
     setQLimit(qLimit + addLimit);
   };
 
+  
   // Query:
   const PATH = `${forumPath}/${DISCUSSAO_COLLECTION}`;
   const refForumDiscussao = collection(db, PATH);

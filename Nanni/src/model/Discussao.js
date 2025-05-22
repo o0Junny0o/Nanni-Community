@@ -9,15 +9,17 @@ class Discussao {
   tag;
   mensagem;
   data;
+  userRef;
   //
   forumPath;
 
-  constructor({ discussaoID, titulo, tag, mensagem, data, forumPath }) {
+  constructor({ discussaoID, titulo, tag, mensagem, data, userRef, forumPath }) {
     this.discussaoID = discussaoID;
     this.titulo = titulo;
     this.tag = tag ?? '';
     this.mensagem = mensagem ?? '';
     this.data = data ?? serverTimestamp();
+    this.userRef = userRef;
     this.forumPath = forumPath;
   }
 
@@ -39,10 +41,6 @@ class Discussao {
     return false;
   }
 
-  async update() {}
-
-  async delete() {}
-
   toFirestoreData() {
     // Transforma TAG
     const retTag = typeof this.tag === 'string' ? TagNormalize(this.tag) : '';
@@ -51,6 +49,7 @@ class Discussao {
       titulo: this.titulo,
       tag: retTag,
       mensagem: this.mensagem,
+      userRef: this.userRef,
       data: this.data,
     };
   }

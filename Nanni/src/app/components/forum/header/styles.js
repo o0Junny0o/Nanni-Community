@@ -9,22 +9,51 @@ const styles = StyleSheet.create({
     header: {
         backgroundColor: colors.p2,
         gap: 15,
-        paddingBottom: 20,
+        paddingTop: 10,
         paddingHorizontal: 16,
-    },
-    forumAvatar: {
-        width: 40,
-        height: 40,
-        borderRadius: 75,
-        borderWidth: 3,
-        marginTop: 2,
-        backgroundColor: colors.p2,
-        borderColor: colors.p1,
     },
     forumPrincipal: {
         alignItems: 'top',
         flexDirection: 'row',
         gap: 15,
+    },
+    forumPrincipalSubView: {
+        flexDirection: 'row',
+        width: '100%',
+    },
+    forumPrincipalTitulos: {
+        flex: 1,
+    },
+    forumAutorView: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    doarView: {
+        marginTop: 10,
+        flexDirection: 'row',
+        alignItems: 'center',
+        alignSelf: 'flex-start',
+        gap: 10,
+        //
+        backgroundColor: colors.p5,
+        padding: 5,
+        paddingHorizontal: 10,
+        borderRadius: 75,
+    },
+    doarBtn: {
+        color: colors.p6,
+    },
+    doarBtnText: {
+        fontSize: 14,
+        fontFamily: fonts.roboto,
+        fontWeight: 'bold',
+    },
+    configIcon: {
+        color: colors.p6,
+    },
+    removeIcon: {
+        color: colors.aviso
     },
     forumDoar: {
         backgroundColor: colors.p1,
@@ -73,6 +102,7 @@ const styles = StyleSheet.create({
         color: colors.p5,
     },
     forumExpansor: {
+        marginTop: 10,
         fontFamily: fonts.monospaceExtrabold,
         fontSize: 14,
         color: colors.p6,

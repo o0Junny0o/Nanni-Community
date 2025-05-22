@@ -37,7 +37,6 @@ export default function ConfigurarForumScreen({ navigation, route }) {
 
   const faixas = Forum.classificacaoIndicativa;
   // Fórum:
-  const [forumAvatar, setForumAvatar] = useState('');
   const [forumNome, setForumNome] = useState('');
   const [forumFaixaEtaria, setForumFaixaEtaria] = useState(faixas?.[0] ?? '');
   const [forumDesc, setForumDesc] = useState('');
@@ -63,10 +62,6 @@ export default function ConfigurarForumScreen({ navigation, route }) {
       const forum = await forumQuery({ forumID: params.forumID });
       if (forum) {
         // dados
-        const fAvatar = forum.avatar;
-        if (fAvatar) {
-          setForumAvatar(deconvertBase64ToImage(forum.avatar).uri);
-        }
         setForumNome(forum.forumName);
         setForumFaixaEtaria(forum.classificacaoIndicativa);
         setForumDesc(forum.forumDesc);
@@ -110,10 +105,6 @@ export default function ConfigurarForumScreen({ navigation, route }) {
         tagsDisponiveis: forumTags,
       });
 
-      if (forumAvatar && forumAvatar !== '') {
-        fr.setAvatar(await convertImageToBase64(forumAvatar));
-      }
-
       if (titulos.existe) {
         fr.setID(params.forumID);
       }
@@ -137,9 +128,13 @@ export default function ConfigurarForumScreen({ navigation, route }) {
     setLoading(false);
   }
 
-  setForumTags((prev) => [...prev, TagNormalize(cTags)]);
+  function addForumTag() {
+    if(cTags.length < 3) return;
 
-  setCTags('');
+    setForumTags(prev => [...prev, TagNormalize(cTags)])
+
+    setCTags('')
+  }
 
   function removeForumTag(tag) {
     if (!tag || typeof tag !== 'string') return;
@@ -148,36 +143,10 @@ export default function ConfigurarForumScreen({ navigation, route }) {
     setForumTags(nTags);
   }
 
-  async function changeForumAvatar() {
-    try {
-      let resultado = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: 'Images',
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 1,
-      });
-
-      if (!resultado.canceled) {
-        const uri = resultado.assets[0].uri;
-        setForumAvatar(uri);
-      }
-    } catch (error) {
-      console.error('Erro ao atualizar foto:', error);
-      alert('Erro ao salvar nova foto');
-    }
-  }
-
   return (
     <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView behavior={undefined}>
         <Text style={styles.pageTitle}>{titulos.titlePage}</Text>
-
-        <View style={styles.avatarView}>
-          <TouchableOpacity onPress={changeForumAvatar}>
-            <Image source={{ uri: forumAvatar }} style={styles.avatar} />
-            <Ionicons name="camera" size={16} style={styles.avatarIcon} />
-          </TouchableOpacity>
-        </View>
 
         <TextInput
           onChangeText={setForumNome}

@@ -68,6 +68,9 @@ const PerfilUsuario = ({ navigation }) => {
   const [carregandoMais, setCarregandoMais] = useState(false);
   const [temMais, setTemMais] = useState(true);
 
+  // [Sobre Analytics]
+  const [hasJogos, setHasJogos] = useState(false)
+
   useEffect(() => {
     async function run() {
       if (authLoading || !user) return;
@@ -91,6 +94,10 @@ const PerfilUsuario = ({ navigation }) => {
 
         if (data.avatar) {
           setFotoPerfil(deconvertBase64ToImage(data.avatar) || '');
+        }
+
+        if(data.jogos?.length > 0) {
+          setHasJogos(true)
         }
       } catch (err) {
         Toast.show({
@@ -449,6 +456,11 @@ const PerfilUsuario = ({ navigation }) => {
     );
   };
 
+  function toAnalytics() {
+    navigation.navigate("Analytics")
+  }
+
+
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
@@ -495,6 +507,18 @@ const PerfilUsuario = ({ navigation }) => {
                 onEdit={() => editarCampo('Email', email)}
               />
               <InfoItem label="Data de nascimento" value={dataNaci} />
+
+              {hasJogos && (
+                <View style={styles.analyticsView}>
+                  <TouchableOpacity
+                    onPress={() => toAnalytics()}
+                    style={styles.analyticsBtnView}>
+                    <Text style={styles.analyticsItem}>
+                      Ver Analytics
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )}
             </View>
 
             {/* Container do Histórico */}

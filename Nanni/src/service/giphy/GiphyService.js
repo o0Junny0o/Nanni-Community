@@ -3,14 +3,15 @@ import { giphy } from '../firebase/conexao';
 
 export default class GiphyService extends IAPIServices {
   constructor() {
-    super(`api_key=${giphy}`, 'https://api.giphy.com/v1/gifs/');
+    super(`api_key=${giphy}`, "https://api.giphy.com/v1/gifs/")
 
     this.rating = 'g';
-    this.extra_uri = `rating=${this.rating}`;
+    this.extra_uri = `rating=${this.rating}`;    
   }
 
+
   setRating({ rating = 'g' }) {
-    if (this.rating === rating) {
+    if(this.rating === rating) {
       return;
     }
 
@@ -26,34 +27,37 @@ export default class GiphyService extends IAPIServices {
 
   getByID(id) {
     const uri = `${id}?${this.extra_uri}`;
-    return this.fetch(uri);
+    return this.fetch(uri)
   }
 
   search({ q, limit = 6, pos = 0 }) {
     const uri = `search?q=${encodeURIComponent(q)}&limit=${limit}&bundle=messaging_non_clips&offset=${pos}&${this.extra_uri}`;
-    return this.fetch(uri);
+    return this.fetch(uri)
   }
 
   getLogo() {
-    return require('../../assets/giphy/PoweredBy_200px-Black_HorizText.png');
+    return require('../../assets/giphy/PoweredBy_200px-Black_HorizText.png')
   }
 
-  toSource(data, type = 'webp') {
-    const media = data.images.original;
-    const id = data.id;
-    if (!media && !id) return;
+  toSource(data, type = "webp") {
+    const media = data.images.original
+    const id = data.id
 
-    return { id, uri: media[type] };
+    if(media && id) {
+      return { id, uri: media[type], aspectRatio: (media.width / media.height)}
+    }
+    
+    return;
   }
 
-  toSourceSingular(data, type = 'webp') {
+  toSourceSingular(data, type = "webp") {
     const item = this.openResp(data);
-    if (item) {
-      return this.toSource(item, type);
+    if(item) {
+      return this.toSource(item, type)
     }
   }
 
   openResp(data) {
-    return data?.data;
+    return data?.data
   }
 }

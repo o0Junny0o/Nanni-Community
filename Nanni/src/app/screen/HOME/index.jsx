@@ -20,6 +20,7 @@ import forumList from '../../../hooks/forum/forumList';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import colors from '../../../styles/colors';
 import { deconvertBase64ToImage } from '../../../utils/Base64Image';
+import { FORUNS_COLLECTION } from '../../../model/refsCollection';
 
 export default function HomeScreen({ navigation }) {
   const [forumSeguidos, setForumSeguidos] = useState([]);
@@ -177,7 +178,7 @@ function VForumSeguidos({ forumID, forumName, forumDesc, path, navigation }) {
   );
 }
 
-function VForumDono({ forumID, avatar, forumName, data, path, navigation }) {
+function VForumDono({ forumID, forumName, data, path, navigation }) {
   if (!forumName && typeof forumName !== 'string') return;
   if (!forumID) return;
   if (!(data instanceof Timestamp)) return;
@@ -188,15 +189,12 @@ function VForumDono({ forumID, avatar, forumName, data, path, navigation }) {
       onPress={(e) =>
         navigation.push('Forum', {
           forumID: forumID,
+          forumPath: path,
         })
       }
     >
       <View style={forumDonoStyles.container}>
         <View style={forumDonoStyles.rows}>
-          <Image
-            source={deconvertBase64ToImage(avatar)}
-            style={forumDonoStyles.avatar}
-          />
           <Text style={forumDonoStyles.title}>{forumName}</Text>
           <Pressable
             style={forumDonoStyles.iconEdit}
@@ -240,7 +238,6 @@ VForumSeguidos.propTypes = {
 
 VForumDono.propTypes = {
   forumID: PropTypes.string.isRequired,
-  avatar: PropTypes.string,
   forumName: PropTypes.string.isRequired,
   data: PropTypes.object.isRequired,
   path: PropTypes.string.isRequired,

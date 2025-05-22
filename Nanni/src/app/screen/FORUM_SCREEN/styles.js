@@ -46,14 +46,6 @@ export const styles = StyleSheet.create({
     borderBottomLeftRadius: 15,
     boxShadow: '0 10 20  #00000066',
   },
-  tagsDesc: {
-    padding: 10,
-    borderRadius: 20,
-    color: '#fff',
-    marginRight: 10,
-    marginTop: 10,
-    marginBottom: 10,
-  },
   backButton: {
     padding: 8,
   },
@@ -93,30 +85,6 @@ export const styles = StyleSheet.create({
   filterButtonText: {
     color: colors.white,
     fontWeight: 'bold',
-  },
-  forumItem: {
-    backgroundColor: colors.white,
-    padding: 16,
-    margin: 10,
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: colors.border,
-    boxShadow: '3 6 6 #00000033',
-  },
-  forumName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: colors.textDark,
-  },
-  forumDescription: {
-    fontSize: 14,
-    color: colors.primaryDark,
-    marginTop: 5,
-  },
-  forumDate: {
-    fontSize: 15,
-    color: '#888',
-    textAlign: 'right',
   },
   footerList: {
     paddingHorizontal: 50,
