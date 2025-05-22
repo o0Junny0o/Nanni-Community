@@ -81,7 +81,6 @@ VDiscussaoItem.propTypes = {
   titulo: PropTypes.string.isRequired,
   mensagem: PropTypes.string.isRequired,
   tag: PropTypes.string.isRequired,
-  data: PropTypes.instanceOf(Timestamp).isRequired,
   userIsDev: PropTypes.bool.isRequired,
   // Callback  
   onDelete: PropTypes.func.isRequired,

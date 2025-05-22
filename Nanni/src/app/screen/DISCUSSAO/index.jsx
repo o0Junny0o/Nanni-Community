@@ -17,7 +17,7 @@ import { StatusBar } from 'expo-status-bar';
 import VForumHeader from '../../components/forum/header';
 
 
-export default function DiscussaoScreen({ route }) {
+export default function DiscussaoScreen({ navigation, route }) {
     const { 
         forum,
         forumAutor,
@@ -47,7 +47,8 @@ export default function DiscussaoScreen({ route }) {
                 forum={forum} 
                 uid={user.uid} 
                 forumAutor={forumAutor} 
-                isDev={true}
+                isDev={forum.userRef === user.uid}
+                navigation={navigation}
             />
             <ScrollView>
                 <View style={styles.container}>

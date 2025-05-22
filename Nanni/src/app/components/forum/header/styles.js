@@ -52,6 +52,9 @@ const styles = StyleSheet.create({
     configIcon: {
         color: colors.p6,
     },
+    deleteIcon: {
+        color: colors.aviso,
+    },
     removeIcon: {
         color: colors.aviso
     },
@@ -111,6 +114,10 @@ const styles = StyleSheet.create({
         fontFamily: fonts.roboto,
         fontSize: 16,
         color: colors.p6,
+    },
+    footer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
     },
 })
 

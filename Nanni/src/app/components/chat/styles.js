@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.p3,
   },
   gestureGrabber: {
-    height: 4,
+    height: 10,
     width: '50%',
     borderRadius: 16,
     alignSelf: 'center',
@@ -37,6 +37,14 @@ const styles = StyleSheet.create({
     verticalAlign: 'top',
     paddingTop: 20,
     paddingLeft: 10,
+  },
+  anexosView: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+  },
+  removeAnexo: {
+    color: colors.p6,
   },
   anexoView: {
     flexDirection: 'row',

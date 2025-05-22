@@ -23,6 +23,9 @@ export default function VChat({ discussaoPath, userRef }) {
   const [showGifView, setShowGifView] = useState(false);
   const [typeGifView, setTypeGifView] = useState('');
 
+  // [Loading]
+  const [loading, setLoading] = useState(false)
+
   // [Sobre Animação]:
   const optTranslateY = useRef(new Animated.Value(200)).current;
 
@@ -79,19 +82,32 @@ export default function VChat({ discussaoPath, userRef }) {
     }
   }
 
+  function modifyLoadingState(state)  {
+    setLoading(state)
+  }
+
   // [Sobre mensagens]:
   async function handleEnvioMensagem() {
+    modifyLoadingState(true)
     const r = await enviarMensagem({ text, userRef, anexos, discussaoPath });
+
     if (r) {
       setText('');
       setAnexos([])
     } else {
       alert('Erro ao enviar mensagem');
     }
+
+    modifyLoadingState(false)
+  }
+
+  function removeAnexo(index) {
+    setAnexos([])    
   }
 
   return (
     <Animated.View
+      pointerEvents={loading ? 'none' : 'auto'}
       style={{
         transform: [{ translateY: optTranslateY }],
         bottom: 0,
@@ -130,6 +146,7 @@ export default function VChat({ discussaoPath, userRef }) {
           {/* Icone de Enviar */}
           <Ionicons
             name="send"
+            disabled={loading}
             size={26}
             style={styles.chatIcon}
             onPress={handleEnvioMensagem}
@@ -142,9 +159,21 @@ export default function VChat({ discussaoPath, userRef }) {
           <View style={styles.anexoView}>
             <Text style={styles.anexoText}>Anexados: </Text>
             {anexos.map((v, i) => (
-              <Text key={i} style={[styles.anexoText, styles.anexoImgText]}>
-                {v.name}
-              </Text>
+              <View key={i} style={styles.anexosView}>
+                <Text  style={[styles.anexoText, styles.anexoImgText]}>
+                  {v.name}
+                </Text>
+                <TouchableOpacity
+                  onPress={() => removeAnexo(i)}>
+                    <Ionicons
+                      name="close" 
+                      size={18}
+                      style={styles.removeAnexo}
+
+                    />
+                </TouchableOpacity>
+
+              </View>
             ))}
           </View>
         )}

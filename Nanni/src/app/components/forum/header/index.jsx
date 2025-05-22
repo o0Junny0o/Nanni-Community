@@ -24,6 +24,7 @@ import styles from "./styles";
 import PropTypes from "prop-types";
 import Forum from "../../../../model/Forum";
 import { db } from "../../../../service/firebase/conexao";
+import forumDelete from "../../../../hooks/forum/forumDelete";
 
 
 export default function VForumHeader({
@@ -43,7 +44,7 @@ export default function VForumHeader({
     useEffect(() => {
         if(heightRef > 0) {
             Animated.timing(animHeight, {
-                toValue: open ? (heightRef+20) : 0,
+                toValue: open ? (heightRef+10) : 0,
                 duration: 300,
                 useNativeDriver: false,
             }).start(); 
@@ -107,6 +108,39 @@ export default function VForumHeader({
         })
     }
 
+    async function deleteForum() {
+        const r = await forumDelete({
+            forumID: forum.forumID,
+        });
+
+        if(r) {
+            navigation.goBack();
+        } else {
+            Alert.alert(
+                "Erro ao Excluir Fórum",
+                "Tente novamente"
+            )
+        }
+    }
+
+    function handleDeleteForum() {
+        Alert.alert(
+            "Você tem certeza disso?",
+            "Os dados de discussão não poderão ser recuperados.",
+            [
+                {
+                    text: "Cancelar",
+                    style: "cancel",
+                },
+                {
+                    text: "Sim",
+                    onPress: deleteForum, 
+                },
+            ],
+            { cancelable: true }
+        )
+    }
+
 
     return (
         <View style={styles.header}>
@@ -144,14 +178,27 @@ export default function VForumHeader({
                         )}
                     </View>
                     {isDev && (
-                        <Pressable
-                            onPress={() => toConfigForum()}>
-                                <Ionicons
-                                    name="settings"
-                                    size={20}
-                                    style={styles.configIcon}
-                                />
-                        </Pressable>
+                        <View>
+                            {/* Deletar */}
+                            <Pressable
+                                onPress={() => handleDeleteForum()}>
+                                    <Ionicons
+                                        name="trash"
+                                        size={20}
+                                        style={styles.deleteIcon}
+                                    />
+                            </Pressable>
+
+                            {/* Configurar */}
+                            <Pressable
+                                onPress={() => toConfigForum()}>
+                                    <Ionicons
+                                        name="settings"
+                                        size={20}
+                                        style={styles.configIcon}
+                                    />
+                            </Pressable>                            
+                        </View>
                     )}
                 </View>
             </View>
@@ -167,37 +214,39 @@ export default function VForumHeader({
                             {forum.forumDesc}
                         </Text>
 
-                        <Pressable 
-                            onPress={() => setOpen(!open)}>
-                                <Text style={styles.forumExpansor}>
-                                    ...
-                                </Text>
-                        </Pressable>
+                        <View style={styles.footer}>
+                            <Pressable 
+                                onPress={() => setOpen(!open)}>
+                                    <Text style={styles.forumExpansor}>
+                                        ...
+                                    </Text>
+                            </Pressable>
 
-                        <TouchableOpacity
-                            style={[
-                                styles.forumSeguir,
-                                (seguidor !== '') && styles.forumSeguido,
-                                loadingSeguir && styles.loadingOverlay
-                            ]}
-                            disabled={loadingSeguir}
-                            onPress={() => handleSeguir()}>
-                                <Ionicons
-                                    name={(seguidor === '') ? 'add' : 'close'}
-                                    size={20}
-                                    style={[
-                                        styles.forumSeguirItem,
-                                        (seguidor !== '') && styles.forumSeguidoItem
-                                    ]}
-                                />
-                                <Text 
-                                    style={[
-                                        styles.forumSeguirItem,
-                                        (seguidor !== '') && styles.forumSeguidoItem
-                                    ]}>
-                                    {(seguidor === '') ? "Seguir" : "Parar de Seguir"}
-                                </Text>
-                        </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[
+                                    styles.forumSeguir,
+                                    (seguidor !== '') && styles.forumSeguido,
+                                    loadingSeguir && styles.loadingOverlay
+                                ]}
+                                disabled={loadingSeguir}
+                                onPress={() => handleSeguir()}>
+                                    <Ionicons
+                                        name={(seguidor === '') ? 'add' : 'close'}
+                                        size={20}
+                                        style={[
+                                            styles.forumSeguirItem,
+                                            (seguidor !== '') && styles.forumSeguidoItem
+                                        ]}
+                                    />
+                                    <Text 
+                                        style={[
+                                            styles.forumSeguirItem,
+                                            (seguidor !== '') && styles.forumSeguidoItem
+                                        ]}>
+                                        {(seguidor === '') ? "Seguir" : "Parar de Seguir"}
+                                    </Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </Animated.View>
         </View>

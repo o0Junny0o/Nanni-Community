@@ -7,6 +7,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import PropTypes from 'prop-types';
 import typeServices from '../../../utils/typeServices';
 import comentarioReport from '../../../hooks/comentario/comentarioReport';
+import { deconvertBase64ToImage } from '../../../utils/Base64Image';
 
 const rgx = /(\[.*?\])/g;
 const MIN_SERVICE_ID = 4
@@ -168,7 +169,7 @@ export default function VComentario({
           anexo.map((item, index) => (
             <Image
               key={index}
-              source={ item.uri }
+              source={ deconvertBase64ToImage(item.uri) }
               style={[
                 styles.gifImage,
                 {aspectRatio: item.aspectRatio}
@@ -194,7 +195,6 @@ VComentario.propTypes = {
   services: PropTypes.object.isRequired,
   mensagem: PropTypes.string.isRequired,
   anexo: PropTypes.array.isRequired,
-  data: PropTypes.instanceOf(Timestamp),
   username: PropTypes.string.isRequired,
   isFromUser: PropTypes.bool,
 }

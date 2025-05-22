@@ -1,4 +1,5 @@
 import * as ImagePicker from 'expo-image-picker';
+import { convertImageToBase64 } from '../../../utils/Base64Image'
 
 export default async function anexoPicker() {
   try {
@@ -12,7 +13,7 @@ export default async function anexoPicker() {
     if (!anexo.canceled) {
       const img = anexo.assets[0];
       const name = img.fileName;
-      const uri = img.uri;
+      const uri = await convertImageToBase64(img.uri);
       const aspectRatio = (img.width/img.height)
 
       return [

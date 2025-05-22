@@ -42,7 +42,7 @@ export default function HomeScreen({ navigation }) {
       if (data.cargo) {
         setIsDev(Boolean(data.cargo));
 
-        const snapForuns = await forumList({ qUserRef: userRef });
+        const snapForuns = await forumList({ qUserRef: user.uid });
 
         if (snapForuns && snapForuns.length > 0) {
           setForumDono(snapForuns);
@@ -239,7 +239,6 @@ VForumSeguidos.propTypes = {
 VForumDono.propTypes = {
   forumID: PropTypes.string.isRequired,
   forumName: PropTypes.string.isRequired,
-  data: PropTypes.object.isRequired,
   path: PropTypes.string.isRequired,
   navigation: PropTypes.shape({
     push: PropTypes.func.isRequired,
