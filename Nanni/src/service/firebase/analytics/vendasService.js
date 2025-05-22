@@ -49,11 +49,11 @@ export async function getJogosDoUsuario(userId) {
         } else {
           return null; // Caso o jogo não exista
         }
-      })
+      }),
     );
 
     // Filtra os jogos que existem e retorna a lista
-    return jogosComNomes.filter(jogo => jogo !== null);
+    return jogosComNomes.filter((jogo) => jogo !== null);
   } catch (error) {
     Toast.show({
       type: 'error',
@@ -70,27 +70,27 @@ export async function getDataJogosVenda(jogosRefs) {
     if (jogosRefs.length === 0) return [];
 
     const vendasRef = collection(db, VENDAS_COLLECTION);
-    const caminhos = jogosRefs.map(jogo => jogo.caminho);
+    const caminhos = jogosRefs.map((jogo) => jogo.caminho);
 
     // Criar mapa para armazenar anos por jogo
     const jogosMap = new Map(
-      jogosRefs.map(jogo => [
-        jogo.caminho, 
-        { nome: jogo.nome, anos: new Set() }
-      ])
+      jogosRefs.map((jogo) => [
+        jogo.caminho,
+        { nome: jogo.nome, anos: new Set() },
+      ]),
     );
 
     // Corrigindo o chunking de caminhos
     const CHUNK_SIZE = 10;
     const promises = [];
-    
+
     for (let i = 0; i < caminhos.length; i += CHUNK_SIZE) {
       const chunk = caminhos.slice(i, i + CHUNK_SIZE);
       const q = query(
         vendasRef,
         // Se o campo itensComprados for um array (múltiplos itens por compra), altere o operador para:
         // where('itensComprados', 'array-contains-any', chunk)
-        where('itensComprados', 'in', chunk)
+        where('itensComprados', 'in', chunk),
       );
       promises.push(getDocs(q));
     }
@@ -99,20 +99,20 @@ export async function getDataJogosVenda(jogosRefs) {
     const snapshots = await Promise.all(promises);
 
     // Processando todos os resultados
-    snapshots.forEach(querySnapshot => {
-      querySnapshot.forEach(doc => {
+    snapshots.forEach((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
         const data = doc.data();
-        const itens = Array.isArray(data.itensComprados) 
-                     ? data.itensComprados 
-                     : [data.itensComprados];
-        
+        const itens = Array.isArray(data.itensComprados)
+          ? data.itensComprados
+          : [data.itensComprados];
+
         const date = data.data?.toDate?.() || new Date(data.data);
         if (isNaN(date.getTime())) return;
 
         const year = date.getFullYear();
-        
+
         // Adicionar ano aos jogos correspondentes
-        itens.forEach(item => {
+        itens.forEach((item) => {
           if (jogosMap.has(item)) {
             jogosMap.get(item).anos.add(year);
           }
@@ -125,12 +125,11 @@ export async function getDataJogosVenda(jogosRefs) {
     jogosMap.forEach((value, key) => {
       result[key] = {
         nome: value.nome,
-        anos: Array.from(value.anos).sort((a, b) => b - a)
+        anos: Array.from(value.anos).sort((a, b) => b - a),
       };
     });
 
     return result;
-
   } catch (error) {
     Toast.show({
       type: 'error',
@@ -158,7 +157,7 @@ export async function calcularVendasPorJogo(jogosRefs, ano) {
   let anoInicio, anoFim;
   try {
     anoInicio = Timestamp.fromDate(new Date(anoNumerico, 0, 1));
-    anoFim    = Timestamp.fromDate(new Date(anoNumerico + 1, 0, 1));
+    anoFim = Timestamp.fromDate(new Date(anoNumerico + 1, 0, 1));
   } catch (e) {
     console.error('Erro ao criar datas:', e);
     Toast.show({
@@ -170,9 +169,9 @@ export async function calcularVendasPorJogo(jogosRefs, ano) {
   }
   try {
     if (jogosRefs.length === 0) return {};
-    
+
     const vendasRef = collection(db, VENDAS_COLLECTION);
-    const caminhos = jogosRefs.map(jogo => jogo.caminho);
+    const caminhos = jogosRefs.map((jogo) => jogo.caminho);
 
     const chunks = [];
     const CHUNK_SIZE = 10;
@@ -191,7 +190,7 @@ export async function calcularVendasPorJogo(jogosRefs, ano) {
     const snapshots = await Promise.all(chunks);
 
     const vendasSnapshot = snapshots.flatMap((s) => s.docs);
-    
+
     // 2. Processar apenas vendas filtradas
     const jogos = {};
 
@@ -242,7 +241,7 @@ export async function getNumVendas(jogosRefs) {
     if (jogosRefs.length === 0) return {};
 
     const vendasRef = collection(db, VENDAS_COLLECTION);
-    const caminhos = jogosRefs.map(jogo => jogo.caminho);
+    const caminhos = jogosRefs.map((jogo) => jogo.caminho);
 
     const chunks = [];
     const CHUNK_SIZE = 10;

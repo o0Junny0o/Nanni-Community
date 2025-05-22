@@ -15,19 +15,17 @@ import { Timestamp } from 'firebase/firestore';
 import { useAuth } from '../../components/contexts/AuthContext';
 import PropTypes from 'prop-types';
 
+function DoacaoScreen({ route }) {
+  const { userRecebe } = route.params;
+  const { user } = useAuth();
+  const [userT, setUserT] = useState(userRecebe);
+  const [valor, setValor] = useState('');
+  const [metodo, setMetodo] = useState('pix'); // Default value
+  const insets = useSafeAreaInsets();
 
-function DoacaoScreen({route}) {
-    const { userRecebe } = route.params;
-    const { user } = useAuth();
-    const [userT, setUserT] = useState(userRecebe);
-    const [valor, setValor] = useState('');
-    const [metodo, setMetodo] = useState('pix'); // Default value
-    const insets = useSafeAreaInsets();
-
-    const handleDoacao = async () => {
-        await doacao(user, userT, valor, metodo);
-    };
-
+  const handleDoacao = async () => {
+    await doacao(user, userT, valor, metodo);
+  };
 
   return (
     <ScrollView

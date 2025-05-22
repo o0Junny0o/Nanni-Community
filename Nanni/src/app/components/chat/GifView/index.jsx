@@ -13,23 +13,20 @@ import PropTypes from 'prop-types';
 import typeServices from '../../../../utils/typeServices';
 import IAPIServices from '../../../../service/IAPIServices';
 
-
-
 export default function VGifView({ type, selection, toggle }) {
-  // [Classe Service]  
-  const [typeState, setTypeState] = useState(type)
-  const service = typeServices[typeState]?.()
+  // [Classe Service]
+  const [typeState, setTypeState] = useState(type);
+  const service = typeServices[typeState]?.();
 
-  if(!(service instanceof IAPIServices)) {
-    console.error(`${type} está incorreto :: ${typeof type}`)
-    return (<></>);
-  }  
-
+  if (!(service instanceof IAPIServices)) {
+    console.error(`${type} está incorreto :: ${typeof type}`);
+    return <></>;
+  }
 
   // [Propriedades da View]
   const [text, setText] = useState('');
   const [gifs, setGifs] = useState([]);
-  const maxLenght = Math.floor(Dimensions.get('window').width / 12); 
+  const maxLenght = Math.floor(Dimensions.get('window').width / 12);
 
   // [Funções da View]
   function clearText() {
@@ -37,10 +34,10 @@ export default function VGifView({ type, selection, toggle }) {
   }
 
   useEffect(() => {
-    clearText()
-    setGifs([])
-    setTypeState(type)
-  }, [type])
+    clearText();
+    setGifs([]);
+    setTypeState(type);
+  }, [type]);
 
   async function searchGif() {
     const res = await service.search({ q: text, limit: 12 });
@@ -51,7 +48,6 @@ export default function VGifView({ type, selection, toggle }) {
     selection(id);
     toggle(false);
   }
-
 
   // [Estrutura da View]
   return (
@@ -83,24 +79,23 @@ export default function VGifView({ type, selection, toggle }) {
 
       {/* Resultados */}
       {gifs.length > 0 && typeState === type && (
-          <FlatList
-            keyExtractor={(item, index) => index.toString()}
-            data={gifs}
-            numColumns={2}
-            style={gifs.length > 0 && VGifGridStyles.resultView}
-            showsHorizontalScrollIndicator={false}
-            renderItem={({ item, index }) => (
-              <TouchableOpacity onPress={() => getGif(item.id)}>
-                <Image
-                  source={service.toSource(item) ?? ''}
-                  style={VGifGridStyles.gifs}
-                  contentFit="contain"
-                />
-              </TouchableOpacity>
-            )}
-          />
-        )
-      }
+        <FlatList
+          keyExtractor={(item, index) => index.toString()}
+          data={gifs}
+          numColumns={2}
+          style={gifs.length > 0 && VGifGridStyles.resultView}
+          showsHorizontalScrollIndicator={false}
+          renderItem={({ item, index }) => (
+            <TouchableOpacity onPress={() => getGif(item.id)}>
+              <Image
+                source={service.toSource(item) ?? ''}
+                style={VGifGridStyles.gifs}
+                contentFit="contain"
+              />
+            </TouchableOpacity>
+          )}
+        />
+      )}
 
       {/* Logo */}
       <View style={VGifGridStyles.logoView}>
@@ -114,9 +109,8 @@ export default function VGifView({ type, selection, toggle }) {
   );
 }
 
-
 VGifView.propTypes = {
   type: PropTypes.string.isRequired,
   selection: PropTypes.func.isRequired,
   toggle: PropTypes.func.isRequired,
-}
+};

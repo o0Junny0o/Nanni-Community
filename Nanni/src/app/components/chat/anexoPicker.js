@@ -17,8 +17,8 @@ export default async function anexoPicker() {
         {
           name: k,
           uri: v,
-        }
-      ]
+        },
+      ];
     }
   } catch (err) {
     alert('Erro ao tentar anexar imagem');

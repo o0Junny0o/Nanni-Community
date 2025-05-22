@@ -33,6 +33,7 @@ const styles = StyleSheet.create({
   profileContainer: {
     alignItems: 'center',
     marginTop: 20,
+    position: 'relative',
   },
   profileImage: {
     width: 150,
@@ -41,10 +42,15 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: colors.profileBorder,
   },
+  imageWrapper: {
+  position: 'relative',
+  width: 150,
+  height: 150,
+  },
   editIcon: {
     position: 'absolute',
     bottom: 0,
-    right: 10,
+    right: 0,
     backgroundColor: colors.editIconBackground,
     padding: 8,
     borderRadius: 20,
@@ -53,6 +59,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     width: '80%',
     marginTop: 30,
+    alignSelf: 'center',
     paddingBottom: 20,
     borderBottomWidth: 1,
   },
@@ -135,18 +142,17 @@ const styles = StyleSheet.create({
   logoutButton: {
     padding: 10,
   },
-  linkButton: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingTop: 10,
-    width: '100%', // Adicione esta linha
-  },
   linkText: {
     color: '#5D90D6',
     fontSize: 20,
     marginBottom: 15,
-    alignItems: 'center',
-    flex: 1,
+  },
+  linkButton: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingTop: 10,
+    width: '80%',
+    alignSelf: 'center',
   },
   historicoItem: {
     marginBottom: 10,
@@ -154,10 +160,11 @@ const styles = StyleSheet.create({
     padding: 15,
     flexDirection: 'row',
     alignItems: 'center',
+    alignSelf: 'center',
     justifyContent: 'space-between',
     borderBottomWidth: 1,
     borderColor: colors.buttonBorder,
-    width: '100%'
+    width: '100%',
   },
   iconContainer: {
     width: 24,

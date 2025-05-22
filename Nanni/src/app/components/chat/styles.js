@@ -12,14 +12,14 @@ const styles = StyleSheet.create({
     backgroundColor: colors.p3,
   },
   gestureGrabber: {
-    height: 4, 
-    width: "50%",
+    height: 4,
+    width: '50%',
     borderRadius: 16,
     alignSelf: 'center',
     marginHorizontal: 15,
-    backgroundColor: colors.p6, 
+    backgroundColor: colors.p6,
     opacity: 0.5,
-  },  
+  },
   chatView: {
     flexDirection: 'row',
     alignSelf: 'flex-start',
@@ -102,7 +102,6 @@ const VGifGridStyles = StyleSheet.create({
   },
 });
 
-
 const VChatOptionsStyles = StyleSheet.create({
   container: {
     flexDirection: 'row',
@@ -115,7 +114,6 @@ const VChatOptionsStyles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: colors.p6,
   },
-})
-
+});
 
 export { styles, VGifGridStyles, VChatOptionsStyles };

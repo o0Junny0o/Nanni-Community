@@ -1,75 +1,72 @@
-import { 
-    Text, 
-    View, 
-    FlatList,
-    TouchableOpacity,
-    TouchableWithoutFeedback,
-    Pressable,
-    ScrollView,
-    Image,
-} from "react-native"
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  Text,
+  View,
+  FlatList,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  Pressable,
+  ScrollView,
+  Image,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
-import { useCallback, useEffect, useState } from "react";
-import {styles, forumSeguidosStyles, forumDonoStyles } from "./styles";
-import PropTypes from "prop-types";
-import { useAuth } from "../../components/contexts/AuthContext";
-import { doc, getDoc, Timestamp } from "firebase/firestore";
-import { db } from "../../../service/firebase/conexao";
-import forumList from "../../../hooks/forum/forumList";
+import { useCallback, useEffect, useState } from 'react';
+import { styles, forumSeguidosStyles, forumDonoStyles } from './styles';
+import PropTypes from 'prop-types';
+import { useAuth } from '../../components/contexts/AuthContext';
+import { doc, getDoc, Timestamp } from 'firebase/firestore';
+import { db } from '../../../service/firebase/conexao';
+import forumList from '../../../hooks/forum/forumList';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import colors from "../../../styles/colors";
-import { deconvertBase64ToImage } from "../../../utils/Base64Image";
-
-
+import colors from '../../../styles/colors';
+import { deconvertBase64ToImage } from '../../../utils/Base64Image';
 
 export default function HomeScreen({ navigation }) {
-
-  const [forumSeguidos, setForumSeguidos] = useState([])
-  const [forumDono, setForumDono] = useState([])
-  const [isDev, setIsDev] = useState(false)
-  const [loading, setLoading] = useState(true)
+  const [forumSeguidos, setForumSeguidos] = useState([]);
+  const [forumDono, setForumDono] = useState([]);
+  const [isDev, setIsDev] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const { user } = useAuth();
 
   async function run() {
-    setLoading(true)
+    setLoading(true);
 
     const userRef = doc(db, 'usuarios', user.uid);
     const docSnap = await getDoc(userRef);
-    
+
     if (docSnap.exists()) {
       const data = docSnap.data();
-      
-      if(data.cargo) {
-        setIsDev(Boolean(data.cargo))
 
-        const snapForuns = await forumList({ qUserRef: userRef })
-        
-        if(snapForuns && snapForuns.length > 0) { 
-          setForumDono(snapForuns)
+      if (data.cargo) {
+        setIsDev(Boolean(data.cargo));
+
+        const snapForuns = await forumList({ qUserRef: userRef });
+
+        if (snapForuns && snapForuns.length > 0) {
+          setForumDono(snapForuns);
         } else {
-          setForumDono([])
+          setForumDono([]);
         }
       }
 
-      if(data.seguindo?.length > 0) { 
-        const foruns = await forumList({ qIDs: data.seguindo})
-        setForumSeguidos(foruns)
+      if (data.seguindo?.length > 0) {
+        const foruns = await forumList({ qIDs: data.seguindo });
+        setForumSeguidos(foruns);
       } else {
-        setForumSeguidos([])
+        setForumSeguidos([]);
       }
     }
-          
-    setLoading(false)
-  } 
+
+    setLoading(false);
+  }
 
   useFocusEffect(
     useCallback(() => {
-      if(!user) return;
+      if (!user) return;
       run();
-    }, [user])
-  )
+    }, [user]),
+  );
 
   const titleForumSeguidos =
     forumSeguidos && forumSeguidos.length > 0
@@ -145,11 +142,10 @@ export default function HomeScreen({ navigation }) {
       ) : (
         <View style={styles.loadingScreen}>
           <Text style={styles.loadingText}>
-            <TouchableOpacity
-              onPress={() => navigation.navigate('Explorar')} >
-                <Text>
-                  Clique em explorar para começar
-                </Text>    
+            <TouchableOpacity onPress={() => navigation.navigate('Explorar')}>
+              <Text style={{ fontSize: 18, fontWeight: 'bold' }}>
+                Clique em explorar para começar
+              </Text>
             </TouchableOpacity>
           </Text>
         </View>
@@ -238,7 +234,7 @@ VForumSeguidos.propTypes = {
   forumDesc: PropTypes.string.isRequired,
   path: PropTypes.string.isRequired,
   navigation: PropTypes.shape({
-    push: PropTypes.func.isRequired
+    push: PropTypes.func.isRequired,
   }).isRequired,
 };
 
@@ -249,6 +245,6 @@ VForumDono.propTypes = {
   data: PropTypes.object.isRequired,
   path: PropTypes.string.isRequired,
   navigation: PropTypes.shape({
-    push: PropTypes.func.isRequired
+    push: PropTypes.func.isRequired,
   }).isRequired,
 };

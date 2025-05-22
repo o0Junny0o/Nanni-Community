@@ -54,7 +54,7 @@ export const styles = StyleSheet.create({
   },
   picker: {
     flex: 1,
-    marginRight: -10, 
+    marginRight: -10,
     marginLeft: 2, // Reduzido de 10
     color: colors.midnightBlue,
     fontFamily: fonts.roboto,

@@ -1,9 +1,9 @@
-import { 
+import {
   Animated,
-  Text, 
-  TextInput, 
-  TouchableOpacity, 
-  View 
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { styles } from './styles';
 import { useEffect, useRef, useState } from 'react';
@@ -15,39 +15,35 @@ import anexoPicker from './anexoPicker';
 import VChatOptions from './ChatOptions';
 import enviarMensagem from './enviarMensagem';
 
-
-export default function VChat({ discussaoPath, userRef }) {    
+export default function VChat({ discussaoPath, userRef }) {
   const [text, setText] = useState('');
   const [anexos, setAnexos] = useState([]);
 
   const [showOpts, setShowOpts] = useState(false);
   const [showGifView, setShowGifView] = useState(false);
-  const [typeGifView, setTypeGifView] = useState('')
+  const [typeGifView, setTypeGifView] = useState('');
 
-  
-  // [Sobre Animação]: 
-  const optTranslateY = useRef(new Animated.Value(200)).current
+  // [Sobre Animação]:
+  const optTranslateY = useRef(new Animated.Value(200)).current;
 
   useEffect(() => {
     Animated.timing(optTranslateY, {
-        toValue: showOpts ? 0 : 10,
-        duration: 300,
-        useNativeDriver: true,
-    }).start(); 
-  }, [showOpts]) // Opções
-
-
+      toValue: showOpts ? 0 : 10,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  }, [showOpts]); // Opções
 
   function handleOnPressOpcoes(type) {
-    if(showGifView) {
-      if(typeGifView !== type) {
-        setTypeGifView(type) 
+    if (showGifView) {
+      if (typeGifView !== type) {
+        setTypeGifView(type);
       } else {
-        setShowGifView(false)
+        setShowGifView(false);
       }
     } else {
-      setTypeGifView(type)
-      setShowGifView(true)
+      setTypeGifView(type);
+      setShowGifView(true);
     }
   }
 
@@ -70,13 +66,11 @@ export default function VChat({ discussaoPath, userRef }) {
     },
   ];
 
-
   // [Sobre Anexos]:
   async function handlePicker() {
-    const r = await anexoPicker()
-    if(r) setAnexos(r)
+    const r = await anexoPicker();
+    if (r) setAnexos(r);
   }
-
 
   // [Sobre Gifs]:
   function salvarGif(id) {
@@ -87,19 +81,27 @@ export default function VChat({ discussaoPath, userRef }) {
 
   // [Sobre mensagens]:
   async function handleEnvioMensagem() {
-    const r = await enviarMensagem({ text, userRef, anexos, discussaoPath })
-    if(r) setText('')
-    else alert("Erro ao enviar mensagem")
-  }  
-  
+    const r = await enviarMensagem({ text, userRef, anexos, discussaoPath });
+    if (r) setText('');
+    else alert('Erro ao enviar mensagem');
+  }
+
   return (
-    <Animated.View style={{
-      transform: [{ translateY: optTranslateY }],
-      bottom: 0,
-      width: "100%",
-    }}>
+    <Animated.View
+      style={{
+        transform: [{ translateY: optTranslateY }],
+        bottom: 0,
+        width: '100%',
+      }}
+    >
       {/* Grid de Gifs */}
-      {showGifView && typeGifView !== '' && <VGifView selection={salvarGif} toggle={setShowGifView} type={typeGifView} />}
+      {showGifView && typeGifView !== '' && (
+        <VGifView
+          selection={salvarGif}
+          toggle={setShowGifView}
+          type={typeGifView}
+        />
+      )}
 
       {/* Componentes de Chat */}
       <View style={styles.container}>
@@ -150,8 +152,7 @@ export default function VChat({ discussaoPath, userRef }) {
   );
 }
 
-
 VChat.propTypes = {
   discussaoPath: PropTypes.string.isRequired,
   userRef: PropTypes.string.isRequired,
-}
+};

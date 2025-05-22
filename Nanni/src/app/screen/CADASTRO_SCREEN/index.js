@@ -79,7 +79,8 @@ export default function Cadastro({ navigation }) {
   const [loading, setLoading] = useState(false);
   const [fotoPerfil, setFotoPerfil] = useState(defaultImageUri);
   const [senhaInvalidaTexto, setSenhaInvalidaTexto] = useState('');
-  const [confirmarSenhaInvalidaTexto, setConfirmarSenhaInvalidaTexto] = useState('');
+  const [confirmarSenhaInvalidaTexto, setConfirmarSenhaInvalidaTexto] =
+    useState('');
 
   const [passwordCriteria, setPasswordCriteria] = useState({
     length: false,

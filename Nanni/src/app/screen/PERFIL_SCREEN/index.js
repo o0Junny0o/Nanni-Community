@@ -8,16 +8,26 @@ import {
   Modal,
   TextInput,
   Alert,
-  ActivityIndicator
+  ActivityIndicator,
+  FlatList,
 } from 'react-native';
 import styles from './styles';
 import * as ImagePicker from 'expo-image-picker'; // 📷 Biblioteca para selecionar imagem
 import { Ionicons } from '@expo/vector-icons';
 import PropTypes from 'prop-types';
 import { db, auth } from '../../../service/firebase/conexao';
-import { doc, updateDoc, getDoc } from 'firebase/firestore';
-import BotaoVoltar from '../../components/buttons/BotaoVoltar/index';
-import BotaoPadrao from '../../components/buttons/BotaoPadrao/index';
+import {
+  doc,
+  updateDoc,
+  getDoc,
+  collection,
+  query,
+  where,
+  orderBy,
+  limit,
+  startAfter,
+  getDocs,
+} from 'firebase/firestore';
 import { useAuth } from '../../components/contexts/AuthContext';
 import {
   convertImageToBase64,
@@ -25,14 +35,16 @@ import {
   isPngImage,
 } from '../../../utils/Base64Image';
 import Toast from 'react-native-toast-message';
-import { updateEmail, reauthenticateWithCredential, EmailAuthProvider, sendEmailVerification, verifyBeforeUpdateEmail } from 'firebase/auth';
+import {
+  reauthenticateWithCredential,
+  EmailAuthProvider,
+  sendEmailVerification,
+  verifyBeforeUpdateEmail,
+} from 'firebase/auth';
 import CARREGAMENTO_SCREEN from '../CARREGAMENTO_SCREEN/index';
-import { USUARIOS_COLLECTION } from '../../../model/refsCollection';
+import { DOACOES_COLLECTION, USUARIOS_COLLECTION } from '../../../model/refsCollection';
 import { navigationRef } from '../../../../App';
-import { userRef } from '../../../utils/userRef';
-import DoacaoModel from '../../../model/Doacao/DoacaoModel';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ScrollView } from 'react-native-gesture-handler';
 import { useFocusEffect } from '@react-navigation/native';
 
 const PerfilUsuario = ({ navigation }) => {
@@ -52,7 +64,9 @@ const PerfilUsuario = ({ navigation }) => {
   const [historicoDoacoes, setHistoricoDoacoes] = useState([]);
   const [isSaving, setIsSaving] = useState(false);
 
-
+  const [ultimoDoc, setUltimoDoc] = useState(null);
+  const [carregandoMais, setCarregandoMais] = useState(false);
+  const [temMais, setTemMais] = useState(true);
 
   useEffect(() => {
     async function run() {
@@ -78,27 +92,44 @@ const PerfilUsuario = ({ navigation }) => {
         if (data.avatar) {
           setFotoPerfil(deconvertBase64ToImage(data.avatar) || '');
         }
-      } catch(err) {
+      } catch (err) {
+        Toast.show({
+          type: 'error',
+          text1: 'ERRO!',
+          text2: 'Erro ao carregar dados',
+        });
         console.error('Erro ao carregar dados:', err);
-        alert('Erro ao carregar perfil');
       } finally {
         setIsLoading(false);
       }
     }
 
-    run()
-  }, [user, authLoading])
-
+    run();
+  }, [user, authLoading]);
 
   useFocusEffect(
     useCallback(() => {
       const carregarDadosUsuario = async () => {
-        try {  
+        try {
           setIsLoading(true);
+          setHistoricoDoacoes([]);
+          setUltimoDoc(null);
+          setTemMais(true);
 
-          const dados = await DoacaoModel.fetchByUserRefGive(userRef(user.uid));
-  
-          // Buscar nome de quem recebeu a doação (userRefTake)
+          const doacoesRef = collection(db, DOACOES_COLLECTION);
+          const q = query(
+            doacoesRef,
+            where('userRefGive', '==', doc(db, USUARIOS_COLLECTION, user.uid)),
+            orderBy('data', 'desc'),
+            limit(10),
+          );
+
+          const querySnapshot = await getDocs(q);
+          const dados = querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+
           const dadosComNome = await Promise.all(
             dados.map(async (doacao) => {
               let nomeUsuario = 'Desconhecido';
@@ -110,26 +141,79 @@ const PerfilUsuario = ({ navigation }) => {
               } catch (e) {
                 console.warn('Erro ao buscar userRefTake:', e);
               }
-  
-              return {
-                ...doacao,
-                nomeUsuarioTake: nomeUsuario,
-              };
+              return { ...doacao, nomeUsuarioTake: nomeUsuario };
             }),
           );
-  
+
           setHistoricoDoacoes(dadosComNome);
+          setUltimoDoc(querySnapshot.docs[querySnapshot.docs.length - 1]);
+          setTemMais(dadosComNome.length === 10);
         } catch (error) {
           console.error('Erro ao carregar dados:', error);
-          alert('Erro ao carregar doação');
+          Toast.show({
+            type: 'error',
+            text1: 'Erro',
+            text2: 'Erro ao carregar histórico de doações',
+          });
         } finally {
           setIsLoading(false);
         }
       };
-  
-      if(user) carregarDadosUsuario();
-    }, [user])
+
+      if (user) carregarDadosUsuario();
+    }, [user]),
   );
+
+  const carregarMaisDoacoes = async () => {
+    if (!temMais || carregandoMais || !ultimoDoc) return;
+
+    try {
+      setCarregandoMais(true);
+
+      const doacoesRef = collection(db, DOACOES_COLLECTION);
+      const q = query(
+        doacoesRef,
+        where('userRefGive', '==', doc(db, USUARIOS_COLLECTION, user.uid)),
+        orderBy('data', 'desc'),
+        startAfter(ultimoDoc),
+        limit(10),
+      );
+
+      const querySnapshot = await getDocs(q);
+      const novosDados = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      const novosDadosComNome = await Promise.all(
+        novosDados.map(async (doacao) => {
+          let nomeUsuario = 'Desconhecido';
+          try {
+            const userDoc = await getDoc(doacao.userRefTake);
+            if (userDoc.exists()) {
+              nomeUsuario = userDoc.data().nome || 'Sem nome';
+            }
+          } catch (e) {
+            console.warn('Erro ao buscar userRefTake:', e);
+          }
+          return { ...doacao, nomeUsuarioTake: nomeUsuario };
+        }),
+      );
+
+      setHistoricoDoacoes((prev) => [...prev, ...novosDadosComNome]);
+      setUltimoDoc(querySnapshot.docs[querySnapshot.docs.length - 1]);
+      setTemMais(novosDadosComNome.length === 10);
+    } catch (error) {
+      console.error('Erro ao carregar mais doações:', error);
+      Toast.show({
+        type: 'error',
+        text1: 'Erro',
+        text2: 'Não foi possível carregar mais doações',
+      });
+    } finally {
+      setCarregandoMais(false);
+    }
+  };
 
   if (authLoading || isLoading) {
     return <CARREGAMENTO_SCREEN />;
@@ -147,7 +231,11 @@ const PerfilUsuario = ({ navigation }) => {
     try {
       setIsSaving(true);
       if (!user) {
-        alert('Usuário não autenticado');
+        Toast.show({
+          type: 'error',
+          text1: 'Erro de autenticação',
+          text2: 'Usuário não autenticado',
+        });
         return;
       }
 
@@ -155,7 +243,10 @@ const PerfilUsuario = ({ navigation }) => {
 
       if (campoEdicao === 'Nome') {
         updates.nome = valorEdicao;
-        await updateDoc(doc(db, USUARIOS_COLLECTION, auth.currentUser.uid), updates);
+        await updateDoc(
+          doc(db, USUARIOS_COLLECTION, auth.currentUser.uid),
+          updates,
+        );
         setNome(valorEdicao);
         Toast.show({
           type: 'success',
@@ -182,19 +273,23 @@ const PerfilUsuario = ({ navigation }) => {
         }
 
         const isEmailPassword = user.providerData.some(
-          (provider) => provider.providerId === 'password'
+          (provider) => provider.providerId === 'password',
         );
 
         if (!isEmailPassword) {
-          alert('Altere seu e-mail diretamente no provedor de autenticação utilizado (Google, etc.)');
+          Toast.show({
+            type: 'error',
+            text1: 'Provedor externo',
+            text2: 'Altere seu e-mail diretamente no provedor utilizado (Google, etc.)',
+          });
           return;
         }
 
         const credential = EmailAuthProvider.credential(
           auth.currentUser.email,
-          senhaAtual
+          senhaAtual,
         );
-  
+
         await reauthenticateWithCredential(auth.currentUser, credential);
         // Atualiza o email na autenticação
         await verifyBeforeUpdateEmail(auth.currentUser, valorEdicao);
@@ -213,7 +308,10 @@ const PerfilUsuario = ({ navigation }) => {
           text1: 'E-mail atualizado!',
           text2: 'Verifique sua caixa de entrada para confirmar o novo e-mail.',
         });
-        await updateDoc(doc(db, USUARIOS_COLLECTION, auth.currentUser.uid), updates);
+        await updateDoc(
+          doc(db, USUARIOS_COLLECTION, auth.currentUser.uid),
+          updates,
+        );
         await logout();
       }
       // Atualiza o Firestore
@@ -225,7 +323,11 @@ const PerfilUsuario = ({ navigation }) => {
 
       // Tratamento específico de erros
       if (error.code === 'auth/email-already-in-use') {
-        alert('Este email já está em uso por outra conta');
+          Toast.show({
+            type: 'error',
+            text1: 'E-mail em uso',
+            text2: 'Este e-mail já está sendo usado por outra conta',
+          });
       } else if (error.code === 'auth/requires-recent-login') {
         try {
           await logout();
@@ -233,15 +335,32 @@ const PerfilUsuario = ({ navigation }) => {
             index: 0,
             routes: [{ name: 'Login' }],
           });
-          alert('Sessão expirada. Faça login novamente para continuar');
+            Toast.show({
+              type: 'error',
+              text1: 'Sessão expirada',
+              text2: 'Faça login novamente para continuar',
+            });
         } catch (logoutError) {
+          Toast.show({
+            type: 'error',
+            text1: 'Erro ao sair',
+            text2: `Não foi possível fazer logout ${logoutError.message}`,
+          });
           console.error('Erro ao fazer logout:', logoutError);
         }
       } else if (!auth.currentUser.emailVerified) {
-        alert('Verifique seu e-mail antes de alterá-lo.');
+          Toast.show({
+            type: 'error',
+            text1: 'E-mail não verificado',
+            text2: 'Verifique seu e-mail antes de alterá-lo',
+          });
         return;
       } else {
-        alert('Erro ao salvar alterações: ' + error.message);
+          Toast.show({
+            type: 'error',
+            text1: 'Erro ao salvar',
+            text2: error.message || 'Erro desconhecido',
+          });
       }
 
       // Reverte o estado em caso de erro
@@ -289,7 +408,11 @@ const PerfilUsuario = ({ navigation }) => {
       }
     } catch (error) {
       console.error('Erro ao atualizar foto:', error);
-      alert('Erro ao salvar nova foto');
+      Toast.show({
+        type: 'error',
+        text1: 'Erro',
+        text2: 'Falha ao atualizar a foto de perfil',
+      });
     }
   };
 
@@ -313,7 +436,11 @@ const PerfilUsuario = ({ navigation }) => {
               });
             } catch (error) {
               console.error('Erro ao fazer logout:', error);
-              alert('Erro ao fazer logout. Tente novamente.');
+                Toast.show({
+                  type: 'error',
+                  text1: 'Erro ao sair',
+                  text2: 'Não foi possível fazer logout',
+                });
             }
           },
         },
@@ -324,95 +451,135 @@ const PerfilUsuario = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={{ flexGrow: 1, alignItems: 'center', }}>
-        {/* Cabeçalho */}
-        <View style={styles.header}>
-          <View style={styles.logoutButton}>
-            <TouchableOpacity
-              style={{ flexDirection: 'row', gap: 10 }}
-              onPress={() => handleLogout()}
-            >
-              <Text style={{ fontSize: 15 }}>SAIR</Text>
-              <Ionicons name="log-out-outline" size={24} color="black" />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Foto de Perfil */}
-        <View style={styles.profileContainer}>
-          <Image source={fotoPerfil} style={styles.profileImage} />
-          <TouchableOpacity style={styles.editIcon} onPress={mudarFotoPerfil}>
-            <Ionicons name="camera" size={24} color="white" />
-          </TouchableOpacity>
-        </View>
-
-        {/* Informações do Usuário */}
-        <View style={styles.infoContainer}>
-          <InfoItem
-            label="Nome"
-            value={nome}
-            onEdit={() => editarCampo('Nome', nome)}
-          />
-          <InfoItem
-            label="Email"
-            value={email}
-            onEdit={() => editarCampo('Email', email)}
-          />
-          <InfoItem label="Data de nascimento" value={dataNaci} />
-        </View>
-
-        {/* Histórico de Doações */}
-        <View style={{ paddingBottom: insets.bottom, width: '80%'}}>
-          <TouchableOpacity
-            onPress={() => setMostrarHistorico(!mostrarHistorico)}
-          >
-            <View style={styles.linkButton}>
-              <View>
-                <Text 
-                  style={styles.linkText}
-                  numberOfLines={1}
+      <FlatList
+        data={[]}
+        renderItem={null}
+        ListHeaderComponent={
+          <>
+            {/* Cabeçalho */}
+            <View style={styles.header}>
+              <View style={styles.logoutButton}>
+                <TouchableOpacity
+                  style={{ flexDirection: 'row', gap: 10 }}
+                  onPress={() => handleLogout()}
                 >
-                  HISTÓRICO DE DOAÇÕES
-                </Text>
-              </View>
-              <View style={styles.iconContainer}>
-                <Ionicons
-                  name={mostrarHistorico ? 'chevron-up-outline' : 'chevron-down-outline'}
-                  size={18}
-                  color="#1D3557"
-                />
+                  <Text style={{ fontSize: 15 }}>SAIR</Text>
+                  <Ionicons name="log-out-outline" size={24} color="black" />
+                </TouchableOpacity>
               </View>
             </View>
-          </TouchableOpacity>
 
-          {mostrarHistorico && (
-            <ScrollView style={{ maxHeight: 240, width: '100%'}}>
-              {historicoDoacoes.map((item) => (
-                <View key={item.id} style={[styles.historicoItem, historicoDoacoes[historicoDoacoes.length - 1].id === item.id && { borderBottomWidth: 0 }]}>
+            {/* Foto de Perfil */}
+            <View style={styles.profileContainer}>
+              <View style={styles.imageWrapper}>
+                <Image source={fotoPerfil} style={styles.profileImage} />
+                <TouchableOpacity
+                  style={styles.editIcon}
+                  onPress={mudarFotoPerfil}
+                >
+                  <Ionicons name="camera" size={24} color="white" />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* Informações do Usuário */}
+            <View style={styles.infoContainer}>
+              <InfoItem
+                label="Nome"
+                value={nome}
+                onEdit={() => editarCampo('Nome', nome)}
+              />
+              <InfoItem
+                label="Email"
+                value={email}
+                onEdit={() => editarCampo('Email', email)}
+              />
+              <InfoItem label="Data de nascimento" value={dataNaci} />
+            </View>
+
+            {/* Container do Histórico */}
+            <View style={{ paddingBottom: insets.bottom }}>
+              <TouchableOpacity
+                onPress={() => setMostrarHistorico(!mostrarHistorico)}
+              >
+                <View style={styles.linkButton}>
                   <View>
-                    <Text style={{ color: '#5D90D6' }}>ID: {item.id}</Text>
-                    <Text style={{ fontWeight: 'bold' }}>
-                      Usuário: {item.nomeUsuarioTake}
-                    </Text>
-                    <Text style={{ color: 'gray' }}>
-                      {new Date(item.data).toLocaleDateString('pt-BR')}
+                    <Text style={styles.linkText} numberOfLines={1}>
+                      HISTÓRICO DE DOAÇÕES
                     </Text>
                   </View>
-                  <Text
-                    style={{
-                      color: '#B88CB4',
-                      fontWeight: 'bold',
-                      fontSize: 20,
-                    }}
-                  >
-                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.valor)}
-                  </Text>
+                  <View style={styles.iconContainer}>
+                    <Ionicons
+                      name={
+                        mostrarHistorico
+                          ? 'chevron-up-outline'
+                          : 'chevron-down-outline'
+                      }
+                      size={18}
+                      color="#1D3557"
+                    />
+                  </View>
                 </View>
-              ))}
-            </ScrollView>
-          )}
-        </View>
-      </ScrollView>
+              </TouchableOpacity>
+            </View>
+          </>
+        }
+        ListFooterComponent={
+          <View style={{ width: '80%'}}>
+            {mostrarHistorico && (
+              <FlatList
+                data={historicoDoacoes}
+                renderItem={({ item }) => (
+                  <View style={styles.historicoItem}>
+                    <View>
+                      <Text style={{ color: '#5D90D6' }}>ID: {item.id}</Text>
+                      <Text style={{ fontWeight: 'bold' }}>
+                        Usuário: {item.nomeUsuarioTake}
+                      </Text>
+                      <Text style={{ color: 'gray' }}>
+                        {new Date(item.data).toLocaleDateString('pt-BR')}
+                      </Text>
+                    </View>
+                    <Text
+                      style={{
+                        color: '#B88CB4',
+                        fontWeight: 'bold',
+                        fontSize: 20,
+                      }}
+                    >
+                      {new Intl.NumberFormat('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL',
+                      }).format(item.valor)}
+                    </Text>
+                  </View>
+                )}
+                keyExtractor={(item) => item.id}
+                onEndReached={carregarMaisDoacoes}
+                onEndReachedThreshold={0.2}
+                ListFooterComponent={
+                  carregandoMais ? (
+                    <ActivityIndicator
+                      style={{ padding: 10 }}
+                      size="small"
+                      color="#0000ff"
+                    />
+                  ) : null
+                }
+                scrollEnabled={true}
+                nestedScrollEnabled={true}
+              />
+            )}
+          </View>
+        }
+        contentContainerStyle={{
+          flexGrow: 1,
+          alignItems: 'center',
+          paddingBottom: insets.bottom,
+        }}
+        keyboardShouldPersistTaps="handled"
+        nestedScrollEnabled={true}
+      />
 
       {/* MODAL PARA EDITAR INFORMAÇÕES */}
       <Modal transparent={true} visible={modalVisible}>
@@ -447,16 +614,17 @@ const PerfilUsuario = ({ navigation }) => {
                 style={[styles.modalButton, styles.saveButton]}
                 onPress={salvarEdicao}
               >
-              {isSaving ? (
-                <ActivityIndicator color="#fff" /> // Ícone de carregamento
-              ) : (
-                <Text style={styles.modalButtonText}>Salvar</Text>
-              )}
+                {isSaving ? (
+                  <ActivityIndicator color="#fff" /> // Ícone de carregamento
+                ) : (
+                  <Text style={styles.modalButtonText}>Salvar</Text>
+                )}
               </TouchableOpacity>
             </View>
           </View>
         </View>
       </Modal>
+      <Toast />
     </SafeAreaView>
   );
 };

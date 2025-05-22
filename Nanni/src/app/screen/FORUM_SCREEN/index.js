@@ -11,20 +11,20 @@ import {
 import { styles } from './styles';
 import PropTypes from 'prop-types';
 import { useAuth } from '../../components/contexts/AuthContext';
-import { 
-  and, 
-  arrayRemove, 
-  arrayUnion, 
-  collection, 
-  deleteDoc, 
-  doc, 
-  getDoc, 
-  getDocs, 
-  query, 
-  serverTimestamp, 
-  setDoc, 
-  updateDoc, 
-  where 
+import {
+  and,
+  arrayRemove,
+  arrayUnion,
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  serverTimestamp,
+  setDoc,
+  updateDoc,
+  where,
 } from 'firebase/firestore';
 import { db } from '../../../service/firebase/conexao';
 import forumList from '../../../hooks/forum/forumList';
@@ -35,8 +35,11 @@ import Forum from '../../../model/Forum';
 import { deconvertBase64ToImage } from '../../../utils/Base64Image';
 import forumQuery from '../../../hooks/forum/forumQuery';
 import useForumDiscussao from '../../../hooks/useForumDiscussao';
-import { FORUNS_COLLECTION } from '../../../model/refsCollection';
-import VForumHeader from '../../components/forum/header';
+import {
+  FORUNS_COLLECTION,
+  USUARIOS_COLLECTION,
+} from '../../../model/refsCollection';
+
 
 export default function ForumScreen({ navigation, route }) {
   const { forumID, forumPath } = route.params;
@@ -74,36 +77,33 @@ export default function ForumScreen({ navigation, route }) {
   useEffect(() => {
     async function run() {
       try {
-        const fr = await forumQuery({ forumID: forumID})
+        const fr = await forumQuery({ forumID: forumID });
 
-        if(fr) {
-          setForum(fr)
-          
-          const docAutor = doc(db, "usuarios", fr.userRef)
-          const colForumSeguidor = collection(db, "seguidores")
-          const queryForumSeguidor = query(colForumSeguidor, 
+        if (fr) {
+          setForum(fr);
+
+          const docAutor = doc(db, USUARIOS_COLLECTION, fr.userRef);
+          const colForumSeguidor = collection(db, 'seguidores');
+          const queryForumSeguidor = query(
+            colForumSeguidor,
             and(
-              where('userRef', '==', user.uid), 
-              where('forumRef', '==', fr.forumID) 
-            )
-          )
-          
+              where('userRef', '==', user.uid),
+              where('forumRef', '==', fr.forumID),
+            ),
+          );
+
           const [frAutor, userIsSeguidor] = await Promise.all([
             getDoc(docAutor),
             getDocs(queryForumSeguidor),
-          ])
+          ]);
 
-          
-          if(frAutor.exists()) {
-            setForumAutor(frAutor.data().nome)
+          if (frAutor.exists()) {
+            setForumAutor(frAutor.data().nome);
           }
 
-          const segDocs = userIsSeguidor.docs
+          const segDocs = userIsSeguidor.docs;
 
-          setSeguidor(segDocs && segDocs.length > 0 ? 
-            segDocs[0].id 
-            : ''
-          )         
+          setSeguidor(segDocs && segDocs.length > 0 ? segDocs[0].id : '');
         }
       } catch (err) {
         alert('Problema ao carregar Fórum');
@@ -175,7 +175,7 @@ export default function ForumScreen({ navigation, route }) {
   useEffect(() => {
     const carregarDadosUsuario = async () => {
       try {
-        const userRef = doc(db, 'usuarios', user.uid);
+        const userRef = doc(db, USUARIOS_COLLECTION, user.uid);
         const docSnap = await getDoc(userRef);
 
         if (!docSnap.exists()) return;
@@ -250,45 +250,50 @@ export default function ForumScreen({ navigation, route }) {
     }));
   };
 
-  async function handleSeguir() {    
+  async function handleSeguir() {
     try {
-      setLoadingSeguir(true)
+      setLoadingSeguir(true);
 
-      const isSeguidor = (seguidor !== '')
-      const userDoc = doc(db, "usuarios", user.uid)     
-      const segDoc = seguidor !== '' ? 
-        doc(db, "seguidores", seguidor) 
-        : doc(collection(db, "seguidores"));
+      const isSeguidor = seguidor !== '';
+      const userDoc = doc(db, 'usuarios', user.uid);
+      const segDoc =
+        seguidor !== ''
+          ? doc(db, 'seguidores', seguidor)
+          : doc(collection(db, 'seguidores'));
 
-      const promises = isSeguidor ?
-        [
-          setDoc(userDoc, { 
-            seguindo: arrayRemove(forum.forumID),
-          }, { merge: true }),
+      const promises = isSeguidor
+        ? [
+            setDoc(
+              userDoc,
+              {
+                seguindo: arrayRemove(forum.forumID),
+              },
+              { merge: true },
+            ),
 
-          deleteDoc(segDoc)
-        ] 
+            deleteDoc(segDoc),
+          ]
         : [
-          setDoc(userDoc, { 
-            seguindo: arrayUnion(forum.forumID),
-          }, { merge: true}),
+            setDoc(
+              userDoc,
+              {
+                seguindo: arrayUnion(forum.forumID),
+              },
+              { merge: true },
+            ),
 
-          setDoc(segDoc, { 
-              userRef: user.uid, 
+            setDoc(segDoc, {
+              userRef: user.uid,
               forumRef: forum.forumID,
               data: serverTimestamp(),
-            }
-          )
-        ];
+            }),
+          ];
 
-      await Promise.all(promises)
-      
-      setSeguidor(isSeguidor ? 
-        '' 
-        : segDoc.id
-      )
-    } catch(err) {
-      console.error(err)
+      await Promise.all(promises);
+
+      setSeguidor(isSeguidor ? '' : segDoc.id);
+    } catch (err) {
+      console.error(err);
     } finally {
       setLoadingSeguir(false);
     }
@@ -332,13 +337,12 @@ export default function ForumScreen({ navigation, route }) {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#163690" />
-
+        
       {forum && forumAutor ? 
         (
           <>
           {/* Header */}
           <VForumHeader forum={forum} uid={user.uid} forumAutor={forumAutor} segID={seguidor} />
-            
           {!discussoes ? (
             <View style={styles.noTopicsContainer}>
               <Text style={styles.noTopicsText}>Ainda não existem Tópicos</Text>
@@ -459,7 +463,6 @@ export default function ForumScreen({ navigation, route }) {
     </SafeAreaView>
   );
 }
-
 
 ForumScreen.propTypes = {
   navigation: PropTypes.shape({

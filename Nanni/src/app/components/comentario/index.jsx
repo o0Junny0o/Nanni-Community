@@ -9,7 +9,7 @@ import typeServices from '../../../utils/typeServices';
 import comentarioReport from '../../../hooks/comentario/comentarioReport';
 
 const rgx = /(\[.*?\])/g;
-const MIN_SERVICE_ID = 4
+const MIN_SERVICE_ID = 4;
 
 export default function VComentario({
   services,
@@ -22,33 +22,30 @@ export default function VComentario({
 }) {
   const ks = Object.keys(typeServices);
   const [parsed, setParsed] = useState([]);
-  const [loaded, setLoaded] = useState(false)
-  
-  
+  const [loaded, setLoaded] = useState(false);
 
   // [Interpret]:
   useEffect(() => {
-    setLoaded(false)
+    setLoaded(false);
 
-    const strSplit = mensagem.split(rgx).filter(Boolean)
-    
+    const strSplit = mensagem.split(rgx).filter(Boolean);
+
     const str = strSplit.reduce((obj, e) => {
       const item = { content: e };
 
       if (ks.some((i) => e.includes(i))) {
-        const parts = e.split(':')
+        const parts = e.split(':');
 
-        if(parts.length === 2 && parts[1].length > MIN_SERVICE_ID) {
-          item.type = 'gif'
-          item.service = parts[0].slice(1)
-          item.gifID = parts[1].slice(0, -1)
+        if (parts.length === 2 && parts[1].length > MIN_SERVICE_ID) {
+          item.type = 'gif';
+          item.service = parts[0].slice(1);
+          item.gifID = parts[1].slice(0, -1);
         } else {
-          item.type = 'text'
+          item.type = 'text';
         }
       } else {
         item.type = 'text';
       }
-
 
       return [...obj, item];
     }, []);
@@ -60,53 +57,48 @@ export default function VComentario({
     try {
       const r = await comentarioReport({
         discussaoPath,
-        comentarioID
-      })
+        comentarioID,
+      });
 
-
-      if(r) {
-        Alert.alert("Comentário reportado")
+      if (r) {
+        Alert.alert('Comentário reportado');
       }
-    } catch(err) {
-      Alert.alert(
-        "Erro ao reportar mensagem",
-      )
+    } catch (err) {
+      Alert.alert('Erro ao reportar mensagem');
 
-      console.error(err)
+      console.error(err);
     }
   }
-
 
   // [Gif]
   useEffect(() => {
     async function fetchGifs() {
-      const itParse = [...parsed]
+      const itParse = [...parsed];
 
       await Promise.all(
         parsed.map(async (item, index) => {
           if (item.service && item.gifID) {
             try {
-              const service = services[item.service]
+              const service = services[item.service];
               const res = await service.getByID(item.gifID);
-              const g = service.toSourceSingular(res)
+              const g = service.toSourceSingular(res);
 
               if (g) {
-                itParse[index] = { ...item, gif: g }
+                itParse[index] = { ...item, gif: g };
               }
             } catch (err) {
               console.error(err);
             }
           }
-        })
+        }),
       ).then(() => {
-        setLoaded(true)
-        setParsed(itParse)        
-      })
+        setLoaded(true);
+        setParsed(itParse);
+      });
     }
 
-    
-    if(!loaded && parsed.some(i => i.type === 'gif')) {
-      fetchGifs()      
+    if (!loaded && parsed.some((i) => i.type === 'gif')) {
+      fetchGifs();
     }
   }, [parsed, loaded]);
 
@@ -124,16 +116,9 @@ export default function VComentario({
       >
         {!isFromUser && (
           <View style={styles.header}>
-            <Text style={styles.author}>
-              {username}
-            </Text>
-            <Pressable
-              onPress={() => handleReport()}>
-                <Ionicons 
-                  name="flag"
-                  style={styles.iconReport}
-                  size={16}                  
-                />
+            <Text style={styles.author}>{username}</Text>
+            <Pressable onPress={() => handleReport()}>
+              <Ionicons name="flag" style={styles.iconReport} size={16} />
             </Pressable>
           </View>
         )}
@@ -171,7 +156,6 @@ export default function VComentario({
   );
 }
 
-
 VComentario.propTypes = {
   discussaoPath: PropTypes.string.isRequired,
   comentarioID: PropTypes.string.isRequired,
@@ -180,4 +164,4 @@ VComentario.propTypes = {
   data: PropTypes.instanceOf(Timestamp).isRequired,
   username: PropTypes.string.isRequired,
   isFromUser: PropTypes.bool,
-}
+};

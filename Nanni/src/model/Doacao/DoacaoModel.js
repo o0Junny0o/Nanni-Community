@@ -1,6 +1,13 @@
 // models/User.ts
 import { db } from '../../service/firebase/conexao';
-import { collection, addDoc, getDocs, query, where } from 'firebase/firestore';
+import {
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  where,
+  getDoc,
+} from 'firebase/firestore';
 import Toast from 'react-native-toast-message';
 import * as Notifications from 'expo-notifications';
 import { DOACOES_COLLECTION } from '../refsCollection';
@@ -34,23 +41,33 @@ class DoacaoModel {
       );
       this.id = docRef.id; // Atualiza o ID após salvar
 
+      const takeSnap = await getDoc(this.userRefTake);
+      if (!takeSnap.exists()) {
+        Toast.show({
+          type: 'error',
+          text1: 'Erro',
+          text2: `Documento do receptor não existe: ${this.userRefTake}`,
+        });
+        return;
+      }
+      const takeData = takeSnap.data() || {};
+      const nomeReceptor = takeData.nome;
+
       Toast.show({
         type: 'success',
         text1: 'Doação Enviada!',
-        text2: `Sua doação foi enviada para ${this.userRefTake}`,
+        text2: `Sua doação foi enviada para ${nomeReceptor}`,
       });
 
       // Notificação push ao invés de console.log
       await Notifications.scheduleNotificationAsync({
         content: {
           title: 'Doação Enviada!',
-          body: `Sua doação foi enviada para ${this.userRefTake}`, 
+          body: `Sua doação foi enviada para ${nomeReceptor}`,
         },
         trigger: { seconds: 2 },
       });
 
-      // eslint-disable-next-line
-      console.log('Doação salva com ID:', this.id);
       return this.id;
     } catch (error) {
       Toast.show({
