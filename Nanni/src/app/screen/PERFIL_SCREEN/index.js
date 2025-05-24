@@ -116,6 +116,7 @@ const PerfilUsuario = ({ navigation }) => {
 
   useFocusEffect(
     useCallback(() => {
+      setMostrarHistorico(false);
       const carregarDadosUsuario = async () => {
         try {
           setIsLoading(true);
