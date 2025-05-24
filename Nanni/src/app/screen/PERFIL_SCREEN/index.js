@@ -42,7 +42,10 @@ import {
   verifyBeforeUpdateEmail,
 } from 'firebase/auth';
 import CARREGAMENTO_SCREEN from '../CARREGAMENTO_SCREEN/index';
-import { DOACOES_COLLECTION, USUARIOS_COLLECTION } from '../../../model/refsCollection';
+import {
+  DOACOES_COLLECTION,
+  USUARIOS_COLLECTION,
+} from '../../../model/refsCollection';
 import { navigationRef } from '../../../../App';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
@@ -69,7 +72,7 @@ const PerfilUsuario = ({ navigation }) => {
   const [temMais, setTemMais] = useState(true);
 
   // [Sobre Analytics]
-  const [hasJogos, setHasJogos] = useState(false)
+  const [hasJogos, setHasJogos] = useState(false);
 
   useEffect(() => {
     async function run() {
@@ -96,8 +99,8 @@ const PerfilUsuario = ({ navigation }) => {
           setFotoPerfil(deconvertBase64ToImage(data.avatar) || '');
         }
 
-        if(data.jogos?.length > 0) {
-          setHasJogos(true)
+        if (data.jogos?.length > 0) {
+          setHasJogos(true);
         }
       } catch (err) {
         Toast.show({
@@ -288,7 +291,8 @@ const PerfilUsuario = ({ navigation }) => {
           Toast.show({
             type: 'error',
             text1: 'Provedor externo',
-            text2: 'Altere seu e-mail diretamente no provedor utilizado (Google, etc.)',
+            text2:
+              'Altere seu e-mail diretamente no provedor utilizado (Google, etc.)',
           });
           return;
         }
@@ -331,11 +335,11 @@ const PerfilUsuario = ({ navigation }) => {
 
       // Tratamento específico de erros
       if (error.code === 'auth/email-already-in-use') {
-          Toast.show({
-            type: 'error',
-            text1: 'E-mail em uso',
-            text2: 'Este e-mail já está sendo usado por outra conta',
-          });
+        Toast.show({
+          type: 'error',
+          text1: 'E-mail em uso',
+          text2: 'Este e-mail já está sendo usado por outra conta',
+        });
       } else if (error.code === 'auth/requires-recent-login') {
         try {
           await logout();
@@ -343,11 +347,11 @@ const PerfilUsuario = ({ navigation }) => {
             index: 0,
             routes: [{ name: 'Login' }],
           });
-            Toast.show({
-              type: 'error',
-              text1: 'Sessão expirada',
-              text2: 'Faça login novamente para continuar',
-            });
+          Toast.show({
+            type: 'error',
+            text1: 'Sessão expirada',
+            text2: 'Faça login novamente para continuar',
+          });
         } catch (logoutError) {
           Toast.show({
             type: 'error',
@@ -357,18 +361,18 @@ const PerfilUsuario = ({ navigation }) => {
           console.error('Erro ao fazer logout:', logoutError);
         }
       } else if (!auth.currentUser.emailVerified) {
-          Toast.show({
-            type: 'error',
-            text1: 'E-mail não verificado',
-            text2: 'Verifique seu e-mail antes de alterá-lo',
-          });
+        Toast.show({
+          type: 'error',
+          text1: 'E-mail não verificado',
+          text2: 'Verifique seu e-mail antes de alterá-lo',
+        });
         return;
       } else {
-          Toast.show({
-            type: 'error',
-            text1: 'Erro ao salvar',
-            text2: error.message || 'Erro desconhecido',
-          });
+        Toast.show({
+          type: 'error',
+          text1: 'Erro ao salvar',
+          text2: error.message || 'Erro desconhecido',
+        });
       }
 
       // Reverte o estado em caso de erro
@@ -444,11 +448,11 @@ const PerfilUsuario = ({ navigation }) => {
               });
             } catch (error) {
               console.error('Erro ao fazer logout:', error);
-                Toast.show({
-                  type: 'error',
-                  text1: 'Erro ao sair',
-                  text2: 'Não foi possível fazer logout',
-                });
+              Toast.show({
+                type: 'error',
+                text1: 'Erro ao sair',
+                text2: 'Não foi possível fazer logout',
+              });
             }
           },
         },
@@ -458,9 +462,8 @@ const PerfilUsuario = ({ navigation }) => {
   };
 
   function toAnalytics() {
-    navigation.navigate("Analytics")
+    navigation.navigate('Analytics');
   }
-
 
   return (
     <SafeAreaView style={styles.container}>
@@ -513,10 +516,9 @@ const PerfilUsuario = ({ navigation }) => {
                 <View style={styles.analyticsView}>
                   <TouchableOpacity
                     onPress={() => toAnalytics()}
-                    style={styles.analyticsBtnView}>
-                    <Text style={styles.analyticsItem}>
-                      Ver Analytics
-                    </Text>
+                    style={styles.analyticsBtnView}
+                  >
+                    <Text style={styles.analyticsItem}>Ver Analytics</Text>
                   </TouchableOpacity>
                 </View>
               )}
@@ -550,7 +552,7 @@ const PerfilUsuario = ({ navigation }) => {
           </>
         }
         ListFooterComponent={
-          <View style={{ width: '80%'}}>
+          <View style={{ width: '80%' }}>
             {mostrarHistorico && (
               <FlatList
                 data={historicoDoacoes}

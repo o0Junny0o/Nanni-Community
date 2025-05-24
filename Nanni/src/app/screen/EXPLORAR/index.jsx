@@ -45,12 +45,12 @@ export default function ExplorarScreen({ navigation }) {
           [[], []],
         );
 
-        const fr = await forumList({ 
-          qTags: comum, 
+        const fr = await forumList({
+          qTags: comum,
           qIndicativa: indicativa,
-        })
+        });
 
-        setForuns(fr)
+        setForuns(fr);
       }
 
       if (foruns.length > 0) {
@@ -166,9 +166,7 @@ export default function ExplorarScreen({ navigation }) {
           <VExplorarItem forum={item} navigation={navigation} />
         )}
         ListEmptyComponent={() => (
-          <Text style={styles.listVaziaTxt}>
-            ...Não Encontrado...
-          </Text>
+          <Text style={styles.listVaziaTxt}>...Não Encontrado...</Text>
         )}
       />
     </SafeAreaView>

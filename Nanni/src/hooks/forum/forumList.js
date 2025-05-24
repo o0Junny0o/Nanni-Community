@@ -38,13 +38,13 @@ async function forumList({
       queryArgs.push(where('userRef', '==', qUserRef));
     }
     if (Array.isArray(qTags)) {
-      if(qTags.length > 0) {
+      if (qTags.length > 0) {
         qTags = qTags.map((item) => String(item));
-        queryArgs.push(where('tagsDisponiveis', 'array-contains-any', qTags));  
+        queryArgs.push(where('tagsDisponiveis', 'array-contains-any', qTags));
       }
     }
     if (Array.isArray(qIndicativa)) {
-      if(qIndicativa.length > 0) {
+      if (qIndicativa.length > 0) {
         queryArgs.push(where('classificacaoIndicativa', 'in', qIndicativa));
       }
     }

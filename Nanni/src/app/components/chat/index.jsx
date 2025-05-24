@@ -24,7 +24,7 @@ export default function VChat({ discussaoPath, userRef }) {
   const [typeGifView, setTypeGifView] = useState('');
 
   // [Loading]
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   // [Sobre Animação]:
   const optTranslateY = useRef(new Animated.Value(200)).current;
@@ -82,27 +82,27 @@ export default function VChat({ discussaoPath, userRef }) {
     }
   }
 
-  function modifyLoadingState(state)  {
-    setLoading(state)
+  function modifyLoadingState(state) {
+    setLoading(state);
   }
 
   // [Sobre mensagens]:
   async function handleEnvioMensagem() {
-    modifyLoadingState(true)
+    modifyLoadingState(true);
     const r = await enviarMensagem({ text, userRef, anexos, discussaoPath });
 
     if (r) {
       setText('');
-      setAnexos([])
+      setAnexos([]);
     } else {
       alert('Erro ao enviar mensagem');
     }
 
-    modifyLoadingState(false)
+    modifyLoadingState(false);
   }
 
   function removeAnexo(index) {
-    setAnexos([])    
+    setAnexos([]);
   }
 
   return (
@@ -160,19 +160,12 @@ export default function VChat({ discussaoPath, userRef }) {
             <Text style={styles.anexoText}>Anexados: </Text>
             {anexos.map((v, i) => (
               <View key={i} style={styles.anexosView}>
-                <Text  style={[styles.anexoText, styles.anexoImgText]}>
+                <Text style={[styles.anexoText, styles.anexoImgText]}>
                   {v.name}
                 </Text>
-                <TouchableOpacity
-                  onPress={() => removeAnexo(i)}>
-                    <Ionicons
-                      name="close" 
-                      size={18}
-                      style={styles.removeAnexo}
-
-                    />
+                <TouchableOpacity onPress={() => removeAnexo(i)}>
+                  <Ionicons name="close" size={18} style={styles.removeAnexo} />
                 </TouchableOpacity>
-
               </View>
             ))}
           </View>

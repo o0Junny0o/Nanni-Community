@@ -43,9 +43,9 @@ const styles = StyleSheet.create({
     borderColor: colors.profileBorder,
   },
   imageWrapper: {
-  position: 'relative',
-  width: 150,
-  height: 150,
+    position: 'relative',
+    width: 150,
+    height: 150,
   },
   editIcon: {
     position: 'absolute',
@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
   },
   analyticsItem: {
     color: colors.buttonText,
-  }
+  },
 });
 
 export default styles;

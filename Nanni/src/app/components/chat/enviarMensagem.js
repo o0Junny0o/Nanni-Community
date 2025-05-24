@@ -8,7 +8,7 @@ export default async function enviarMensagem({
   discussaoPath,
 }) {
   if (text.length < 2) {
-    if(anexos.length === 0) {
+    if (anexos.length === 0) {
       return;
     }
   }
@@ -22,7 +22,7 @@ export default async function enviarMensagem({
     });
 
     const resp = await comentario.create();
-    
+
     if (resp) {
       return true;
     } else {
