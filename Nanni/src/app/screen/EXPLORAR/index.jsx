@@ -45,10 +45,17 @@ export default function ExplorarScreen({ navigation }) {
           [[], []],
         );
 
-        if (foruns.length > 0) {
-          const arr = [...new Set(foruns.flatMap((fr) => fr.tagsDisponiveis))];
-          setPreTags(arr);
-        }
+        const fr = await forumList({ 
+          qTags: comum, 
+          qIndicativa: indicativa,
+        })
+
+        setForuns(fr)
+      }
+
+      if (foruns.length > 0) {
+        const arr = [...new Set(foruns.flatMap((fr) => fr.tagsDisponiveis))];
+        setPreTags(arr);
       }
     }
 
@@ -159,7 +166,9 @@ export default function ExplorarScreen({ navigation }) {
           <VExplorarItem forum={item} navigation={navigation} />
         )}
         ListEmptyComponent={() => (
-          <Text style={styles.listVazia}>...Lista Vázia...</Text>
+          <Text style={styles.listVaziaTxt}>
+            ...Não Encontrado...
+          </Text>
         )}
       />
     </SafeAreaView>

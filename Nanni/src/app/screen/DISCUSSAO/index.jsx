@@ -8,25 +8,30 @@ import {
 import { useAuth } from "../../components/contexts/AuthContext";
 import VChat from '../../components/chat';
 import PropTypes from 'prop-types';
-import { serverTimestamp, Timestamp } from 'firebase/firestore';
 import useChat from '../../../hooks/useChat';
 import VComentario from '../../components/comentario';
 import { instaceServices } from '../../../utils/typeServices';
 import { ScrollView } from 'react-native-gesture-handler';
-import { StatusBar } from 'expo-status-bar';
 import VForumHeader from '../../components/forum/header';
+import { StatusBar } from 'expo-status-bar';
+import colors from '../../../styles/colors';
+import Forum from '../../../model/Forum';
 
 
-export default function DiscussaoScreen({ navigation, route }) {
+export default function DiscussaoScreen({ 
+    navigation, 
+    route 
+}) {
     const { 
         forum,
-        forumAutor,
         discussaoPath,
         titulo,
         tag, 
         mensagem, 
-        data,  
+        data,
     } = route.params;
+
+
     
     const { 
         data: chat,
@@ -41,19 +46,20 @@ export default function DiscussaoScreen({ navigation, route }) {
 
     return (
         <SafeAreaView style={styles.safeArea}>
-            <StatusBar barStyle="light-content" backgroundColor="#163690"  />
+            <StatusBar 
+                barStyle="light-content"
+                backgroundColor={colors.p3}
+            />
             {/* Header */}
             <VForumHeader 
-                forum={forum} 
+                forum={forum.data} 
                 uid={user.uid} 
-                forumAutor={forumAutor} 
-                isDev={forum.userRef === user.uid}
+                forumAutor={forum.autor} 
+                isDev={forum.userIsDev}
                 navigation={navigation}
             />
             <ScrollView>
                 <View style={styles.container}>
-                    {/* Header */}
-
                     {/* Mensagem */}
                     <View style={styles.discView}>
                         <Text style={styles.discTitle}>
@@ -112,13 +118,20 @@ export default function DiscussaoScreen({ navigation, route }) {
 
 
 DiscussaoScreen.propTypes = {
+    navigation: PropTypes.shape({
+        push: PropTypes.func.isRequired,
+    }).isRequired,
     route: PropTypes.shape({
         params: PropTypes.shape({
+            forum: PropTypes.shape({
+                data: PropTypes.instanceOf(Forum).isRequired,
+                autor: PropTypes.string.isRequired,
+                userIsDev: PropTypes.bool.isRequired,
+            }),
+            discussaoPath: PropTypes.string.isRequired,
             titulo: PropTypes.string.isRequired,
-            tag: PropTypes.string.isRequired,
+            tag: PropTypes.string.isRequired, 
             mensagem: PropTypes.string.isRequired,
-            data: PropTypes.instanceOf(Timestamp).isRequired,
-            discussaoPath: PropTypes.string.isRequired,            
         }).isRequired,
     }).isRequired,
 }

@@ -73,6 +73,14 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: colors.p6,
   },
+  listVaziaTxt: {
+    alignSelf: 'center',
+    marginVertical: 20,
+    fontFamily: fonts.roboto,
+    fontSize: 14,
+    fontWeight: 'bold',
+    opacity: 0.5,
+  },
 });
 
 export default styles;

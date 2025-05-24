@@ -4,6 +4,7 @@ import {
     useState 
 } from "react";
 import { 
+    Alert,
     Animated, 
     Pressable, 
     Text, 
@@ -35,22 +36,37 @@ export default function VForumHeader({
     segID,
     navigation,
 }) {
+    //
     const [open, setOpen] = useState(false)
+    //
     const [seguidor, setSeguidor] = useState(segID ?? '')
     const [loadingSeguir, setLoadingSeguir] = useState(false)
-
+    
+    // [ Animação ]
     const [heightRef, setHeightRef] = useState(0);
     const animHeight = useRef(new Animated.Value(0)).current;
+    const animRadius = useRef(new Animated.Value(0)).current;
     useEffect(() => {
         if(heightRef > 0) {
-            Animated.timing(animHeight, {
-                toValue: open ? (heightRef+10) : 0,
-                duration: 300,
-                useNativeDriver: false,
-            }).start(); 
+            Animated.parallel([
+                Animated.timing(animHeight, {
+                    toValue: open ? (heightRef+15) : 5,
+                    duration: 400,
+                    useNativeDriver: false,
+                }),
+
+                Animated.timing(animRadius, {
+                    toValue: open ? 16 : 0,
+                    duration: 500,
+                    useNativeDriver: false,
+                }),
+            ]).start(); 
+           
         }
     }, [open])
 
+
+    // [ Funções ]
     async function handleSeguir() {    
         try {
             setLoadingSeguir(true)
@@ -143,7 +159,13 @@ export default function VForumHeader({
 
 
     return (
-        <View style={styles.header}>
+        <Animated.View style={[
+            styles.header,
+            open && { 
+                borderBottomEndRadius: animRadius, 
+                borderBottomStartRadius: animRadius,
+            }
+        ]}>
             <View style={styles.forumPrincipal}>
                 <View style={styles.forumPrincipalSubView}>
                     <View style={styles.forumPrincipalTitulos}>
@@ -153,42 +175,34 @@ export default function VForumHeader({
                         <Text style={styles.forumAutor}>
                             Por: {forumAutor}
                         </Text>
-                        <TouchableOpacity
-                            onPress={() => toDoarScreen()}
-                            style={styles.doarView}>
-                                <Ionicons
-                                    name="heart"
-                                    size={16}
-                                    style={styles.doarBtn} 
-                                />
-                                <Text style={[
-                                    styles.doarBtn,
-                                    styles.doarBtnText
-                                ]}>
-                                    Doar
-                                </Text>
-                        </TouchableOpacity>
+                        {!isDev && (
+                            <TouchableOpacity
+                                onPress={() => toDoarScreen()}
+                                style={styles.doarView}>
+                                    <Ionicons
+                                        name="heart"
+                                        size={16}
+                                        style={styles.doarBtn} 
+                                    />
+                                    <Text style={[
+                                        styles.doarBtn,
+                                        styles.doarBtnText
+                                    ]}>
+                                        Doar
+                                    </Text>
+                            </TouchableOpacity>
+                        )}
                         {!open && (
                             <Pressable 
                                 onPress={() => setOpen(!open)}>
                                     <Text style={styles.forumExpansor}>
-                                        ...
+                                        Sobre...
                                     </Text>
                             </Pressable>
                         )}
                     </View>
                     {isDev && (
-                        <View>
-                            {/* Deletar */}
-                            <Pressable
-                                onPress={() => handleDeleteForum()}>
-                                    <Ionicons
-                                        name="trash"
-                                        size={20}
-                                        style={styles.deleteIcon}
-                                    />
-                            </Pressable>
-
+                        <View style={styles.devOptions}>
                             {/* Configurar */}
                             <Pressable
                                 onPress={() => toConfigForum()}>
@@ -197,7 +211,17 @@ export default function VForumHeader({
                                         size={20}
                                         style={styles.configIcon}
                                     />
-                            </Pressable>                            
+                            </Pressable>   
+
+                            {/* Deletar */}
+                            <Pressable
+                                onPress={() => handleDeleteForum()}>
+                                    <Ionicons
+                                        name="trash"
+                                        size={20}
+                                        style={styles.deleteIcon}
+                                    />
+                            </Pressable>                       
                         </View>
                     )}
                 </View>
@@ -217,8 +241,12 @@ export default function VForumHeader({
                         <View style={styles.footer}>
                             <Pressable 
                                 onPress={() => setOpen(!open)}>
-                                    <Text style={styles.forumExpansor}>
-                                        ...
+                                    <Text style={[
+                                        styles.forumExpansor,
+                                        styles.forumExpansorFechar,
+                                        !open && styles.forumExpansorFecharInactive,
+                                    ]}>
+                                        Fechar
                                     </Text>
                             </Pressable>
 
@@ -249,7 +277,7 @@ export default function VForumHeader({
                         </View>
                     </View>
                 </Animated.View>
-        </View>
+        </Animated.View>
     )
 }
 

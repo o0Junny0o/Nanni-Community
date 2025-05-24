@@ -37,20 +37,16 @@ async function forumList({
     if (qUserRef && typeof qUserRef === 'string') {
       queryArgs.push(where('userRef', '==', qUserRef));
     }
-    if (qTags && qTags.length > 0) {
-      if (!Array.isArray(qTags)) {
-        qTags = Array(qTags);
+    if (Array.isArray(qTags)) {
+      if(qTags.length > 0) {
+        qTags = qTags.map((item) => String(item));
+        queryArgs.push(where('tagsDisponiveis', 'array-contains-any', qTags));  
       }
-
-      qTags = qTags.map((item) => String(item));
-      queryArgs.push(where('tagsDisponiveis', 'array-contains-any', qTags));
     }
-    if (qIndicativa) {
-      if (!Array.isArray(qIndicativa)) {
-        qIndicativa = Array(qIndicativa);
+    if (Array.isArray(qIndicativa)) {
+      if(qIndicativa.length > 0) {
+        queryArgs.push(where('classificacaoIndicativa', 'in', qIndicativa));
       }
-
-      queryArgs.push(where('classificacaoIndicativa', 'in', qIndicativa));
     }
     if (typeof qOrderBy !== 'undefined') {
       queryArgs.push(orderBy('data', qOrderBy ? 'desc' : 'asc'));

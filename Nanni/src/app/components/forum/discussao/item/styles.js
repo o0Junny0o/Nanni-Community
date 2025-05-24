@@ -6,20 +6,21 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: colors.p6,
         padding: 16,
-        margin: 10,
         borderRadius: 5,
         borderWidth: 0.25,
-        borderColor: colors.border,
-        elevation: 4,
+        borderColor: colors.p3,
+        elevation: 6,
     },
     principal: {
-        flexDirection: 'row',
+        flexDirection: 'column',
         width: '100%',
+        gap: 8,
     },
     titulosView: {
-        flex: 1,
+        flexDirection: 'row',
     },
     titulo: {
+        flex: 1,
         fontSize: 18,
         fontFamily: fonts.robotoMonoBold,
         fontWeight: 'bold',

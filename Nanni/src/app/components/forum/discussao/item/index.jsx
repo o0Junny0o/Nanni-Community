@@ -23,42 +23,41 @@ export default function VDiscussaoItem({
   return (
     <View style={styles.container}>
       <View style={styles.principal}>
-        <View style={styles.titulosView}>
-          <Text style={styles.titulo}>{titulo}</Text>
-          {/* <Text style={styles.forumDescription}>
-            AUTOR: {item?.mensagem}
-          </Text> */}
+          <View style={styles.titulosView}>
+            <Text style={styles.titulo}>
+              {titulo}
+            </Text>
+            {userIsDev && (
+              <View style={styles.iconsView}>
+                <TouchableOpacity
+                  onPress={(e) => {
+                    e.stopPropagation();
+                    onDelete()
+                  }}
+                >
+                  <Ionicons 
+                    name="trash" 
+                    size={20}
+                    style={styles.removeIcon}/>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={(e) => {
+                    e.stopPropagation();
+                    onUpdate();
+                  }}
+                >
+                  <Ionicons 
+                    name="pencil" 
+                    size={20}
+                    style={styles.editIcon}/>
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
           <Text style={styles.mensagem}>
             {mensagem}
           </Text>
-        </View>
-        {userIsDev && (
-          <View style={styles.iconsView}>
-            <TouchableOpacity
-              onPress={(e) => {
-                e.stopPropagation();
-                onDelete()
-              }}
-            >
-              <Ionicons 
-                name="trash" 
-                size={20}
-                style={styles.removeIcon}/>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={(e) => {
-                e.stopPropagation();
-                onUpdate();
-              }}
-            >
-              <Ionicons 
-                name="pencil" 
-                size={20}
-                style={styles.editIcon}/>
-            </TouchableOpacity>
-          </View>
-        )}
       </View>
 
       <Text

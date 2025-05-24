@@ -32,6 +32,7 @@ import {
 import VForumHeader from '../../components/forum/header';
 import VDiscussaoItem from '../../components/forum/discussao/item';
 import handleDeleteDiscussao from '../../components/forum/discussao/handleDeleteDiscussao';
+import colors from '../../../styles/colors';
 
 
 export default function ForumScreen({ navigation, route }) {
@@ -94,13 +95,21 @@ export default function ForumScreen({ navigation, route }) {
     run();
   }, [forumID, user]);
 
+  function toConfigurarDiscussao() {
+    navigation.push('CriarDiscussao', {
+      forumPath: forumPath,
+    })
+  }
+
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#163690" />
-        
       {forum &&  
         (
           <>
+          <StatusBar 
+            barStyle="light-content"
+            backgroundColor={colors.p3}
+          />
           {/* Header */}
           <VForumHeader 
             forum={forum.data} 
@@ -110,24 +119,22 @@ export default function ForumScreen({ navigation, route }) {
             isDev={forum.userIsDev}
             navigation={navigation}
           />
-          {!discussoes ? (
-            <View style={styles.noTopicsContainer}>
-              <Text style={styles.noTopicsText}>Ainda não existem Tópicos</Text>
-            </View>
-          ) : (
+          {discussoes && (
             <View style={styles.fullFlex}>
-              <Text style={styles.titleDisc}>DISCUSSÕES</Text>
+              <Text style={styles.titleDisc}>
+                DISCUSSÕES
+              </Text>
 
               <FlatList
                 showsVerticalScrollIndicator={false}
                 data={discussoes}
                 keyExtractor={(item, index) => index.toString()}
+                contentContainerStyle={styles.discListGap}
                 renderItem={({ item }) => (
                   <Pressable
                     onPress={() =>
                       navigation.push('Discussao', {
-                        forum: forum.data,
-                        forumAutor: forum.autor,
+                        forum: forum,
                         discussaoPath: item.getDiscussaoPath(),
                         titulo: item.titulo,
                         tag: item.tag, 
@@ -146,8 +153,12 @@ export default function ForumScreen({ navigation, route }) {
                         {...item} />
                   </Pressable>
                 )}
-                ListFooterComponent={() => (
-                  <Text style={styles.footerList}>SEM MAIS DISCUSSÕES</Text>
+                ListEmptyComponent={() => (
+                  <View>
+                    <Text style={styles.footerList}>
+                      Ainda não existe Discussões
+                    </Text>
+                  </View>
                 )}
               />
             </View>
@@ -155,9 +166,7 @@ export default function ForumScreen({ navigation, route }) {
 
           <TouchableOpacity
             style={styles.createNewForumButton}
-            onPress={() => navigation.push('CriarDiscussao', {
-              forumPath: forumPath,
-            })}
+            onPress={toConfigurarDiscussao}
           >
             <Text style={styles.createNewForumButtonText}>
               Criar Nova Discussão
@@ -168,7 +177,6 @@ export default function ForumScreen({ navigation, route }) {
     </SafeAreaView>
   );
 }
-
 
 
 ForumScreen.propTypes = {

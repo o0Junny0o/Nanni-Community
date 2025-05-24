@@ -2,15 +2,21 @@ import { StyleSheet } from "react-native";
 import colors from "../../../../styles/colors";
 import fonts from "../../../../styles/fonts";
 
+
 const styles = StyleSheet.create({
+    statusBar: {
+        backgroundColor: colors.p3,
+    },
     loadingOverlay: {
         opacity: 0.4,
     },
     header: {
-        backgroundColor: colors.p2,
+        backgroundColor: colors.p3,
         gap: 15,
         paddingTop: 10,
         paddingHorizontal: 16,
+        borderBottomWidth: 3,
+        borderColor: colors.p5,
     },
     forumPrincipal: {
         alignItems: 'top',
@@ -30,7 +36,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     doarView: {
-        marginTop: 10,
+        marginTop: 20,
         flexDirection: 'row',
         alignItems: 'center',
         alignSelf: 'flex-start',
@@ -50,13 +56,21 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     configIcon: {
-        color: colors.p6,
+        color: colors.p3,
     },
     deleteIcon: {
         color: colors.aviso,
     },
     removeIcon: {
         color: colors.aviso
+    },
+    devOptions: {
+        alignSelf: 'flex-start',
+        gap: 15,
+        paddingHorizontal: 7,
+        paddingVertical: 12,
+        borderRadius: 15,
+        backgroundColor: colors.p6,
     },
     forumDoar: {
         backgroundColor: colors.p1,
@@ -76,7 +90,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.p6,
     },
     forumSeguido: {
-        backgroundColor: colors.p3,
+        backgroundColor: colors.aviso,
     },
     forumSeguirItem: {
         fontWeight: 'bold',
@@ -91,6 +105,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 5,
     },
     forumTitle: {
+        marginBottom: 2,
         fontFamily: fonts.monospaceExtrabold,
         fontSize: 20,
         fontWeight: 'bold',
@@ -105,12 +120,21 @@ const styles = StyleSheet.create({
         color: colors.p5,
     },
     forumExpansor: {
-        marginTop: 10,
+        marginTop: 30,
         fontFamily: fonts.monospaceExtrabold,
         fontSize: 14,
+        opacity: 0.75,
         color: colors.p6,
     },
+    forumExpansorFechar: {
+        marginTop: 0,
+        textDecorationLine: 'underline', 
+    },
+    forumExpansorFecharInactive: {
+        opacity: 0,
+    },
     forumDesc: {
+        textAlign: 'justify',
         fontFamily: fonts.roboto,
         fontSize: 16,
         color: colors.p6,
@@ -118,6 +142,8 @@ const styles = StyleSheet.create({
     footer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+        alignItems: 'center',
+        marginTop: 10,
     },
 })
 

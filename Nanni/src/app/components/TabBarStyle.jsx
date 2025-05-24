@@ -1,15 +1,6 @@
 import { StyleSheet, View } from 'react-native';
+import colors from '../../styles/colors';
 
-const colors = {
-  p1: '#5D90D6',
-  // p2: '#163690',
-  p3: '#071934',
-  // p5: "#B88CB4",
-  p6: '#F2F2F2',
-  // text: '#000000',
-  // background: '#FFFFFF',
-  // overlayBackground: 'rgba(200, 200, 200, 0.4)',
-};
 
 const styles = StyleSheet.create({
   backGround: {
@@ -29,9 +20,9 @@ const styles = StyleSheet.create({
     height: 80,
     paddingBottom: 10,
     paddingTop: 10,
-    backgroundColor: colors.p3,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
+    backgroundColor: colors.p3,
   },
 });
 

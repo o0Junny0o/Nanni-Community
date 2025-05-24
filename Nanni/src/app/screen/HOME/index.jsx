@@ -4,23 +4,21 @@ import {
   FlatList,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  Pressable,
   ScrollView,
-  Image,
+  Pressable,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
-import { useCallback, useEffect, useState } from 'react';
-import { styles, forumSeguidosStyles, forumDonoStyles } from './styles';
+import { useCallback, useState } from 'react';
+import styles from './styles';
 import PropTypes from 'prop-types';
 import { useAuth } from '../../components/contexts/AuthContext';
-import { doc, getDoc, Timestamp } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../service/firebase/conexao';
 import forumList from '../../../hooks/forum/forumList';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import colors from '../../../styles/colors';
-import { deconvertBase64ToImage } from '../../../utils/Base64Image';
-import { FORUNS_COLLECTION } from '../../../model/refsCollection';
+import VForumSeguido from '../../components/forum/home/seguido';
+import VForumDono from '../../components/forum/home/dono';
+import LoadingScreen from '../CARREGAMENTO_SCREEN';
 
 export default function HomeScreen({ navigation }) {
   const [forumSeguidos, setForumSeguidos] = useState([]);
@@ -82,12 +80,17 @@ export default function HomeScreen({ navigation }) {
         : 'Seu Fórum'
       : undefined;
 
+  function configForum({forumID}) {
+    navigation.push('ConfigurarForum', {
+      forumID: forumID,
+    });        
+  }
+
+
   return (
     <SafeAreaView style={styles.safeArea}>
       {loading ? (
-        <View style={styles.loadingScreen}>
-          <Text style={styles.loadingText}>Carregando...</Text>
-        </View>
+        <LoadingScreen />
       ) : forumDono.length > 0 || forumSeguidos.length > 0 ? (
         <View style={styles.view}>
           <View style={styles.container}>
@@ -101,11 +104,21 @@ export default function HomeScreen({ navigation }) {
                     data={forumDono}
                     keyExtractor={(item) => item.forumID}
                     renderItem={({ item }) => (
-                      <VForumDono
-                        navigation={navigation}
-                        path={item.getForumPath()}
-                        {...item}
-                      />
+                      <Pressable
+                        onPress={() =>
+                            navigation.push('Forum', {
+                              forumID: item.forumID,
+                              forumPath: item.getForumPath(),
+                            })
+                          }>
+                          <VForumDono
+                            path={item.getForumPath()}
+                            onConfigForum={() => configForum({
+                              forumID: item.forumID
+                            })}
+                            {...item}
+                          />
+                      </Pressable>
                     )}
                   />
                 </>
@@ -120,11 +133,19 @@ export default function HomeScreen({ navigation }) {
                     data={forumSeguidos}
                     keyExtractor={(item) => item.forumID}
                     renderItem={({ item }) => (
-                      <VForumSeguidos
-                        navigation={navigation}
-                        path={item.getForumPath()}
-                        {...item}
-                      />
+                      <Pressable
+                        onPress={() =>
+                          navigation.push('Forum', {
+                            forumID: item.forumID,
+                            forumPath: item.getForumPath(),
+                          })
+                        }>
+                          <VForumSeguido
+                            navigation={navigation}
+                            path={item.getForumPath()}
+                            {...item}
+                          />
+                      </Pressable>
                     )}
                   />
                 </>
@@ -136,7 +157,9 @@ export default function HomeScreen({ navigation }) {
               onPress={(e) => navigation.push('ConfigurarForum')}
               style={styles.button}
             >
-              <Text style={styles.buttonTxt}>Criar Novo Fórum</Text>
+              <Text style={styles.buttonTxt}>
+                Criar Novo Fórum
+              </Text>
             </TouchableOpacity>
           ) : null}
         </View>
@@ -144,7 +167,7 @@ export default function HomeScreen({ navigation }) {
         <View style={styles.loadingScreen}>
           <Text style={styles.loadingText}>
             <TouchableOpacity onPress={() => navigation.navigate('Explorar')}>
-              <Text style={{ fontSize: 18, fontWeight: 'bold' }}>
+              <Text style={styles.toHomeTxt}>
                 Clique em explorar para começar
               </Text>
             </TouchableOpacity>
@@ -155,69 +178,9 @@ export default function HomeScreen({ navigation }) {
   );
 }
 
-function VForumSeguidos({ forumID, forumName, forumDesc, path, navigation }) {
-  if (!forumName && typeof forumName !== 'string') return;
-  if (!forumDesc && typeof forumDesc !== 'string') return;
-  if (typeof path !== 'string') return;
-  if (!forumID) return;
 
-  return (
-    <TouchableWithoutFeedback
-      onPress={() =>
-        navigation.push('Forum', {
-          forumID: forumID,
-          forumPath: path,
-        })
-      }
-    >
-      <View style={forumSeguidosStyles.container}>
-        <Text style={forumSeguidosStyles.title}>{forumName}</Text>
-        <Text style={forumSeguidosStyles.desc}>{forumDesc}</Text>
-      </View>
-    </TouchableWithoutFeedback>
-  );
-}
 
-function VForumDono({ forumID, forumName, data, path, navigation }) {
-  if (!forumName && typeof forumName !== 'string') return;
-  if (!forumID) return;
-  if (!(data instanceof Timestamp)) return;
-  if (typeof path !== 'string') return;
 
-  return (
-    <Pressable
-      onPress={(e) =>
-        navigation.push('Forum', {
-          forumID: forumID,
-          forumPath: path,
-        })
-      }
-    >
-      <View style={forumDonoStyles.container}>
-        <View style={forumDonoStyles.rows}>
-          <Text style={forumDonoStyles.title}>{forumName}</Text>
-          <Pressable
-            style={forumDonoStyles.iconEdit}
-            onPress={(e) => {
-              navigation.push('ConfigurarForum', {
-                forumID: forumID,
-              });
-            }}
-          >
-            <Ionicons name="settings" size={24} color={colors.p3} />
-          </Pressable>
-        </View>
-        <View style={[forumDonoStyles.rows, forumDonoStyles.rowsOptions]}>
-          {data && (
-            <Text style={forumDonoStyles.extra}>
-              {data.toDate().toLocaleDateString('pt-BR')}
-            </Text>
-          )}
-        </View>
-      </View>
-    </Pressable>
-  );
-}
 
 HomeScreen.propTypes = {
   navigation: PropTypes.shape({
@@ -226,21 +189,6 @@ HomeScreen.propTypes = {
   }).isRequired,
 };
 
-VForumSeguidos.propTypes = {
-  forumID: PropTypes.string.isRequired,
-  forumName: PropTypes.string.isRequired,
-  forumDesc: PropTypes.string.isRequired,
-  path: PropTypes.string.isRequired,
-  navigation: PropTypes.shape({
-    push: PropTypes.func.isRequired,
-  }).isRequired,
-};
 
-VForumDono.propTypes = {
-  forumID: PropTypes.string.isRequired,
-  forumName: PropTypes.string.isRequired,
-  path: PropTypes.string.isRequired,
-  navigation: PropTypes.shape({
-    push: PropTypes.func.isRequired,
-  }).isRequired,
-};
+
+
