@@ -30,12 +30,9 @@ import ConfigurarForumScreen from './src/app/screen/CRIAR_FORUM';
 import CriarDiscussaoScreen from './src/app/screen/CRIAR_DISCUSSAO';
 import DiscussaoScreen from './src/app/screen/DISCUSSAO';
 
-
 // Importar a Tabbar
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import customTabBarStyle from './src/app/components/TabBarStyle';
-
-
 
 // Criação dos Stacks
 const Stack = createStackNavigator();
@@ -131,7 +128,10 @@ function MainNavigator() {
       <MainStack.Screen name="Analytics" component={ANALITYCS_SCREEN} />
       <MainStack.Screen name="Forum" component={Forum} />
       <MainStack.Screen name="TopicoScreen" component={TopicoScreen} />
-      <MainStack.Screen name="CriarDiscussao" component={CriarDiscussaoScreen} />
+      <MainStack.Screen
+        name="CriarDiscussao"
+        component={CriarDiscussaoScreen}
+      />
       <MainStack.Screen name="Discussao" component={DiscussaoScreen} />
       <MainStack.Screen name="PerfilUsuario" component={PerfilUsuario} />
       <MainStack.Screen name="DOACAO" component={DOACAO} />

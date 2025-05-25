@@ -7,7 +7,7 @@ import Comentario from '../../model/Comentario';
 async function comentarioCreate(comentario) {
   // Tratamento:
   if (!(comentario instanceof Comentario)) return null;
-  console.log(comentario.anexo)
+  console.log(comentario.anexo);
   if (comentario.anexo.length == 0) {
     if (
       typeof comentario.mensagem !== 'string' ||

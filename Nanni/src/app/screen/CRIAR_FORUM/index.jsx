@@ -129,11 +129,11 @@ export default function ConfigurarForumScreen({ navigation, route }) {
   }
 
   function addForumTag() {
-    if(cTags.length < 3) return;
+    if (cTags.length < 3) return;
 
-    setForumTags(prev => [...prev, TagNormalize(cTags)])
+    setForumTags((prev) => [...prev, TagNormalize(cTags)]);
 
-    setCTags('')
+    setCTags('');
   }
 
   function removeForumTag(tag) {

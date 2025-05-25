@@ -1,11 +1,7 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from './styles';
-import { 
-    FlatList,
-    Text, 
-    View 
-} from 'react-native';
-import { useAuth } from "../../components/contexts/AuthContext";
+import { FlatList, Text, View } from 'react-native';
+import { useAuth } from '../../components/contexts/AuthContext';
 import VChat from '../../components/chat';
 import PropTypes from 'prop-types';
 import useChat from '../../../hooks/useChat';
@@ -17,121 +13,87 @@ import { StatusBar } from 'expo-status-bar';
 import colors from '../../../styles/colors';
 import Forum from '../../../model/Forum';
 
+export default function DiscussaoScreen({ navigation, route }) {
+  const { forum, discussaoPath, titulo, tag, mensagem, data } = route.params;
 
-export default function DiscussaoScreen({ 
-    navigation, 
-    route 
-}) {
-    const { 
-        forum,
-        discussaoPath,
-        titulo,
-        tag, 
-        mensagem, 
-        data,
-    } = route.params;
+  const { data: chat } = useChat({
+    discussaoPATH: discussaoPath,
+    initialLimit: 20,
+  });
 
+  const instServ = instaceServices();
 
-    
-    const { 
-        data: chat,
-    } = useChat({ 
-        discussaoPATH: discussaoPath,
-        initialLimit: 20,
-    })
+  const { user } = useAuth();
 
-    const instServ = instaceServices()
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar barStyle="light-content" backgroundColor={colors.p3} />
+      {/* Header */}
+      <VForumHeader
+        forum={forum.data}
+        uid={user.uid}
+        forumAutor={forum.autor}
+        isDev={forum.userIsDev}
+        navigation={navigation}
+      />
+      <ScrollView>
+        <View style={styles.container}>
+          {/* Mensagem */}
+          <View style={styles.discView}>
+            <Text style={styles.discTitle}>{titulo}</Text>
 
-    const { user } = useAuth()
+            {mensagem && <Text style={styles.discDescricao}>{mensagem}</Text>}
 
-    return (
-        <SafeAreaView style={styles.safeArea}>
-            <StatusBar 
-                barStyle="light-content"
-                backgroundColor={colors.p3}
-            />
-            {/* Header */}
-            <VForumHeader 
-                forum={forum.data} 
-                uid={user.uid} 
-                forumAutor={forum.autor} 
-                isDev={forum.userIsDev}
-                navigation={navigation}
-            />
-            <ScrollView>
-                <View style={styles.container}>
-                    {/* Mensagem */}
-                    <View style={styles.discView}>
-                        <Text style={styles.discTitle}>
-                            {titulo}
-                        </Text>
+            <Text style={styles.discData}>
+              {data.toDate().toLocaleDateString('pt-BR')}
+            </Text>
+          </View>
 
-                        {mensagem && (
-                            <Text style={styles.discDescricao}>
-                                {mensagem}
-                            </Text>
-                        )}
-                        
-                        <Text style={styles.discData}>
-                            {data.toDate().toLocaleDateString("pt-BR")}
-                        </Text>
-                    </View>
-
-                    <View style={styles.chatView}>
-                        <Text style={styles.chatTitle}>
-                            Comentários
-                        </Text>
-                        {chat && (
-                            <FlatList
-                                data={chat}
-                                contentContainerStyle={styles.chatContainer}
-                                scrollEnabled={false}
-                                keyExtractor={(item, index) => item.comentario.comentarioID}
-                                renderItem={({item}) => (
-                                    <VComentario
-                                        services={instServ}
-                                        discussaoPath={discussaoPath}
-                                        comentarioID={item.comentario.comentarioID}
-                                        mensagem={item.comentario.mensagem}
-                                        data={item.comentario.data}
-                                        anexo={item.comentario.anexo}
-                                        username={item.username}
-                                        isFromUser={item.comentario.userRef === user.uid}
-                                        
-                                    />
-                                )}
-                            />
-                        )}
-                </View>
-                
-            </View>
-            </ScrollView>
-            <VChat
-                discussaoPath={discussaoPath}
-                userRef={user.uid}
-            />
-        </SafeAreaView>
-    )
+          <View style={styles.chatView}>
+            <Text style={styles.chatTitle}>Comentários</Text>
+            {chat && (
+              <FlatList
+                data={chat}
+                contentContainerStyle={styles.chatContainer}
+                scrollEnabled={false}
+                keyExtractor={(item, index) => item.comentario.comentarioID}
+                renderItem={({ item }) => (
+                  <VComentario
+                    services={instServ}
+                    discussaoPath={discussaoPath}
+                    comentarioID={item.comentario.comentarioID}
+                    mensagem={item.comentario.mensagem}
+                    data={item.comentario.data}
+                    anexo={item.comentario.anexo}
+                    username={item.username}
+                    isFromUser={item.comentario.userRef === user.uid}
+                  />
+                )}
+              />
+            )}
+          </View>
+        </View>
+      </ScrollView>
+      <VChat discussaoPath={discussaoPath} userRef={user.uid} />
+    </SafeAreaView>
+  );
 }
-
-
-
 
 DiscussaoScreen.propTypes = {
-    navigation: PropTypes.shape({
-        push: PropTypes.func.isRequired,
+  navigation: PropTypes.shape({
+    push: PropTypes.func.isRequired,
+  }).isRequired,
+  route: PropTypes.shape({
+    params: PropTypes.shape({
+      forum: PropTypes.shape({
+        data: PropTypes.instanceOf(Forum).isRequired,
+        autor: PropTypes.string.isRequired,
+        userIsDev: PropTypes.bool.isRequired,
+      }),
+      discussaoPath: PropTypes.string.isRequired,
+      titulo: PropTypes.string.isRequired,
+      tag: PropTypes.string.isRequired,
+      mensagem: PropTypes.string.isRequired,
     }).isRequired,
-    route: PropTypes.shape({
-        params: PropTypes.shape({
-            forum: PropTypes.shape({
-                data: PropTypes.instanceOf(Forum).isRequired,
-                autor: PropTypes.string.isRequired,
-                userIsDev: PropTypes.bool.isRequired,
-            }),
-            discussaoPath: PropTypes.string.isRequired,
-            titulo: PropTypes.string.isRequired,
-            tag: PropTypes.string.isRequired, 
-            mensagem: PropTypes.string.isRequired,
-        }).isRequired,
-    }).isRequired,
-}
+  }).isRequired,
+};

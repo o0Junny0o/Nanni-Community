@@ -1,6 +1,6 @@
-import { StyleSheet } from "react-native";
-import colors from "../../../../styles/colors";
-import fonts from "../../../../styles/fonts";
+import { StyleSheet } from 'react-native';
+import colors from '../../../../styles/colors';
+import fonts from '../../../../styles/fonts';
 
 const forumSeguidosStyles = StyleSheet.create({
   container: {
@@ -79,5 +79,4 @@ const forumDonoStyles = StyleSheet.create({
   },
 });
 
-
-export { forumDonoStyles, forumSeguidosStyles }
+export { forumDonoStyles, forumSeguidosStyles };

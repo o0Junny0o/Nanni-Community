@@ -1,7 +1,4 @@
-import { 
-  useState, 
-  useEffect 
-} from 'react';
+import { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -26,20 +23,14 @@ import {
 import { db } from '../../../service/firebase/conexao';
 import forumQuery from '../../../hooks/forum/forumQuery';
 import useForumDiscussao from '../../../hooks/useForumDiscussao';
-import {
-  USUARIOS_COLLECTION,
-} from '../../../model/refsCollection';
+import { USUARIOS_COLLECTION } from '../../../model/refsCollection';
 import VForumHeader from '../../components/forum/header';
 import VDiscussaoItem from '../../components/forum/discussao/item';
 import handleDeleteDiscussao from '../../components/forum/discussao/handleDeleteDiscussao';
 import colors from '../../../styles/colors';
 
-
 export default function ForumScreen({ navigation, route }) {
-  const { 
-    forumID, 
-    forumPath 
-  } = route.params;
+  const { forumID, forumPath } = route.params;
 
   const { user } = useAuth();
   const [forum, setForum] = useState();
@@ -79,7 +70,7 @@ export default function ForumScreen({ navigation, route }) {
           setForum({
             autor: frAutor.data().nome,
             data: fr,
-            userIsDev: (fr.userRef === user.uid),
+            userIsDev: fr.userRef === user.uid,
           });
 
           const segDocs = userIsSeguidor.docs;
@@ -98,32 +89,26 @@ export default function ForumScreen({ navigation, route }) {
   function toConfigurarDiscussao() {
     navigation.push('CriarDiscussao', {
       forumPath: forumPath,
-    })
+    });
   }
 
   return (
     <SafeAreaView style={styles.container}>
-      {forum &&  
-        (
-          <>
-          <StatusBar 
-            barStyle="light-content"
-            backgroundColor={colors.p3}
-          />
+      {forum && (
+        <>
+          <StatusBar barStyle="light-content" backgroundColor={colors.p3} />
           {/* Header */}
-          <VForumHeader 
-            forum={forum.data} 
-            uid={user.uid} 
-            forumAutor={forum.autor} 
-            segID={seguidor} 
+          <VForumHeader
+            forum={forum.data}
+            uid={user.uid}
+            forumAutor={forum.autor}
+            segID={seguidor}
             isDev={forum.userIsDev}
             navigation={navigation}
           />
           {discussoes && (
             <View style={styles.fullFlex}>
-              <Text style={styles.titleDisc}>
-                DISCUSSÕES
-              </Text>
+              <Text style={styles.titleDisc}>DISCUSSÕES</Text>
 
               <FlatList
                 showsVerticalScrollIndicator={false}
@@ -137,20 +122,24 @@ export default function ForumScreen({ navigation, route }) {
                         forum: forum,
                         discussaoPath: item.getDiscussaoPath(),
                         titulo: item.titulo,
-                        tag: item.tag, 
-                        mensagem: item.mensagem, 
+                        tag: item.tag,
+                        mensagem: item.mensagem,
                         data: item.data,
                       })
-                    }>
-                      <VDiscussaoItem 
-                        userIsDev={forum.isDev || (item.userRef === user.uid)}
-                        onDelete={() => handleDeleteDiscussao(item.getDiscussaoPath())}
-                        onUpdate={() => { 
-                          navigation.push("CriarDiscussao", {
-                            discussaoPath: item.getDiscussaoPath(),
-                          }) 
-                        }}
-                        {...item} />
+                    }
+                  >
+                    <VDiscussaoItem
+                      userIsDev={forum.isDev || item.userRef === user.uid}
+                      onDelete={() =>
+                        handleDeleteDiscussao(item.getDiscussaoPath())
+                      }
+                      onUpdate={() => {
+                        navigation.push('CriarDiscussao', {
+                          discussaoPath: item.getDiscussaoPath(),
+                        });
+                      }}
+                      {...item}
+                    />
                   </Pressable>
                 )}
                 ListEmptyComponent={() => (
@@ -178,7 +167,6 @@ export default function ForumScreen({ navigation, route }) {
   );
 }
 
-
 ForumScreen.propTypes = {
   navigation: PropTypes.shape({
     goBack: PropTypes.func.isRequired,
@@ -191,6 +179,3 @@ ForumScreen.propTypes = {
     }),
   }),
 };
-
-
-

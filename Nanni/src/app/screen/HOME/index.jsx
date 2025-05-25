@@ -80,12 +80,11 @@ export default function HomeScreen({ navigation }) {
         : 'Seu Fórum'
       : undefined;
 
-  function configForum({forumID}) {
+  function configForum({ forumID }) {
     navigation.push('ConfigurarForum', {
       forumID: forumID,
-    });        
+    });
   }
-
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -106,18 +105,21 @@ export default function HomeScreen({ navigation }) {
                     renderItem={({ item }) => (
                       <Pressable
                         onPress={() =>
-                            navigation.push('Forum', {
+                          navigation.push('Forum', {
+                            forumID: item.forumID,
+                            forumPath: item.getForumPath(),
+                          })
+                        }
+                      >
+                        <VForumDono
+                          path={item.getForumPath()}
+                          onConfigForum={() =>
+                            configForum({
                               forumID: item.forumID,
-                              forumPath: item.getForumPath(),
                             })
-                          }>
-                          <VForumDono
-                            path={item.getForumPath()}
-                            onConfigForum={() => configForum({
-                              forumID: item.forumID
-                            })}
-                            {...item}
-                          />
+                          }
+                          {...item}
+                        />
                       </Pressable>
                     )}
                   />
@@ -139,12 +141,13 @@ export default function HomeScreen({ navigation }) {
                             forumID: item.forumID,
                             forumPath: item.getForumPath(),
                           })
-                        }>
-                          <VForumSeguido
-                            navigation={navigation}
-                            path={item.getForumPath()}
-                            {...item}
-                          />
+                        }
+                      >
+                        <VForumSeguido
+                          navigation={navigation}
+                          path={item.getForumPath()}
+                          {...item}
+                        />
                       </Pressable>
                     )}
                   />
@@ -157,9 +160,7 @@ export default function HomeScreen({ navigation }) {
               onPress={(e) => navigation.push('ConfigurarForum')}
               style={styles.button}
             >
-              <Text style={styles.buttonTxt}>
-                Criar Novo Fórum
-              </Text>
+              <Text style={styles.buttonTxt}>Criar Novo Fórum</Text>
             </TouchableOpacity>
           ) : null}
         </View>
@@ -178,17 +179,9 @@ export default function HomeScreen({ navigation }) {
   );
 }
 
-
-
-
-
 HomeScreen.propTypes = {
   navigation: PropTypes.shape({
     push: PropTypes.func.isRequired,
     navigate: PropTypes.func.isRequired,
   }).isRequired,
 };
-
-
-
-

@@ -45,9 +45,9 @@ const styles = StyleSheet.create({
   buttonTxt: {
     color: colors.p6,
   },
-  toHomeTxt: { 
-    fontSize: 18, 
-    fontWeight: 'bold', 
+  toHomeTxt: {
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 

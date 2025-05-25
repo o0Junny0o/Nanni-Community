@@ -1,16 +1,8 @@
-import PropTypes from "prop-types";
-import { 
-    Text, 
-    View 
-} from "react-native";
-import { forumSeguidosStyles } from "../styles";
+import PropTypes from 'prop-types';
+import { Text, View } from 'react-native';
+import { forumSeguidosStyles } from '../styles';
 
-export default function VForumSeguido ({ 
-  forumID, 
-  forumName, 
-  forumDesc, 
-  path, 
-}) {
+export default function VForumSeguido({ forumID, forumName, forumDesc, path }) {
   if (!forumName && typeof forumName !== 'string') return;
   if (!forumDesc && typeof forumDesc !== 'string') return;
   if (typeof path !== 'string') return;
@@ -18,8 +10,8 @@ export default function VForumSeguido ({
 
   return (
     <View style={forumSeguidosStyles.container}>
-        <Text style={forumSeguidosStyles.title}>{forumName}</Text>
-        <Text style={forumSeguidosStyles.desc}>{forumDesc}</Text>
+      <Text style={forumSeguidosStyles.title}>{forumName}</Text>
+      <Text style={forumSeguidosStyles.desc}>{forumDesc}</Text>
     </View>
   );
 }

@@ -1,5 +1,11 @@
 import { useState, useEffect, useMemo } from 'react';
-import { View, Text, ActivityIndicator, SafeAreaView } from 'react-native';
+import {
+  View,
+  Text,
+  ActivityIndicator,
+  SafeAreaView,
+  ScrollView,
+} from 'react-native';
 import { useAuth } from '../../components/contexts/AuthContext';
 import {
   calcularVendasPorJogo,
@@ -133,66 +139,68 @@ export default function AnalyticsScreen() {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <View style={styles.container}>
-        <Text style={styles.title}>Análise de Dados</Text>
+      <ScrollView>
+        <View style={styles.container}>
+          <Text style={styles.title}>Análise de Dados</Text>
 
-        {/* Seletor de Jogo */}
-        <View style={styles.pickerContainer}>
-          <Icon name="sports-esports" size={20} color="#666" />
-          <Picker
-            style={styles.picker}
-            selectedValue={selectedJogo}
-            onValueChange={setSelectedJogo}
-            dropdownIconColor="#666"
-          >
-            {jogos.map((jogo) => (
-              <Picker.Item
-                key={jogo.caminho}
-                label={jogo.nome}
-                value={jogo.caminho}
-              />
+          {/* Seletor de Jogo */}
+          <View style={styles.pickerContainer}>
+            <Icon name="sports-esports" size={20} color="#666" />
+            <Picker
+              style={styles.picker}
+              selectedValue={selectedJogo}
+              onValueChange={setSelectedJogo}
+              dropdownIconColor="#666"
+            >
+              {jogos.map((jogo) => (
+                <Picker.Item
+                  key={jogo.caminho}
+                  label={jogo.nome}
+                  value={jogo.caminho}
+                />
+              ))}
+            </Picker>
+          </View>
+
+          {/* Métricas */}
+          <View style={styles.metricContainer}>
+            {Object.entries(metricas).map(([key, value]) => (
+              <View key={key} style={styles.metricItem}>
+                <Text style={styles.metricLabel}>{key}</Text>
+                <Text style={styles.metricValue}>{value}</Text>
+              </View>
             ))}
-          </Picker>
-        </View>
+          </View>
 
-        {/* Métricas */}
-        <View style={styles.metricContainer}>
-          {Object.entries(metricas).map(([key, value]) => (
-            <View key={key} style={styles.metricItem}>
-              <Text style={styles.metricLabel}>{key}</Text>
-              <Text style={styles.metricValue}>{value}</Text>
-            </View>
-          ))}
-        </View>
+          {/* Seletor de Ano */}
+          <View style={styles.pickerContainer}>
+            <Icon name="calendar-today" size={18} color="#666" />
+            <Picker
+              style={styles.picker}
+              selectedValue={selectedAno}
+              onValueChange={setSelectedAno}
+              dropdownIconColor="#666"
+            >
+              {anos.map((ano) => (
+                <Picker.Item
+                  key={`ano-${ano}`}
+                  label={String(ano)}
+                  value={String(ano)}
+                />
+              ))}
+            </Picker>
+          </View>
 
-        {/* Seletor de Ano */}
-        <View style={styles.pickerContainer}>
-          <Icon name="calendar-today" size={18} color="#666" />
-          <Picker
-            style={styles.picker}
-            selectedValue={selectedAno}
-            onValueChange={setSelectedAno}
-            dropdownIconColor="#666"
-          >
-            {anos.map((ano) => (
-              <Picker.Item
-                key={`ano-${ano}`}
-                label={String(ano)}
-                value={String(ano)}
-              />
-            ))}
-          </Picker>
+          {/* Gráfico */}
+          {chartData.length > 0 ? (
+            <LineChartScreen data={chartData} />
+          ) : (
+            <Text style={styles.infoText}>
+              Nenhum dado disponível para o período
+            </Text>
+          )}
         </View>
-
-        {/* Gráfico */}
-        {chartData.length > 0 ? (
-          <LineChartScreen data={chartData} />
-        ) : (
-          <Text style={styles.infoText}>
-            Nenhum dado disponível para o período
-          </Text>
-        )}
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }

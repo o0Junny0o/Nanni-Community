@@ -13,7 +13,15 @@ class Discussao {
   //
   forumPath;
 
-  constructor({ discussaoID, titulo, tag, mensagem, data, userRef, forumPath }) {
+  constructor({
+    discussaoID,
+    titulo,
+    tag,
+    mensagem,
+    data,
+    userRef,
+    forumPath,
+  }) {
     this.discussaoID = discussaoID;
     this.titulo = titulo;
     this.tag = tag ?? '';
