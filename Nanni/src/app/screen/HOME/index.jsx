@@ -165,14 +165,29 @@ export default function HomeScreen({ navigation }) {
           ) : null}
         </View>
       ) : (
-        <View style={styles.loadingScreen}>
-          <Text style={styles.loadingText}>
-            <TouchableOpacity onPress={() => navigation.navigate('Explorar')}>
-              <Text style={styles.toHomeTxt}>
-                Clique em explorar para começar
-              </Text>
-            </TouchableOpacity>
+        <View style={styles.toHomeContainer}>
+          <TouchableOpacity 
+            onPress={() => navigation.navigate('Explorar')}>
+            <Text style={styles.toHomeTxt}>
+              Clique em explorar para começar
+            </Text>
+          </TouchableOpacity>
+
+          <Text style={styles.toHomeOUTxt}>
+            OU
           </Text>
+
+          {isDev ? (
+            <TouchableOpacity
+              onPress={(e) => navigation.push('ConfigurarForum')}
+              style={[
+                styles.button,
+                styles.buttonCenter,
+              ]}
+            >
+              <Text style={styles.buttonTxt}>Criar Novo Fórum</Text>
+            </TouchableOpacity>
+          ) : null}
         </View>
       )}
     </SafeAreaView>

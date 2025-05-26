@@ -126,9 +126,7 @@ export default function VForumHeader({
       forumID: forum.forumID,
     });
 
-    if (r) {
-      navigation.goBack();
-    } else {
+    if (!r) {
       Alert.alert('Erro ao Excluir Fórum', 'Tente novamente');
     }
   }

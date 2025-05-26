@@ -14,7 +14,7 @@ async function forumQuery({ forumID }) {
     const snapshot = await getDoc(forumDoc);
 
     if (!snapshot.exists()) {
-      throw new Error('Falha ao obter docs de Foruns');
+      return false;
     }
 
     return new Forum({ forumID: snapshot.id, ...snapshot.data() });

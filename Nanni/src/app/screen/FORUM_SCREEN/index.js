@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -28,6 +28,7 @@ import VForumHeader from '../../components/forum/header';
 import VDiscussaoItem from '../../components/forum/discussao/item';
 import handleDeleteDiscussao from '../../components/forum/discussao/handleDeleteDiscussao';
 import colors from '../../../styles/colors';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function ForumScreen({ navigation, route }) {
   const { forumID, forumPath } = route.params;
@@ -45,52 +46,67 @@ export default function ForumScreen({ navigation, route }) {
   }) || [];
   const [seguidor, setSeguidor] = useState('');
 
+
+
+
+
   // [Obtem informações de Fórum]
-  useEffect(() => {
-    async function run() {
-      try {
-        const fr = await forumQuery({ forumID: forumID });
+  async function run() {
+    try {
+      const fr = await forumQuery({ forumID: forumID });
 
-        if (fr) {
-          const docAutor = doc(db, USUARIOS_COLLECTION, fr.userRef);
-          const colForumSeguidor = collection(db, 'seguidores');
-          const queryForumSeguidor = query(
-            colForumSeguidor,
-            and(
-              where('userRef', '==', user.uid),
-              where('forumRef', '==', fr.forumID),
-            ),
-          );
+      if (fr) {
+        const docAutor = doc(db, USUARIOS_COLLECTION, fr.userRef);
+        const colForumSeguidor = collection(db, 'seguidores');
+        const queryForumSeguidor = query(
+          colForumSeguidor,
+          and(
+            where('userRef', '==', user.uid),
+            where('forumRef', '==', fr.forumID),
+          ),
+        );
 
-          const [frAutor, userIsSeguidor] = await Promise.all([
-            getDoc(docAutor),
-            getDocs(queryForumSeguidor),
-          ]);
+        const [frAutor, userIsSeguidor] = await Promise.all([
+          getDoc(docAutor),
+          getDocs(queryForumSeguidor),
+        ]);
 
-          setForum({
-            autor: frAutor.data().nome,
-            data: fr,
-            userIsDev: fr.userRef === user.uid,
-          });
+        setForum({
+          autor: frAutor.data().nome,
+          data: fr,
+          userIsDev: fr.userRef === user.uid,
+        });
 
-          const segDocs = userIsSeguidor.docs;
-          setSeguidor(segDocs && segDocs.length > 0 ? segDocs[0].id : '');
-        }
-      } catch (err) {
-        alert('Problema ao carregar Fórum');
-        console.error(err);
-        navigation.goBack();
+        const segDocs = userIsSeguidor.docs;
+        setSeguidor(segDocs && segDocs.length > 0 ? segDocs[0].id : '');
+      } else {
+        navigation.goBack()
       }
+    } catch (err) {
+      alert('Problema ao carregar Fórum');
+      console.error(err);
+      navigation.goBack();
     }
+  }
 
+  
+  useEffect(() => {
     run();
   }, [forumID, user]);
+
+  useFocusEffect(
+    useCallback(() => {
+      run()
+    })
+  )
 
   function toConfigurarDiscussao() {
     navigation.push('CriarDiscussao', {
       forumPath: forumPath,
     });
   }
+
+  
 
   return (
     <SafeAreaView style={styles.container}>

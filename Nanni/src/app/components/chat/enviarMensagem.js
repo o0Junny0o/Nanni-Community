@@ -7,7 +7,7 @@ export default async function enviarMensagem({
   anexos,
   discussaoPath,
 }) {
-  if (text.length < 2) {
+  if (text.length < 1) {
     if (anexos.length === 0) {
       return;
     }

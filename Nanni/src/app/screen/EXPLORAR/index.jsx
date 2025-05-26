@@ -10,7 +10,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import colors from '../../../styles/colors';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import TagNormalize from '../../../utils/TagNormalize';
 import forumList from '../../../hooks/forum/forumList';
 import styles from './styles';
@@ -18,6 +18,7 @@ import { Picker } from '@react-native-picker/picker';
 import Forum from '../../../model/Forum';
 import PropTypes from 'prop-types';
 import VExplorarItem from '../../components/explorar/item';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function ExplorarScreen({ navigation }) {
   const [foruns, setForuns] = useState([]);
@@ -34,33 +35,39 @@ export default function ExplorarScreen({ navigation }) {
     refPickerFiltro?.current.focus();
   }
 
-  useEffect(() => {
-    async function run() {
-      if (tagsSearch.length < 1) {
-        setForuns(await forumList({ qLimit: 10, qOrderBy: true }));
-      } else {
-        const [indicativa, comum] = tagsSearch.reduce(
-          ([p, f], e) =>
-            cIndicativaTags.includes(e) ? [[...p, e], f] : [p, [...f, e]],
-          [[], []],
-        );
+  async function run() {
+    if (tagsSearch.length < 1) {
+      setForuns(await forumList({ qLimit: 10, qOrderBy: true }));
+    } else {
+      const [indicativa, comum] = tagsSearch.reduce(
+        ([p, f], e) =>
+          cIndicativaTags.includes(e) ? [[...p, e], f] : [p, [...f, e]],
+        [[], []],
+      );
 
-        const fr = await forumList({
-          qTags: comum,
-          qIndicativa: indicativa,
-        });
+      const fr = await forumList({
+        qTags: comum,
+        qIndicativa: indicativa,
+      });
 
-        setForuns(fr);
-      }
-
-      if (foruns.length > 0) {
-        const arr = [...new Set(foruns.flatMap((fr) => fr.tagsDisponiveis))];
-        setPreTags(arr);
-      }
+      setForuns(fr);
     }
 
+    if (foruns.length > 0) {
+      const arr = [...new Set(foruns.flatMap((fr) => fr.tagsDisponiveis))];
+      setPreTags(arr);
+    }
+  }
+
+  useEffect(() => {
     run();
   }, [tagsSearch]);
+
+  useFocusEffect(
+    useCallback(() => {
+      run();
+    })
+  )
 
   function addSearchTag(tag) {
     if (!tag || typeof tag !== 'string') return;

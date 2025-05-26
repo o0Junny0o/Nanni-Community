@@ -42,10 +42,27 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     backgroundColor: colors.p3,
   },
+  buttonCenter: { 
+    alignSelf: 'center',
+    margin: 0,
+    marginLeft: 23,
+  },
   buttonTxt: {
     color: colors.p6,
   },
-  toHomeTxt: {
+  toHomeContainer: {
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 20,
+  },
+  toHomeOUTxt: {
+    fontFamily: fonts.monospaceExtrabold,
+    fontSize: 22,
+    letterSpacing: 1.25,
+    fontWeight: "bold",
+  },
+  toHomeTxt: { 
     fontSize: 18,
     fontWeight: 'bold',
   },

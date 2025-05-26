@@ -12,6 +12,7 @@ import VForumHeader from '../../components/forum/header';
 import { StatusBar } from 'expo-status-bar';
 import colors from '../../../styles/colors';
 import Forum from '../../../model/Forum';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 
 export default function DiscussaoScreen({ navigation, route }) {
   const { forum, discussaoPath, titulo, tag, mensagem, data } = route.params;
@@ -21,6 +22,23 @@ export default function DiscussaoScreen({ navigation, route }) {
     initialLimit: 20,
   });
 
+
+  // [Scroll to Bottom]
+  const flatRef = useRef(null)
+  
+  // Scroll automático quando novos itens são adicionados
+  const handleContentSizeChange = () => {
+    if (flatRef.current && chat?.length) {
+      flatRef.current.scrollToEnd({ animated: true });
+    }
+  };
+
+  // Scroll inicial quando a lista é montada
+  const handleLayout = () => {
+    if (flatRef.current && chat?.length) {
+      flatRef.current.scrollToEnd({ animated: false });
+    }
+  };
   const instServ = instaceServices();
 
   const { user } = useAuth();
@@ -36,7 +54,8 @@ export default function DiscussaoScreen({ navigation, route }) {
         isDev={forum.userIsDev}
         navigation={navigation}
       />
-      <ScrollView>
+      <ScrollView
+        ref={flatRef}>
         <View style={styles.container}>
           {/* Mensagem */}
           <View style={styles.discView}>
@@ -51,9 +70,11 @@ export default function DiscussaoScreen({ navigation, route }) {
 
           <View style={styles.chatView}>
             <Text style={styles.chatTitle}>Comentários</Text>
-            {chat && (
-              <FlatList
+            <FlatList
+                
                 data={chat}
+                onContentSizeChange={handleContentSizeChange}
+                onLayout={handleLayout}
                 contentContainerStyle={styles.chatContainer}
                 scrollEnabled={false}
                 keyExtractor={(item, index) => item.comentario.comentarioID}
@@ -70,7 +91,6 @@ export default function DiscussaoScreen({ navigation, route }) {
                   />
                 )}
               />
-            )}
           </View>
         </View>
       </ScrollView>
