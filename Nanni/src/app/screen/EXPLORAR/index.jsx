@@ -19,6 +19,10 @@ import Forum from '../../../model/Forum';
 import PropTypes from 'prop-types';
 import VExplorarItem from '../../components/explorar/item';
 import { useFocusEffect } from '@react-navigation/native';
+import { useAuth } from '../../components/contexts/AuthContext';
+import { doc, getDoc, Timestamp } from 'firebase/firestore';
+import { db } from '../../../service/firebase/conexao';
+import { USUARIOS_COLLECTION } from '../../../model/refsCollection';
 
 export default function ExplorarScreen({ navigation }) {
   const [foruns, setForuns] = useState([]);
@@ -31,42 +35,77 @@ export default function ExplorarScreen({ navigation }) {
   const cIndicativaTags = [...Forum.classificacaoIndicativa];
   const refPickerFiltro = useRef();
 
+  const { user } = useAuth();
+  const [idade, setIdade] = useState('')
+
   function openPickerFiltro() {
     refPickerFiltro?.current.focus();
   }
-
+  
   async function run() {
-    if (tagsSearch.length < 1) {
-      setForuns(await forumList({ qLimit: 10, qOrderBy: true }));
-    } else {
-      const [indicativa, comum] = tagsSearch.reduce(
-        ([p, f], e) =>
-          cIndicativaTags.includes(e) ? [[...p, e], f] : [p, [...f, e]],
-        [[], []],
-      );
+    try {
+      if (tagsSearch.length < 1) {
+        setForuns(await forumList({ qLimit: 10, qIdade: idade }));
+      } else {
+        const [indicativa, comum] = tagsSearch.reduce(
+          ([p, f], e) =>
+            cIndicativaTags.includes(e) ? [[...p, e], f] : [p, [...f, e]],
+          [[], []],
+        );
 
-      const fr = await forumList({
-        qTags: comum,
-        qIndicativa: indicativa,
-      });
+        const fr = await forumList({
+          qTags: comum,
+          qIndicativa: indicativa,
+          qIdade: idade,
+        });
 
-      setForuns(fr);
-    }
+        setForuns(fr);
+      }
 
-    if (foruns.length > 0) {
-      const arr = [...new Set(foruns.flatMap((fr) => fr.tagsDisponiveis))];
-      setPreTags(arr);
+      if (foruns.length > 0) {
+        const arr = [...new Set(foruns.flatMap((fr) => fr.tagsDisponiveis))];
+        setPreTags(arr);
+      }
+    } catch(err) {
+      console.error(err)
     }
   }
 
   useEffect(() => {
-    run();
+    if(idade) run();
   }, [tagsSearch]);
+
+  useEffect(() => {
+    async function getIdade() {
+      try {
+        const userRef = doc(db, USUARIOS_COLLECTION, user.uid);
+        const docSnap = await getDoc(userRef);
+
+        if(docSnap.exists()) {
+          const dateNasc = new Date(docSnap.data().dataNascimento)
+
+          const now = new Date()
+          let idade =  now.getFullYear() - dateNasc.getFullYear();
+          const m =  now.getMonth() - dateNasc.getMonth();
+
+          if(m <= 0 || (m === 0 && now.getDate() < dateNasc.getDate())) {
+            idade--;
+          }
+
+          setIdade(idade)
+        }
+      } catch(err) {
+        console.error(err)
+      }
+    }
+
+    getIdade()
+  }, [])
 
   useFocusEffect(
     useCallback(() => {
       run();
-    })
+    }, [])
   )
 
   function addSearchTag(tag) {

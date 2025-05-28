@@ -3,7 +3,6 @@ import {
   View,
   FlatList,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   ScrollView,
   Pressable,
 } from 'react-native';

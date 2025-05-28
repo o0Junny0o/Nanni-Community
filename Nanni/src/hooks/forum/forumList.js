@@ -17,6 +17,7 @@ async function forumList({
   qTags,
   qIndicativa,
   qOrderBy,
+  qIdade,
 }) {
   try {
     // Query dinâmica:
@@ -52,6 +53,17 @@ async function forumList({
       queryArgs.push(orderBy('data', qOrderBy ? 'desc' : 'asc'));
     }
 
+
+    if(Number.isInteger(qIdade) && qIdade < 18) {
+      const faixa = Forum.classificacaoIndicativa
+        .map(v => Number(v.slice(1)))
+        .filter(num => num - qIdade <= 0)
+        .map(v => `+${v}`)
+
+      
+      queryArgs.push(where('classificacaoIndicativa', 'in', faixa))
+    }
+    
     //
 
     // Query:
