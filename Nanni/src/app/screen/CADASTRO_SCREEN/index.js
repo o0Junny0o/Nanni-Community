@@ -160,8 +160,10 @@ export default function Cadastro({ navigation }) {
       temErro = true;
     }
 
+    
     if (dataNascimento) {
-      const idade = calcularIdade(dataNascimento);
+      const idade = calcularIdade(String(dataNascimento));
+      
       if (idade < 13) {
         Alert.alert(
           'Erro',
@@ -171,6 +173,7 @@ export default function Cadastro({ navigation }) {
       }
     }
 
+    
     if (temErro) {
       return;
     }
@@ -362,8 +365,8 @@ export default function Cadastro({ navigation }) {
             <View style={styles.dateInputContainer}>
               <TextInput
                 style={[
-                  styles.input,
                   styles.dateInput,
+                  { flex: 1 },
                   { borderColor: styles.input.borderColor },
                 ]}
                 placeholder="Data de Nascimento (DD/MM/AAAA)"
@@ -480,7 +483,6 @@ export default function Cadastro({ navigation }) {
           <TouchableOpacity
             style={[styles.botao, loading && styles.botaoDesativado]}
             onPress={handleCadastro}
-            disabled={loading}
           >
             {loading ? (
               <ActivityIndicator color="#FFFFFF" />

@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     color: colors.softLilac,
   },
   calendarIcon: {
-    marginLeft: 10,
+    marginLeft: 0,
   },
   touchable_opacity: {
     width: '100%',
