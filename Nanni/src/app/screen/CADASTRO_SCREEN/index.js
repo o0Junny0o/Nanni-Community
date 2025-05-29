@@ -182,7 +182,7 @@ export default function Cadastro({ navigation }) {
 
     try {
       let avatar;
-      if (fotoPerfil && fotoPerfil !== defaultImageUri) {
+      if (fotoPerfil) {
         if (!isPngImage(fotoPerfil)) {
           Toast.show({
             type: 'warning',
@@ -203,7 +203,11 @@ export default function Cadastro({ navigation }) {
           return;
         }
       } else {
-        avatar = null;
+        Toast.show({
+          type: 'error',
+          text1: 'Erro nenhuma imagem selecionada!',
+          text2: 'Selecione uma imagem.',
+        });
       }
 
       const userCredential = await createUserWithEmailAndPassword(
