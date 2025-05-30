@@ -14,6 +14,8 @@ import DoacaoModel from '../../../model/Doacao/DoacaoModel';
 import { Timestamp } from 'firebase/firestore';
 import { useAuth } from '../../components/contexts/AuthContext';
 import PropTypes from 'prop-types';
+import { StatusBar } from 'expo-status-bar';
+import colors from '../../../styles/colors';
 
 function DoacaoScreen({ route }) {
   const { userRecebe } = route.params;

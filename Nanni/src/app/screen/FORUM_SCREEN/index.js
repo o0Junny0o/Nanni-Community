@@ -136,6 +136,7 @@ export default function ForumScreen({ navigation, route }) {
                     onPress={() =>
                       navigation.push('Discussao', {
                         forum: forum,
+                        seguidor: seguidor,
                         discussaoPath: item.getDiscussaoPath(),
                         titulo: item.titulo,
                         tag: item.tag,

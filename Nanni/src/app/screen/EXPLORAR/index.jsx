@@ -7,10 +7,15 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
+import { 
+  useCallback, 
+  useEffect, 
+  useRef, 
+  useState 
+} from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import colors from '../../../styles/colors';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { useCallback, useEffect, useRef, useState } from 'react';
 import TagNormalize from '../../../utils/TagNormalize';
 import forumList from '../../../hooks/forum/forumList';
 import styles from './styles';
@@ -20,7 +25,7 @@ import PropTypes from 'prop-types';
 import VExplorarItem from '../../components/explorar/item';
 import { useFocusEffect } from '@react-navigation/native';
 import { useAuth } from '../../components/contexts/AuthContext';
-import { doc, getDoc, Timestamp } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../service/firebase/conexao';
 import { USUARIOS_COLLECTION } from '../../../model/refsCollection';
 

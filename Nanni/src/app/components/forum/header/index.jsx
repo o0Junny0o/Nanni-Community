@@ -46,13 +46,13 @@ export default function VForumHeader({
       Animated.parallel([
         Animated.timing(animHeight, {
           toValue: open ? heightRef + 15 : 5,
-          duration: 400,
+          duration: 300,
           useNativeDriver: false,
         }),
 
         Animated.timing(animRadius, {
           toValue: open ? 16 : 0,
-          duration: 500,
+          duration: 300,
           useNativeDriver: false,
         }),
       ]).start();

@@ -320,29 +320,25 @@ export default function Cadastro({ navigation }) {
             ]}
             onPress={selecionarFotoPerfil}
           >
-            {fotoPerfil ? (
-              <Image
-                source={{ uri: fotoPerfil }}
-                style={styles.fotoPerfilCircular}
-              />
-            ) : (
-              <View
-                style={[
-                  styles.fotoPerfilPlaceholderCircular,
-                  { backgroundColor: styles.input.borderColor },
-                ]}
-              >
-                <Ionicons
-                  name="camera-outline"
-                  size={30}
-                  color={styles.textoFotoPerfilCircular.color}
+            {fotoPerfil && (
+              <>
+                <Image
+                  source={{ uri: fotoPerfil }}
+                  style={styles.fotoPerfilCircular}
                 />
-                <Text style={styles.textoFotoPerfilCircular}>
-                  Adicionar Foto de Perfil (Opcional)
-                </Text>
-              </View>
+
+                <Ionicons
+                  name="camera"
+                  size={24}
+                  style={styles.cameraIconOverlay}
+                />
+              </>
             )}
+            
           </TouchableOpacity>
+          <Text style={styles.textoFotoPerfilCircular}>
+              Adicionar Foto de Perfil (Opcional)
+            </Text>
 
           <TextInput
             style={[styles.input, { borderColor: styles.input.borderColor }]}
@@ -369,8 +365,7 @@ export default function Cadastro({ navigation }) {
             <View style={styles.dateInputContainer}>
               <TextInput
                 style={[
-                  styles.dateInput,
-                  { flex: 1 },
+                  styles.dateInputText,
                   { borderColor: styles.input.borderColor },
                 ]}
                 placeholder="Data de Nascimento (DD/MM/AAAA)"

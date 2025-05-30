@@ -1,6 +1,10 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from './styles';
-import { FlatList, Text, View } from 'react-native';
+import { 
+  FlatList, 
+  Text, 
+  View 
+} from 'react-native';
 import { useAuth } from '../../components/contexts/AuthContext';
 import VChat from '../../components/chat';
 import PropTypes from 'prop-types';
@@ -12,10 +16,18 @@ import VForumHeader from '../../components/forum/header';
 import { StatusBar } from 'expo-status-bar';
 import colors from '../../../styles/colors';
 import Forum from '../../../model/Forum';
-import { useEffect, useLayoutEffect, useRef } from 'react';
+import { useRef } from 'react';
 
 export default function DiscussaoScreen({ navigation, route }) {
-  const { forum, discussaoPath, titulo, tag, mensagem, data } = route.params;
+  const { 
+    forum,
+    seguidor,
+    discussaoPath, 
+    titulo, 
+    tag, 
+    mensagem, 
+    data 
+  } = route.params;
 
   const { data: chat } = useChat({
     discussaoPATH: discussaoPath,
@@ -42,7 +54,7 @@ export default function DiscussaoScreen({ navigation, route }) {
   const instServ = instaceServices();
 
   const { user } = useAuth();
-
+  
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="light-content" backgroundColor={colors.p3} />
@@ -51,6 +63,7 @@ export default function DiscussaoScreen({ navigation, route }) {
         forum={forum.data}
         uid={user.uid}
         forumAutor={forum.autor}
+        segID={seguidor}
         isDev={forum.userIsDev}
         navigation={navigation}
       />
@@ -110,6 +123,7 @@ DiscussaoScreen.propTypes = {
         autor: PropTypes.string.isRequired,
         userIsDev: PropTypes.bool.isRequired,
       }),
+      seguidor: PropTypes.string.isRequired,
       discussaoPath: PropTypes.string.isRequired,
       titulo: PropTypes.string.isRequired,
       tag: PropTypes.string.isRequired,

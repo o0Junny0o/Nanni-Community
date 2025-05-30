@@ -1,37 +1,44 @@
 import { StyleSheet } from 'react-native';
+import colors from '../../../styles/colors';
+import fonts from '../../../styles/fonts';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5', // Light background
   },
   content: {
+    alignSelf: 'center',
+    gap: 10,
+    marginTop: 60,    
     paddingHorizontal: 20,
     paddingTop: 30,
     paddingBottom: 20,
-    flex: 1,
   },
   title: {
+    marginBottom: 30,
     fontSize: 24,
+    fontFamily: fonts.monospaceExtrabold,
     fontWeight: 'bold',
-    color: '#4CAF50', // Green
-    marginBottom: 10,
     textAlign: 'center',
+    color: colors.p2,
   },
   description: {
-    fontSize: 16,
-    color: '#666',
     marginBottom: 20,
+    fontSize: 16,
     textAlign: 'center',
+    fontFamily: fonts.roboto,
+    color: colors.text,
   },
   input: {
-    backgroundColor: 'white',
-    borderRadius: 8,
     padding: 12,
+    paddingVertical: 16,
     marginBottom: 15,
-    fontSize: 16,
-    borderColor: '#ddd', // Light border
+    borderRadius: 8,
     borderWidth: 1,
+    fontSize: 16,
+    fontFamily: fonts.roboto,
+    borderColor: colors.p5label,
+    backgroundColor: colors.background,
   },
   label: {
     fontSize: 16,
@@ -48,7 +55,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   doarButton: {
-    backgroundColor: '#4CAF50', // Green
+    backgroundColor: colors.p2, 
     borderRadius: 8,
     padding: 15,
     alignItems: 'center',
@@ -60,10 +67,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   disclaimer: {
-    fontSize: 12,
-    color: '#888',
-    marginTop: 20,
+    marginTop: 20,    
+    opacity: 0.6,
+    fontSize: 16,
     textAlign: 'center',
+    color: colors.text,
   },
 });
 
